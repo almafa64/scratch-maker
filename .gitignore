@@ -19,7 +19,6 @@ mono_crash.*
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
-[Rr]elease/
 [Rr]eleases/
 x64/
 x86/
@@ -27,7 +26,6 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
-[Bb]in/
 [Oo]bj/
 [Oo]ut/
 [Ll]og/
@@ -363,5 +361,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Mine
-.scratch/
-.scratch_test/
+/scratch_test/bin/
+/scratch_test/obj/
+/bin/Release/*.config
+/scratch

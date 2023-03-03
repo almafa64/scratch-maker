@@ -42,7 +42,8 @@ namespace Scratch_Utils
 		None = 0,
 		Number = 1,
 		String = 2,
-		Variable = 4
+		Variable = 4,
+		List = 8
 	}
 }
 
@@ -55,8 +56,12 @@ namespace Scratch
 			public Goto(object x, object y)
 			{
 				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException($"x was string, which is not accepted"); 
-				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y was string, which is not accepted"); 
-				args = new BlockArgs("motion_gotoxy", $"\"X\":[1,[4,\"{x}\"}}]],\"Y\":[1,[4,\"{y}\"}}]]");
+				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y was string, which is not accepted");
+
+				string arg1 = (x is Var varx) ? $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"]]" : $"\"X\":[1,[4,\"{x}\"]]";
+				string arg2 = (y is Var vary) ? $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"]]" : $"\"Y\":[1,[4,\"{y}\"]]";
+
+				args = new BlockArgs("motion_gotoxy", $"{arg1},{arg2}");
 			}
 		}
 	}

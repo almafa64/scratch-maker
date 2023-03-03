@@ -1,14 +1,17 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using static Scratch.Project;
 
 namespace Scratch_Utils
 {
 	public class BaseData
 	{
-		//internal Dictionary<string, T> map = new Dictionary<string, T>();
 		public string Name;
 		public BaseData(string name) 
 		{
@@ -50,27 +53,6 @@ namespace Scratch_Utils
 			this.md5ext = assetId + '.' + dataFormat;
 		}
 	}
-
-	public struct CommentData
-	{
-		public string blockId;
-		public int height;
-		public bool minimized;
-		public string text;
-		public int width;
-		public double x;
-		public double y;
-		public CommentData(string blockId, string text, int height, int width, double x, double y, bool minimized)
-		{
-			this.blockId = blockId;
-			this.text = text;
-			this.height = height;
-			this.width = width;
-			this.x = x;
-			this.y = y;
-			this.minimized = minimized;
-		}
-	}
 }
 
 namespace Scratch
@@ -78,30 +60,22 @@ namespace Scratch
 	public class Var : Container
 	{
 		internal object value;
-		internal AcceptedTypes type;
 
-		public Var(SObject sObject, string name, object value) : base(sObject, name)
+		internal Var(SObject sObject, string name, object value) : base(sObject, name)
 		{
-			//type check
-			type = TypeCheck.Check(value);
 			this.value = value;
-			sObject.data.Vars.Add(this);
-		}	
+			sObject.Vars[name] = this;
+		}
 	}
 
 	public class List : Container
 	{
 		internal List<object> vars = new List<object>();
 
-		public List(SObject sObject, string name, params object[] vars) : base(sObject, name)
+		internal List(SObject sObject, string name, params object[] vars) : base(sObject, name)
 		{
-			//type check
-			foreach(object o in vars)
-			{
-				TypeCheck.Check(o);
-			}
-			this.vars.AddRange(vars);
-			sObject.data.Lists.Add(this);
+			if(vars != null) this.vars.AddRange(vars);
+			sObject.Lists[name] = this;
 		}
 	}
 
@@ -109,24 +83,32 @@ namespace Scratch
 	{
 		public Broadcast(SObject sObject, string name) : base(name)
 		{
-			if(sObject is Background bg) bg.data.Broadcasts.Add(this);
-			else sObject.data.Project.background.data.Broadcasts.Add(this);
+			if(sObject is Background bg) bg.Broadcasts[name] = this;
+			else sObject.Project.background.Broadcasts[name] = this;
 		}
 	}
 
 	public class Comment : Ided
 	{
-		public CommentData data;
+		internal string name;
+		internal string blockId = null;
+		public int height;
+		public bool minimized;
+		public string text;
+		public int width;
+		public double x;
+		public double y;
 
-		public Comment(SObject sObject, string text, int height = 200, int width = 200, double x = 500, double y = 500, bool minimized = false) : this(sObject, new CommentData(null, text, height, width, x, y, minimized))
+		public Comment(SObject sObject, string name, string text = "", bool minimized = false, int height = 200, int width = 200, double x = 200, double y = 200) : base("")
 		{
-			
-		}
-
-		internal Comment(SObject sObject, CommentData data) : base("")
-		{
-			this.data = data;
-			sObject.data.Comments.Add(this);
+			this.text = text;
+			this.name = name;
+			this.minimized = minimized;
+			this.height = height;
+			this.width = width;
+			this.x = x;
+			this.y = y;
+			sObject.Comments[name] = this;
 		}
 	}
 
@@ -141,15 +123,38 @@ namespace Scratch
 
 		public Costume(string path, string name, float x = 0, float y = 0) : base(path, name)
 		{
-			/*if(dataFormat == "png")
+			this.bitmapResolution = (byte)((dataFormat == "svg") ? 1 : 2);
+			if(bitmapResolution == 1)
 			{
-				Bitmap a = new Bitmap(path);
-				baseX = a.Width / 2;
-				baseY = a.Height / 2;
-			}*/
+				using(FileStream fs = new FileStream(path, FileMode.Open))
+				{
+					const int length = 180;
+					byte[] arr = new byte[length];
+					fs.Read(arr, 0, length);
+					StringBuilder sb = new StringBuilder();
+					for(int i = 0; i < arr.Length; i++)
+					{
+						sb.Append((char)arr[i]);
+					}
+					string a = sb.ToString();
+					int widthIS = a.IndexOf("width") + "width=\"".Length;
+					int widthIE = a.IndexOf('"', widthIS) - widthIS;
+					int heightIS = a.IndexOf("height") + "height=\"".Length;
+					int heightIE = a.IndexOf('"', heightIS) - heightIS;
+					baseX = Convert.ToSingle(a.Substring(widthIS, widthIE)) / 2f;
+					baseY = Convert.ToSingle(a.Substring(heightIS, heightIE)) / 2f;
+				}
+			}
+			else
+			{
+				/*using(Bitmap a = new Bitmap(path))
+				{
+					baseX = a.Width / 2;
+					baseY = a.Height / 2;
+				}*/
+			}
 			this.x = x + baseX;
 			this.y = y + baseY;
-			this.bitmapResolution = (byte)((dataFormat == "svg") ? 1 : 2);
 		}
 	}
 

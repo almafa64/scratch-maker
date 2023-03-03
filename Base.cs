@@ -3,51 +3,121 @@ using Scratch_Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 
 namespace Scratch_Utils
 {
-	public struct SpriteData
+	public class SObject
 	{
-		internal List<Broadcast> Broadcasts { get; set; }	//to Dictionary<string, Broadcast>
-		internal List<Comment> Comments { get; set; }		//to Dictionary<string, Comment>
-		internal List<Sound> Sounds { get; set; }			//to Dictionary<string, Sounds>
-		internal List<Costume> Costumes { get; set; }		//to Dictionary<string, Costume>
-		internal List<List> Lists { get; set; }				//to Dictionary<string, List>
-		internal List<Var> Vars { get; set; }				//to Dictionary<string, Var>
+		internal List<Column> columns;
+
+		internal Dictionary<string, Broadcast> Broadcasts { get; set; }
+		internal Dictionary<string, Comment> Comments { get; set; }
+		internal Dictionary<string, Sound> Sounds { get; set; }
+		internal Dictionary<string, Costume> Costumes { get; set; }
+		internal Dictionary<string, List> Lists { get; set; }
+		internal Dictionary<string, Var> Vars { get; set; }
 		internal Project Project { get; set; }
 		public int CurrentCostume { get; set; }
-		public int LayerOrder { get; set; }	
-	}
-
-	public class SObject// : List<Column>
-	{
-		internal SpriteData data;
-		internal List<Column> columns;
+		public int LayerOrder { get; set; }
 
 		public SObject(Project project) 
 		{
-			data = new SpriteData();
-			data.Broadcasts = new List<Broadcast>();
-			data.Comments = new List<Comment>();
-			data.Sounds = new List<Sound>();
-			data.Costumes = new List<Costume>();
-			data.Lists = new List<List>();
-			data.Vars = new List<Var>();
-			data.Project = project;
-			data.CurrentCostume = 0;
-			data.LayerOrder = 1;
+			Broadcasts = new Dictionary<string, Broadcast>();
+			Comments = new Dictionary<string, Comment>();
+			Sounds = new Dictionary<string, Sound>();
+			Costumes = new Dictionary<string, Costume>();
+			Lists = new Dictionary<string, List>();
+			Vars = new Dictionary<string, Var>();
+			Project = project;
+			CurrentCostume = 0;
+			LayerOrder = 1;
 			columns = new List<Column>();
 		}
 
-		public void AddCostume(params Costume[] costume)
+		public void AddCostume(params Costume[] costumes)
 		{
-			data.Costumes.AddRange(costume);
+			foreach(Costume c in costumes)
+			{
+				Costumes[c.Name] = c;
+			}
 		}
 
 		public void AddSound(params Sound[] sounds)
 		{
-			data.Sounds.AddRange(sounds);
+			foreach(Sound s in sounds)
+			{
+				Sounds[s.Name] = s;
+			}
 		}
+
+		#region Vars
+
+		public void MakeVariable(string name, bool global = true, object value = null)
+		{
+			if(value == null) value = 0;
+			if(TypeCheck.Check(value) == AcceptedTypes.Variable) throw new ArgumentException("Variable value cannot be another variable");
+			if(ThisHasVar(name) || BgHasVar(name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
+			
+			if(!global || this is Project.Background) new Var(this, name, value);
+			else new Var(Project.background, name, value);
+		}
+
+		public Var GetVar(string name)
+		{
+			if(ThisHasVar(name)) return Vars[name];
+			else if(BgHasVar(name)) return Project.background.Vars[name];
+			else throw new ArgumentException($"No variable was found with the name \"{name}\"");
+		}
+
+		private bool ThisHasVar(string name)
+		{
+			return Vars.ContainsKey(name);
+		}
+
+		private bool BgHasVar(string name)
+		{
+			return Project.background.Vars.ContainsKey(name);
+		}
+
+		#endregion Vars
+
+		#region List
+
+		public void MakeList(string name, bool global = true, object[] values = null)
+		{
+			if(values != null)
+			{
+				foreach(object value in values)
+				{
+					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
+				}
+			}
+			if(ThisHasList(name) || BgHasList(name)) throw new ArgumentException($"List with the name \"{name}\" already exists");
+
+			if(!global || this is Project.Background) new List(this, name, values);
+			else new List(Project.background, name, values);
+		}
+
+		public List GetList(string name)
+		{
+			if(ThisHasList(name)) return Lists[name];
+			else if(BgHasList(name)) return Project.background.Lists[name];
+			else throw new ArgumentException($"No list was found with the name \"{name}\"");
+		}
+
+		private bool ThisHasList(string name)
+		{
+			return Lists.ContainsKey(name);
+		}
+
+		private bool BgHasList(string name)
+		{
+			return Project.background.Lists.ContainsKey(name);
+		}
+
+		#endregion List
 	}
 }
 
@@ -89,13 +159,17 @@ namespace Scratch
 		public Background background;
 		internal List<Sprite> sprites = new List<Sprite>();
 
+		public bool openFolder;
 		public Extensions extensions;
 
-		public Project(string name, Extensions extensions = Extensions.None)
+
+		public Project(string name, Extensions extensions = Extensions.None, bool openFolder = true)
 		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-GB");
 			this.name = name;
 			this.background = new Background(this);
 			this.extensions = extensions;
+			this.openFolder = openFolder;
 		}
 
 		public class Background : SObject, IDisposable
@@ -108,7 +182,7 @@ namespace Scratch
 
 			internal Background(Project project) : base(project)
 			{
-				data.LayerOrder = 0;
+				LayerOrder = 0;
 			}
 
             public void Dispose(){}

@@ -1,5 +1,6 @@
 ﻿using Scratch;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -125,6 +126,7 @@ namespace Scratch_Utils
 				return AcceptedTypes.Number;
 			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
+			else if(t == typeof(List)) return AcceptedTypes.List;
 
 			throw new ArgumentException($"bad parameter type. {t} is not number, string nor bool");
 		}
@@ -219,12 +221,12 @@ namespace Scratch_Utils
 
 			ZipFile.CreateFromDirectory($"{newPath}\\build", $"{newPath}\\{pr.name}.sb3");
 
-			Process.Start("explorer.exe", $"{newPath}");
+			if(pr.openFolder) Process.Start("explorer.exe", $"{newPath}");
 		}
 
 		private static void DoSpriteStuff(StringBuilder fileText, bool isSprite, SObject sObject)
 		{
-			string newPath = sObject.data.Project.name;
+			string newPath = sObject.Project.name;
 
 			fileText.Append("{\"blocks\":{");
 			if(CountBlock(sObject) != 0)
@@ -286,71 +288,69 @@ namespace Scratch_Utils
 				RemoveLast(fileText);
 			}
 
-			SpriteData tmpData = sObject.data;
-
 			fileText.Append("},\"broadcasts\":{");
-			if(!isSprite && tmpData.Broadcasts.Count != 0)
+			if(!isSprite && sObject.Broadcasts.Count != 0)
 			{
-				foreach(Broadcast br in tmpData.Broadcasts)
+				foreach(KeyValuePair<string, Broadcast> map in sObject.Broadcasts)
 				{
 					fileText.Append('"');
-					fileText.Append(br.Id);
+					fileText.Append(map.Value.Id);
 					fileText.Append("\":\"");
-					fileText.Append(br.Name);
+					fileText.Append(map.Key);
 					fileText.Append("\",");
 				}
 				RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"comments\":{");
-			if(tmpData.Comments.Count != 0)
+			if(sObject.Comments.Count != 0)
 			{
-				foreach(Comment cm in tmpData.Comments)
+				foreach(KeyValuePair<string, Comment> map in sObject.Comments)
 				{
+					Comment cm = map.Value;
 					fileText.Append('"');
 					fileText.Append(cm.Id);
 					fileText.Append("\":{\"blockId\":");
 
-					CommentData data = cm.data;
-
-					if(data.blockId == null) fileText.Append("null");
+					if(cm.blockId == null) fileText.Append("null");
 					else
 					{
 						fileText.Append('"');
-						fileText.Append(data.blockId);
+						fileText.Append(cm.blockId);
 						fileText.Append('"');
 					}
 
 					fileText.Append(",\"height\":");
-					fileText.Append(data.height);
+					fileText.Append(cm.height);
 
 					fileText.Append(",\"width\":");
-					fileText.Append(data.width);
+					fileText.Append(cm.width);
 
 					fileText.Append(",\"minimized\":");
-					fileText.Append(Small(data.minimized));
+					fileText.Append(Small(cm.minimized));
 
 					fileText.Append(",\"x\":");
-					fileText.Append(data.x);
+					fileText.Append(cm.x);
 
 					fileText.Append(",\"y\":");
-					fileText.Append(data.y);
+					fileText.Append(cm.y);
 
 					fileText.Append(",\"text\":\"");
-					fileText.Append(data.text);
+					fileText.Append(cm.text);
 					fileText.Append("\"},");
 				}
 				RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"costumes\":[");
-			if(tmpData.Costumes.Count == 0)
+			if(sObject.Costumes.Count == 0)
 			{
-				if(isSprite) tmpData.Costumes.Add(new Costume("cat.svg", "cat"));
-				else tmpData.Costumes.Add(new Costume("bg.svg", "bg"));
+				if(isSprite) sObject.Costumes["cat"] = (new Costume("cat.svg", "cat"));
+				else sObject.Costumes["bg"] = (new Costume("bg.svg", "bg"));
 			}
-			foreach(Costume ct in tmpData.Costumes)
+			foreach(KeyValuePair<string, Costume> map in sObject.Costumes)
 			{
+				Costume ct = map.Value;
 				fileText.Append("{\"assetId\":\"");
 				fileText.Append(ct.assetId);
 
@@ -379,10 +379,11 @@ namespace Scratch_Utils
 			RemoveLast(fileText);
 
 			fileText.Append("],\"sounds\":[");
-			if(tmpData.Sounds.Count != 0)
+			if(sObject.Sounds.Count != 0)
 			{
-				foreach(Sound sd in tmpData.Sounds)
+				foreach(KeyValuePair<string, Sound> map in sObject.Sounds)
 				{
+					Sound sd = map.Value;
 					fileText.Append("{\"assetId\":\"");
 					fileText.Append(sd.assetId);
 
@@ -412,10 +413,11 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("],\"lists\":{");
-			if(tmpData.Lists.Count != 0)
+			if(sObject.Lists.Count != 0)
 			{
-				foreach(List ls in tmpData.Lists)
+				foreach(KeyValuePair<string, List> map in sObject.Lists)
 				{
+					List ls = map.Value;
 					fileText.Append('"');
 					fileText.Append(ls.Id);
 
@@ -434,42 +436,36 @@ namespace Scratch_Utils
 						RemoveLast(fileText);
 					}
 
-					fileText.Append("]]");
+					fileText.Append("]],");
 				}
 				RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"variables\":{");
-			if(tmpData.Vars.Count != 0)
+			if(sObject.Vars.Count != 0)
 			{
-				foreach(Var var in tmpData.Vars)
+				foreach(KeyValuePair<string, Var> map in sObject.Vars)
 				{
+					Var var = map.Value;
 					fileText.Append('"');
 					fileText.Append(var.Id);
 
 					fileText.Append("\":[\"");
 					fileText.Append(var.Name);
 
-					fileText.Append("\",");
+					fileText.Append("\",\"");
+					fileText.Append(var.value);
 
-					//if(var.value.GetType() == typeof(string))
-					//{
-						fileText.Append('"');
-						fileText.Append(var.value);
-						fileText.Append('"');
-					//}
-					//else fileText.Append(var.value);
-
-					fileText.Append("],");
+					fileText.Append("\"],");
 				}
 				RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"currentCostume\":");
-			fileText.Append(tmpData.CurrentCostume);
+			fileText.Append(sObject.CurrentCostume);
 
 			fileText.Append(",\"layerOrder\":");
-			fileText.Append(tmpData.LayerOrder);
+			fileText.Append(sObject.LayerOrder);
 
 			if (isSprite)
 			{
