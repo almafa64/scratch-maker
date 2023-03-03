@@ -47,6 +47,7 @@ namespace Scratch_Utils
 
 		public Accessories(string path, string name):base(name)
 		{
+			if(!File.Exists(path)) throw new ArgumentException($"File {path} doesn't exists");
 			this.path = path;
 			this.assetId = ID.AssetMake();
 			this.dataFormat = path.Substring(path.LastIndexOf('.') + 1);
@@ -63,8 +64,31 @@ namespace Scratch
 
 		internal Var(SObject sObject, string name, object value) : base(sObject, name)
 		{
+			if(Has(sObject, name) || BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
+			
+			if(value == null) value = 0;
+			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("Variable value cannot be another variable or list");
+			
 			this.value = value;
-			sObject.Vars[name] = this;
+			sObject._Vars[name] = this;
+		}
+
+		public Var(object value) : base(null, null)
+		{
+			if(value == null) value = 0;
+			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("Variable value cannot be another variable or list");
+			
+			this.value = value;
+		}
+
+		internal static bool Has(SObject sObject, string name)
+		{
+			return sObject._Vars.ContainsKey(name);
+		}
+
+		internal static bool BgHas(SObject sObject, string name)
+		{
+			return sObject.Project.background._Vars.ContainsKey(name);
 		}
 	}
 
@@ -74,8 +98,39 @@ namespace Scratch
 
 		internal List(SObject sObject, string name, params object[] vars) : base(sObject, name)
 		{
-			if(vars != null) this.vars.AddRange(vars);
-			sObject.Lists[name] = this;
+			if(Has(sObject, name) || BgHas(sObject, name)) throw new ArgumentException($"List with the name \"{name}\" already exists");
+
+			if(vars != null)
+			{
+				foreach(object value in vars)
+				{
+					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
+				}
+				this.vars.AddRange(vars);
+			}
+			sObject._Lists[name] = this;
+		}
+
+		public List(params object[] vars) : base(null, null)
+		{
+			if(vars != null)
+			{
+				foreach(object value in vars)
+				{
+					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
+				}
+				this.vars.AddRange(vars);
+			}
+		}
+
+		internal static bool Has(SObject sObject, string name)
+		{
+			return sObject._Lists.ContainsKey(name);
+		}
+
+		internal static bool BgHas(SObject sObject, string name)
+		{
+			return sObject.Project.background._Lists.ContainsKey(name);
 		}
 	}
 
@@ -83,8 +138,8 @@ namespace Scratch
 	{
 		public Broadcast(SObject sObject, string name) : base(name)
 		{
-			if(sObject is Background bg) bg.Broadcasts[name] = this;
-			else sObject.Project.background.Broadcasts[name] = this;
+			if(sObject is Background bg) bg._Broadcasts[name] = this;
+			else sObject.Project.background._Broadcasts[name] = this;
 		}
 	}
 
@@ -108,7 +163,7 @@ namespace Scratch
 			this.width = width;
 			this.x = x;
 			this.y = y;
-			sObject.Comments[name] = this;
+			sObject._Comments[name] = this;
 		}
 	}
 

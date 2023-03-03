@@ -1,4 +1,5 @@
-﻿using Scratch_Utils;
+﻿using Scratch;
+using Scratch_Utils;
 using System;
 
 namespace Scratch_Utils
@@ -33,7 +34,16 @@ namespace Scratch_Utils
 
 	public class Block
 	{
-		public BlockArgs args;
+		internal BlockArgs args;
+		internal Block(params object[] vals)
+		{
+			for(int i = 0; i < vals.Length; i++)
+			{
+				object o = vals[i];
+				if(o is Var a && a.Name == null) throw new ArgumentException($"Not initalized variable at place {i} with value {a.value}");
+				else if(o is List b && b.Name == null) throw new ArgumentException($"Not initalized list at place {i}");
+			}
+		}
 	}
 
 	[Flags]
@@ -53,7 +63,7 @@ namespace Scratch
 	{
 		public class Goto : Block
 		{
-			public Goto(object x, object y)
+			public Goto(object x, object y) : base(x,y)
 			{
 				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException($"x was string, which is not accepted"); 
 				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y was string, which is not accepted");

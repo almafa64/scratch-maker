@@ -289,9 +289,9 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("},\"broadcasts\":{");
-			if(!isSprite && sObject.Broadcasts.Count != 0)
+			if(!isSprite && sObject._Broadcasts.Count != 0)
 			{
-				foreach(KeyValuePair<string, Broadcast> map in sObject.Broadcasts)
+				foreach(KeyValuePair<string, Broadcast> map in sObject._Broadcasts)
 				{
 					fileText.Append('"');
 					fileText.Append(map.Value.Id);
@@ -303,9 +303,9 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("},\"comments\":{");
-			if(sObject.Comments.Count != 0)
+			if(sObject._Comments.Count != 0)
 			{
-				foreach(KeyValuePair<string, Comment> map in sObject.Comments)
+				foreach(KeyValuePair<string, Comment> map in sObject._Comments)
 				{
 					Comment cm = map.Value;
 					fileText.Append('"');
@@ -343,12 +343,12 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("},\"costumes\":[");
-			if(sObject.Costumes.Count == 0)
+			if(sObject._Costumes.Count == 0)
 			{
-				if(isSprite) sObject.Costumes["cat"] = (new Costume("cat.svg", "cat"));
-				else sObject.Costumes["bg"] = (new Costume("bg.svg", "bg"));
+				if(isSprite) sObject._Costumes["cat"] = (new Costume("cat.svg", "cat"));
+				else sObject._Costumes["bg"] = (new Costume("bg.svg", "bg"));
 			}
-			foreach(KeyValuePair<string, Costume> map in sObject.Costumes)
+			foreach(KeyValuePair<string, Costume> map in sObject._Costumes)
 			{
 				Costume ct = map.Value;
 				fileText.Append("{\"assetId\":\"");
@@ -379,9 +379,9 @@ namespace Scratch_Utils
 			RemoveLast(fileText);
 
 			fileText.Append("],\"sounds\":[");
-			if(sObject.Sounds.Count != 0)
+			if(sObject._Sounds.Count != 0)
 			{
-				foreach(KeyValuePair<string, Sound> map in sObject.Sounds)
+				foreach(KeyValuePair<string, Sound> map in sObject._Sounds)
 				{
 					Sound sd = map.Value;
 					fileText.Append("{\"assetId\":\"");
@@ -413,9 +413,9 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("],\"lists\":{");
-			if(sObject.Lists.Count != 0)
+			if(sObject._Lists.Count != 0)
 			{
-				foreach(KeyValuePair<string, List> map in sObject.Lists)
+				foreach(KeyValuePair<string, List> map in sObject._Lists)
 				{
 					List ls = map.Value;
 					fileText.Append('"');
@@ -442,9 +442,9 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("},\"variables\":{");
-			if(sObject.Vars.Count != 0)
+			if(sObject._Vars.Count != 0)
 			{
-				foreach(KeyValuePair<string, Var> map in sObject.Vars)
+				foreach(KeyValuePair<string, Var> map in sObject._Vars)
 				{
 					Var var = map.Value;
 					fileText.Append('"');

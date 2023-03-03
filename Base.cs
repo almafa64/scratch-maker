@@ -3,121 +3,150 @@ using Scratch_Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading;
 
 namespace Scratch_Utils
 {
+	public class VarDic
+	{
+		internal SObject sObject;
+		internal Dictionary<string, Var> vars;
+
+		internal VarDic(SObject sObject, Dictionary<string, Var> vars)
+		{
+			this.sObject = sObject;
+			this.vars = vars;
+		}
+
+		public Var this[string name, bool global = false]
+		{
+			get
+			{
+				if(Var.Has(sObject, name)) return vars[name];
+				else if(Var.BgHas(sObject, name)) return sObject.Project.background._Vars[name];
+				else throw new ArgumentException($"No variable was found with the name \"{name}\"");
+			}
+
+			set
+			{
+				if(Var.Has(sObject, name) || Var.BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
+
+				value.Name = name;
+				value.sObject = sObject;
+				if(!global || sObject is Project.Background) vars[name] = value;
+				else sObject.Project.background._Vars[name] = value;
+			}
+		}
+	}
+
+	public class ListDic
+	{
+		internal SObject sObject;
+		internal Dictionary<string, List> lists;
+
+		internal ListDic(SObject sObject, Dictionary<string, List> lists)
+		{
+			this.sObject = sObject;
+			this.lists = lists;
+		}
+
+		public List this[string name, bool global = false]
+		{
+			get
+			{
+				if(List.Has(sObject, name)) return sObject._Lists[name];
+				else if(List.BgHas(sObject, name)) return sObject.Project.background._Lists[name];
+				else throw new ArgumentException($"No list was found with the name \"{name}\"");
+			}
+
+			set
+			{
+				if(List.Has(sObject, name) || List.BgHas(sObject, name)) throw new ArgumentException($"List with the name \"{name}\" already exists");
+
+				value.Name = name;
+				value.sObject = sObject;
+				if(!global || sObject is Project.Background) lists[name] = value;
+				else sObject.Project.background._Lists[name] = value;
+			}
+		}
+	}
+
 	public class SObject
 	{
 		internal List<Column> columns;
 
-		internal Dictionary<string, Broadcast> Broadcasts { get; set; }
-		internal Dictionary<string, Comment> Comments { get; set; }
-		internal Dictionary<string, Sound> Sounds { get; set; }
-		internal Dictionary<string, Costume> Costumes { get; set; }
-		internal Dictionary<string, List> Lists { get; set; }
-		internal Dictionary<string, Var> Vars { get; set; }
-		internal Project Project { get; set; }
+		public ReadOnlyDictionary<string, Broadcast> Broadcasts { get; internal set; }
+		public ReadOnlyDictionary<string, Comment> Comments { get; internal set; }
+		public ReadOnlyDictionary<string, Sound> Sounds { get; internal set; }
+		public ReadOnlyDictionary<string, Costume> Costumes { get; internal set; }
+
+		internal Dictionary<string, Broadcast> _Broadcasts;
+		internal Dictionary<string, Comment> _Comments;
+		internal Dictionary<string, Sound> _Sounds;
+		internal Dictionary<string, Costume> _Costumes;
+
+		internal Dictionary<string, List> _Lists;
+		internal Dictionary<string, Var> _Vars;
+		public VarDic Vars { get; internal set; }
+		public ListDic Lists { get; internal set; }
+
+		internal Project Project;
+
 		public int CurrentCostume { get; set; }
 		public int LayerOrder { get; set; }
 
 		public SObject(Project project) 
 		{
-			Broadcasts = new Dictionary<string, Broadcast>();
-			Comments = new Dictionary<string, Comment>();
-			Sounds = new Dictionary<string, Sound>();
-			Costumes = new Dictionary<string, Costume>();
-			Lists = new Dictionary<string, List>();
-			Vars = new Dictionary<string, Var>();
+			_Sounds = new Dictionary<string, Sound>();
+			_Broadcasts = new Dictionary<string, Broadcast>();
+			_Comments = new Dictionary<string, Comment>();
+			_Costumes = new Dictionary<string, Costume>();
+
+			_Vars = new Dictionary<string, Var>();
+			Vars = new VarDic(this, _Vars);
+			_Lists = new Dictionary<string, List>();
+			Lists = new ListDic(this, _Lists);
+
+			Sounds = new ReadOnlyDictionary<string, Sound>(_Sounds);
+			Broadcasts = new ReadOnlyDictionary<string, Broadcast>(_Broadcasts);
+			Comments = new ReadOnlyDictionary<string, Comment>(_Comments);
+			Costumes = new ReadOnlyDictionary<string, Costume>(_Costumes);
+
 			Project = project;
 			CurrentCostume = 0;
 			LayerOrder = 1;
 			columns = new List<Column>();
 		}
 
-		public void AddCostume(params Costume[] costumes)
+		public void AddCostumes(params Costume[] costumes)
 		{
 			foreach(Costume c in costumes)
 			{
-				Costumes[c.Name] = c;
+				_Costumes[c.Name] = c;
 			}
 		}
 
-		public void AddSound(params Sound[] sounds)
+		public void AddSounds(params Sound[] sounds)
 		{
 			foreach(Sound s in sounds)
 			{
-				Sounds[s.Name] = s;
+				_Sounds[s.Name] = s;
 			}
 		}
 
-		#region Vars
-
 		public void MakeVariable(string name, bool global = true, object value = null)
 		{
-			if(value == null) value = 0;
-			if(TypeCheck.Check(value) == AcceptedTypes.Variable) throw new ArgumentException("Variable value cannot be another variable");
-			if(ThisHasVar(name) || BgHasVar(name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
-			
 			if(!global || this is Project.Background) new Var(this, name, value);
 			else new Var(Project.background, name, value);
 		}
 
-		public Var GetVar(string name)
-		{
-			if(ThisHasVar(name)) return Vars[name];
-			else if(BgHasVar(name)) return Project.background.Vars[name];
-			else throw new ArgumentException($"No variable was found with the name \"{name}\"");
-		}
-
-		private bool ThisHasVar(string name)
-		{
-			return Vars.ContainsKey(name);
-		}
-
-		private bool BgHasVar(string name)
-		{
-			return Project.background.Vars.ContainsKey(name);
-		}
-
-		#endregion Vars
-
-		#region List
-
 		public void MakeList(string name, bool global = true, object[] values = null)
 		{
-			if(values != null)
-			{
-				foreach(object value in values)
-				{
-					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
-				}
-			}
-			if(ThisHasList(name) || BgHasList(name)) throw new ArgumentException($"List with the name \"{name}\" already exists");
-
 			if(!global || this is Project.Background) new List(this, name, values);
 			else new List(Project.background, name, values);
 		}
-
-		public List GetList(string name)
-		{
-			if(ThisHasList(name)) return Lists[name];
-			else if(BgHasList(name)) return Project.background.Lists[name];
-			else throw new ArgumentException($"No list was found with the name \"{name}\"");
-		}
-
-		private bool ThisHasList(string name)
-		{
-			return Lists.ContainsKey(name);
-		}
-
-		private bool BgHasList(string name)
-		{
-			return Project.background.Lists.ContainsKey(name);
-		}
-
-		#endregion List
 	}
 }
 
