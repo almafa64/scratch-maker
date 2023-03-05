@@ -26,11 +26,9 @@ namespace scratch_test
 						column.Add(new Movement.Goto(sprite.Vars["testVar2"], sprite.Vars["testVar1"]));
 					}
 
-					using(Column c = new Column(sprite, 100, 100))
+					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())
 					{
-						MyBlock b = new MyBlock("test").AddValue("x");
-						c.Add(b);
-						c.Add(new Movement.Goto(4242, b["x"]));
+						b.Add(new Movement.Goto(4242, b["x"]));
 					}
 
 					using(Column column = new Column(sprite))
@@ -44,7 +42,7 @@ namespace scratch_test
 
 				using(Project.Background bg = project.background)
 				{
-
+					
 				}
 			}
 		}

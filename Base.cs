@@ -57,7 +57,7 @@ namespace Scratch_Utils
 		{
 			get
 			{
-				if(List.Has(sObject, name)) return sObject._Lists[name];
+				if(List.Has(sObject, name)) return lists[name];
 				else if(List.BgHas(sObject, name)) return sObject.Project.background._Lists[name];
 				else throw new ArgumentException($"No list was found with the name \"{name}\"");
 			}
@@ -70,6 +70,27 @@ namespace Scratch_Utils
 				value.sObject = sObject;
 				if(!global || sObject is Project.Background) lists[name] = value;
 				else sObject.Project.background._Lists[name] = value;
+			}
+		}
+	}
+
+	public class MyBlockDic
+	{
+		internal SObject sObject;
+		internal Dictionary<string, MyBlock> myBlocks;
+
+		internal MyBlockDic(SObject sObject, Dictionary<string, MyBlock> myBlocks)
+		{
+			this.sObject = sObject;
+			this.myBlocks = myBlocks;
+		}
+
+		public MyBlock this[string name]
+		{
+			get
+			{
+				if(sObject._MyBlocks.ContainsKey(name)) return myBlocks[name];
+				else throw new ArgumentException($"No list was found with the name \"{name}\"");
 			}
 		}
 	}
@@ -93,6 +114,9 @@ namespace Scratch_Utils
 		public VarDic Vars { get; internal set; }
 		public ListDic Lists { get; internal set; }
 
+		internal Dictionary<string, MyBlock> _MyBlocks;
+		public MyBlockDic MyBlocks { get; internal set; }
+
 		internal Project Project;
 
 		public int CurrentCostume { get; set; }
@@ -104,6 +128,9 @@ namespace Scratch_Utils
 			_Broadcasts = new Dictionary<string, Broadcast>();
 			_Comments = new Dictionary<string, Comment>();
 			_Costumes = new Dictionary<string, Costume>();
+
+			_MyBlocks = new Dictionary<string, MyBlock>();
+			MyBlocks = new MyBlockDic(this, _MyBlocks);
 
 			_Vars = new Dictionary<string, Var>();
 			Vars = new VarDic(this, _Vars);
@@ -273,32 +300,24 @@ namespace Scratch
 
 		public void Add(Block block)
 		{
-			if(block is ITopBlock)
-			{
-				if(blocks.Count > 0) throw new ArgumentException($"Block {block.name} is a top level block so it has to be the first block in the column");
-				block.args.TopLevel = true;
-
-				if(block is MyBlock mb)
-				{
-					blocks.Add(mb.prototype);
-					blocks.AddRange(mb.paramBlocks);
-				}
-			}
-			else
+			if(block.needsNext)
 			{
 				if(blocks.Count - 1 >= 0)
 				{
-					Block prev = blocks[blocks.Count - 1];
+					int counter = 0;
+					Block prev;
+					while(true)
+					{
+						prev = blocks[blocks.Count - (counter + 1)];
+						if(prev.needsNext) break;
+						counter++;
+					}
 					block.args.ParentId = prev.args.Id;
 					prev.args.NextId = block.args.Id;
 					block.args.TopLevel = false;
 				}
-				else
-				{
-					block.args.TopLevel = true;
-				}
+				else block.args.TopLevel = true;
 			}
-						
 			blocks.Add(block);
 		}
 

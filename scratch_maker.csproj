@@ -57,6 +57,8 @@
     <Compile Include="Block.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Base.cs" />
+    <Compile Include="Blocks\MyBlock.cs" />
+    <Compile Include="Blocks\Movement.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
