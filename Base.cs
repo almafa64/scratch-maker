@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace Scratch_Utils
@@ -258,26 +259,46 @@ namespace Scratch
 		public SObject sObject;
 		internal List<Block> blocks;
 
-		public Column(SObject sprite)
+		public int x;
+		public int y;
+
+		public Column(SObject sprite, int x = 200, int y = 200)
 		{
 			this.blocks = new List<Block>();
 			this.sObject = sprite;
 			this.sObject.columns.Add(this);
+			this.x = x;
+			this.y = y;
 		}
 
 		public void Add(Block block)
 		{
-			if(blocks.Count - 1 >= 0)
+			if(block is ITopBlock)
 			{
-				Block prev = blocks[blocks.Count - 1];
-				block.args.ParentId = prev.args.Id;
-				prev.args.NextId = block.args.Id;
-				block.args.TopLevel = false;
+				if(blocks.Count > 0) throw new ArgumentException($"Block {block.name} is a top level block so it has to be the first block in the column");
+				block.args.TopLevel = true;
+
+				if(block is MyBlock mb)
+				{
+					blocks.Add(mb.prototype);
+					blocks.AddRange(mb.paramBlocks);
+				}
 			}
 			else
 			{
-				block.args.TopLevel = true;
+				if(blocks.Count - 1 >= 0)
+				{
+					Block prev = blocks[blocks.Count - 1];
+					block.args.ParentId = prev.args.Id;
+					prev.args.NextId = block.args.Id;
+					block.args.TopLevel = false;
+				}
+				else
+				{
+					block.args.TopLevel = true;
+				}
 			}
+						
 			blocks.Add(block);
 		}
 

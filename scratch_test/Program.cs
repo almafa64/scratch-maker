@@ -1,5 +1,6 @@
 ﻿using Scratch;
 using System;
+using System.Threading;
 
 namespace scratch_test
 {
@@ -23,6 +24,13 @@ namespace scratch_test
 					{
 						column.Add(new Movement.Goto(2, 200));
 						column.Add(new Movement.Goto(sprite.Vars["testVar2"], sprite.Vars["testVar1"]));
+					}
+
+					using(Column c = new Column(sprite, 100, 100))
+					{
+						MyBlock b = new MyBlock("test").AddValue("x");
+						c.Add(b);
+						c.Add(new Movement.Goto(4242, b["x"]));
 					}
 
 					using(Column column = new Column(sprite))

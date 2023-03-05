@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading;
 using static Scratch.Project;
 
 namespace Scratch_Utils
@@ -121,12 +122,14 @@ namespace Scratch_Utils
 	{
 		internal static AcceptedTypes Check(object o)
 		{
+			if (o == null) return AcceptedTypes.None;
 			Type t = o.GetType();
 			if(t == typeof(int) || t == typeof(float) || t == typeof(double) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) || t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong))
 				return AcceptedTypes.Number;
 			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
 			else if(t == typeof(List)) return AcceptedTypes.List;
+			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.BlockVar;
 
 			throw new ArgumentException($"bad parameter type. {t} is not number, string nor bool");
 		}
@@ -233,7 +236,6 @@ namespace Scratch_Utils
 			{
 				foreach(Column column in sObject.columns)
 				{
-					bool first = true;
 					foreach(Block block in column.blocks)
 					{
 						fileText.Append('"');
@@ -245,6 +247,30 @@ namespace Scratch_Utils
 
 						fileText.Append("},\"inputs\":{");
 						if(tmpArgs.Inputs != null) fileText.Append(tmpArgs.Inputs);
+
+						if(tmpArgs.Mutatator != null)
+						{
+							Mutator m = tmpArgs.Mutatator.Value;
+
+							fileText.Append("},\"mutation\":{");
+
+							fileText.Append("\"argumentdefaults\":\"");
+							fileText.Append(m.argumentDefaults);
+
+							fileText.Append("\",\"argumentids\":\"");
+							fileText.Append(m.argumentIds);
+
+							fileText.Append("\",\"argumentnames\":\"");
+							fileText.Append(m.argumentNames);
+
+							fileText.Append("\",\"proccode\":\"");
+							fileText.Append(m.proCode);
+
+							fileText.Append("\",\"warp\":\"");
+							fileText.Append(Small(m.warp));
+
+							fileText.Append("\",\"children\":[],\"tagName\":\"mutation\"");
+						}
 
 						fileText.Append("},\"next\":");
 						if(tmpArgs.NextId != null)
@@ -272,15 +298,14 @@ namespace Scratch_Utils
 						fileText.Append(Small(tmpArgs.Shadow));
 
 						fileText.Append(",\"topLevel\":");
-						fileText.Append(Small(first));
+						fileText.Append(Small(tmpArgs.TopLevel));
 
-						if(first)
+						if(tmpArgs.TopLevel)
 						{
 							fileText.Append(",\"x\":");
-							fileText.Append(tmpArgs.X);
+							fileText.Append(column.x);
 							fileText.Append(",\"y\":");
-							fileText.Append(tmpArgs.Y);
-							first = false;
+							fileText.Append(column.y);
 						}
 						fileText.Append("},");
 					}
@@ -549,12 +574,12 @@ namespace Scratch_Utils
 			return tmp;
 		}
 
-		private static void RemoveLast(StringBuilder sb, int length = 1)
+		internal static void RemoveLast(StringBuilder sb, int length = 1)
 		{
 			sb.Remove(sb.Length - length, length);
 		}
 
-		private static string Small(bool b)
+		internal static string Small(bool b)
         {
 			return b.ToString().ToLower();
         }
