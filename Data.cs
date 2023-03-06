@@ -1,4 +1,5 @@
-﻿using Scratch_Utils;
+﻿using Scratch.Properties;
+using Scratch_Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,6 +41,7 @@ namespace Scratch_Utils
 		internal string assetId;
 		internal string dataFormat;
 		internal string md5ext;
+
 		internal string path;
 
 		public Accessories(string path, string name):base(name)
@@ -48,6 +50,13 @@ namespace Scratch_Utils
 			this.path = path;
 			this.assetId = ID.AssetMake();
 			this.dataFormat = path.Substring(path.LastIndexOf('.') + 1);
+			this.md5ext = assetId + '.' + dataFormat;
+		}
+
+		internal Accessories(string name):base(name)
+		{
+			this.assetId = ID.AssetMake();
+			this.dataFormat = "svg";
 			this.md5ext = assetId + '.' + dataFormat;
 		}
 	}
@@ -167,15 +176,16 @@ namespace Scratch
 	public class Costume : Accessories
 	{
 		internal byte bitmapResolution;
-		public float x;
-		public float y;
+		internal float x;
+		internal float y;
 
 		internal float baseX;
 		internal float baseY;
+		internal byte[] bytes;
 
 		public Costume(string path, string name, float x = 0, float y = 0) : base(path, name)
 		{
-			this.bitmapResolution = (byte)((dataFormat == "svg") ? 1 : 2);
+			bitmapResolution = (byte)((dataFormat == "svg") ? 1 : 2);
 			if(bitmapResolution == 1)
 			{
 				using(FileStream fs = new FileStream(path, FileMode.Open))
@@ -207,6 +217,25 @@ namespace Scratch
 			}
 			this.x = x + baseX;
 			this.y = y + baseY;
+		}
+
+		internal Costume(bool isBg) : base("0")
+		{
+			bitmapResolution = 1;
+			if(isBg)
+			{
+				baseX = 0;
+				baseY = 0;
+				bytes = Resources.bg;
+			}
+			else
+			{
+				baseX = 47.58949f;
+				baseY = 49.920395f;
+				bytes = Resources.cat;
+			}
+			this.x = baseX;
+			this.y = baseY;
 		}
 	}
 

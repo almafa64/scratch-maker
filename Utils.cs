@@ -17,6 +17,7 @@ namespace Scratch_Utils
 		private static string[] Ids = new string[chuckSize];
 		private static string[] AssetIds = new string[chuckSize];
 		private static int newIdIndex = 0;
+		private static int newAssetIdIndex = 0;
 		private static readonly Random rd = new Random();
 		private static readonly Random asserRd = new Random();
 		private const string ascii = "!#%()*+,-./:;=?@[]^_`{|}~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -93,8 +94,8 @@ namespace Scratch_Utils
 
 		private static void AssetAdd(string add)
 		{
-			AssetIds[newIdIndex] = add;
-			if(++newIdIndex >= AssetIds.Length)
+			AssetIds[newAssetIdIndex] = add;
+			if(++newAssetIdIndex >= AssetIds.Length)
 			{
 				string[] tmp = new string[AssetIds.Length + chuckSize];
 				AssetIds.CopyTo(tmp, 0);
@@ -367,11 +368,14 @@ namespace Scratch_Utils
 				RemoveLast(fileText);
 			}
 
+			bool embedFile = false;
+
 			fileText.Append("},\"costumes\":[");
 			if(sObject._Costumes.Count == 0)
 			{
-				if(isSprite) sObject._Costumes["cat"] = (new Costume("cat.svg", "cat"));
-				else sObject._Costumes["bg"] = (new Costume("bg.svg", "bg"));
+				if(isSprite) sObject._Costumes["cat"] = new Costume(false);
+				else sObject._Costumes["bg"] = new Costume(true);
+				embedFile = true;
 			}
 			foreach(KeyValuePair<string, Costume> map in sObject._Costumes)
 			{
@@ -399,7 +403,8 @@ namespace Scratch_Utils
 
 				fileText.Append("},");
 
-				File.Copy(ct.path, $"{newPath}\\build\\{ct.md5ext}");
+				if(!embedFile) File.Copy(ct.path, $"{newPath}\\build\\{ct.md5ext}");
+				else File.WriteAllBytes($"{newPath}\\build\\{ct.md5ext}", ct.bytes);
 			}
 			RemoveLast(fileText);
 

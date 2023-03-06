@@ -21,13 +21,13 @@ namespace Scratch
 				args = new BlockArgs("motion_gotoxy");
 
 				string arg1;
-				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"36\"]]", this, bx.block);
-				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"]]";
+				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
 
 				string arg2;
-				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"36\"]]", this, by.block);
-				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"]]";
+				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"0\"]]", this, by.block);
+				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
 				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
 
 				args.Inputs = $"{arg1},{arg2}";
@@ -65,18 +65,18 @@ namespace Scratch
 				args = new BlockArgs("motion_glidesecstoxy");
 
 				string arg1;
-				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[2,\"{bx.block.args.Id}\",[4,\"26\"]]", this, bx.block);
-				else if(x is Var varx) arg1 = $"\"X\":[2,[12,\"{varx.Name}\",\"{varx.Id}\"]]";
+				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
 
 				string arg2;
-				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[2,\"{by.block.args.Id}\",[4,\"26\"]]", this, by.block);
-				else if(y is Var vary) arg2 = $"\"Y\":[2,[12,\"{vary.Name}\",\"{vary.Id}\"]]";
+				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"0\"]]", this, by.block);
+				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
 				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
 
 				string arg3;
-				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[2,\"{bsec.block.args.Id}\",[4,\"26\"]]", this, bsec.block);
-				else if(sec is Var varsec) arg3 = $"\"SECS\":[2,[12,\"{varsec.Name}\",\"{varsec.Id}\"]]";
+				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[3,\"{bsec.block.args.Id}\",[4,\"0\"]]", this, bsec.block);
+				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
 				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
 
 				args.Inputs = $"{arg3},{arg1},{arg2}";
@@ -102,7 +102,103 @@ namespace Scratch
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
-				args.Inputs = $"\"SECS\":[1,[4,\"{sec}\"]],\"TO\":[1,\"{tmp.args.Id}\"]";
+				string arg3;
+				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[3,\"{bsec.block.args.Id}\",[4,\"0\"]]", this, bsec.block);
+				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
+				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
+
+				args.Inputs = $"{arg3},\"TO\":[1,\"{tmp.args.Id}\"]";
+			}
+		}
+
+		public class Move : Block
+		{
+			public Move(object steps) : base("Move steps", steps)
+			{
+				if(TypeCheck.Check(steps) == AcceptedTypes.String) throw new ArgumentException($"steps is string, which is not accepted");
+
+				args = new BlockArgs("motion_movesteps");
+
+				string arg1;
+				if(steps is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"STEPS\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				else if(steps is Var varx) arg1 = $"\"STEPS\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+				else arg1 = $"\"STEPS\":[1,[4,\"{steps}\"]]";
+
+				args.Inputs = arg1;
+			}
+		}
+
+		public static class Change
+		{
+			public class X : Block
+			{
+				public X(object by) : base("Change X by", by)
+				{
+					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
+
+					args = new BlockArgs("motion_changexby");
+
+					string arg1;
+					if(by is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DX\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if(by is Var varx) arg1 = $"\"DX\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"DX\":[1,[4,\"{by}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+
+			public class Y : Block
+			{
+				public Y(object by) : base("Change Y by", by)
+				{
+					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
+
+					args = new BlockArgs("motion_changeyby");
+
+					string arg1;
+					if(by is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DY\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if(by is Var varx) arg1 = $"\"DY\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"DY\":[1,[4,\"{by}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+		}
+
+		public static class Set
+		{
+			public class X : Block
+			{
+				public X(object value) : base("Change X by", value)
+				{
+					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
+
+					args = new BlockArgs("motion_setx");
+
+					string arg1;
+					if(value is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if(value is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"X\":[1,[4,\"{value}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+
+			public class Y : Block
+			{
+				public Y(object value) : base("Change Y value", value)
+				{
+					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
+
+					args = new BlockArgs("motion_sety");
+
+					string arg1;
+					if(value is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"Y\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if(value is Var varx) arg1 = $"\"Y\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"Y\":[1,[4,\"{value}\"]]";
+
+					args.Inputs = arg1;
+				}
 			}
 		}
 	}

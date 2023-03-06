@@ -1,5 +1,6 @@
 ﻿using Scratch;
 using System;
+using System.Data.Common;
 using System.Threading;
 
 namespace scratch_test
@@ -24,17 +25,33 @@ namespace scratch_test
 					using(Column column = new Column(sprite))
 					{
 						column.Add(new Movement.Goto(2, 200));
-						column.Add(new Movement.Goto(sprite.Vars["te"], sprite.Vars["te"]));
-						column.Add(new Movement.Glide(2, sprite.Vars["te"], sprite.Vars["te"]));
+						column.Add(new Movement.Goto(sprite.Vars["te"], sprite.Vars["fwafwa"]));
+						column.Add(new Movement.Glide(2, sprite.Vars["fwafwa"], sprite.Vars["te"]));
 						column.Add(new Movement.Goto(project.Sprites["test2"]));
 						column.Add(new Movement.Goto(Movement.To.Mouse));
 						column.Add(new Movement.Glide(2, project.Sprites["test2"]));
 						column.Add(new Movement.Glide(2, Movement.To.Random));
+						column.Add(new Movement.Move(42));
+						column.Add(new Movement.Move(sprite.Vars["te"]));
+						column.Add(new Movement.Change.X(42));
+						column.Add(new Movement.Change.X(sprite.Vars["te"]));
+						column.Add(new Movement.Change.Y(42));
+						column.Add(new Movement.Change.Y(sprite.Vars["te"]));
+						column.Add(new Movement.Set.X(42));
+						column.Add(new Movement.Set.X(sprite.Vars["te"]));
+						column.Add(new Movement.Set.Y(42));
+						column.Add(new Movement.Set.Y(sprite.Vars["te"]));
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())
 					{
 						b.Add(new Movement.Goto(4242, b["x"]));
+						b.Add(new Movement.Glide(b["x"], b["x"], b["x"]));
+						b.Add(new Movement.Move(b["x"]));
+						b.Add(new Movement.Change.X(b["x"]));
+						b.Add(new Movement.Change.Y(b["x"]));
+						b.Add(new Movement.Set.X(b["x"]));
+						b.Add(new Movement.Set.Y(b["x"]));
 					}
 
 					using(Column column = new Column(sprite))

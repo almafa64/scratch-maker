@@ -274,7 +274,7 @@ namespace Scratch
 		internal double x;
 		internal double y;
 
-		public Sprite(string name, Project project, double x = 0, double y = 0, int direction = 0, int size = 100, bool draggable = true, bool visible = true, RotationStyle rotationStyle = RotationStyle.AllAround) : base(project)
+		public Sprite(string name, Project project, double x = 0, double y = 0, int direction = 90, int size = 100, bool draggable = true, bool visible = true, RotationStyle rotationStyle = RotationStyle.AllAround) : base(project)
 		{
 			this.name = name;
 			project._sprites[name] = this;
