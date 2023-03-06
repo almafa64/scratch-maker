@@ -1,11 +1,8 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using static Scratch.Project;
 
 namespace Scratch_Utils

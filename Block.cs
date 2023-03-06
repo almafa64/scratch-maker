@@ -1,12 +1,36 @@
 ﻿using Scratch;
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 
 namespace Scratch_Utils
 {
+	internal enum InputType // from https://en.scratch-wiki.info/wiki/Scratch_File_Format#Blocks
+	{
+		Number = 4,			//value
+		PositiveNumber,		//null
+		PositiveInteger,    //null
+		Integer,			//null
+		Angle,				//null
+		Color,              //hex color (#abcdef)
+		String,             //value
+		Broadcast,          //name, ID
+		Var,                //null, null, x, y
+		List                //null
+	}
+
+	internal enum ShadowType
+    {
+		/* from https://github.com/LLK/scratch-vm/blob/e5950c3/src/serialization/sb3.js#L39-L41
+		const INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
+		const INPUT_BLOCK_NO_SHADOW = 2; // no shadow
+		const INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
+		*/
+		Shadow = 1,
+		NoShadow,
+		ObscureShadow
+    }
+
 	public struct Mutator
 	{
 		internal string argumentDefaults;
