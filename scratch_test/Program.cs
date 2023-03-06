@@ -10,20 +10,26 @@ namespace scratch_test
 		{
 			using(Project project = new Project("test", Extensions.Translate, false))
 			{
+				using(Sprite s = new Sprite("test2", project))
+				{
+					s.Vars["te"] = new Var(96);
+					s.Vars["fwafwa", true] = new Var(69);
+				}
+
 				using(Sprite sprite = new Sprite("testSprite", project))
 				{
-					sprite.MakeVariable("testVar1", false, 42);
-					sprite.MakeVariable("testVar2", false);
-					sprite.MakeList("testList", false, new object[] { 42, 521, "yey" });
-					sprite.MakeList("testList2");
-
 					sprite.Vars["te"] = new Var(43);
 					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
 
 					using(Column column = new Column(sprite))
 					{
 						column.Add(new Movement.Goto(2, 200));
-						column.Add(new Movement.Goto(sprite.Vars["testVar2"], sprite.Vars["testVar1"]));
+						column.Add(new Movement.Goto(sprite.Vars["te"], sprite.Vars["te"]));
+						column.Add(new Movement.Glide(2, sprite.Vars["te"], sprite.Vars["te"]));
+						column.Add(new Movement.Goto(project.Sprites["test2"]));
+						column.Add(new Movement.Goto(Movement.To.Mouse));
+						column.Add(new Movement.Glide(2, project.Sprites["test2"]));
+						column.Add(new Movement.Glide(2, Movement.To.Random));
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())

@@ -130,8 +130,8 @@ namespace Scratch_Utils
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
 			else if(t == typeof(List)) return AcceptedTypes.List;
 			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.BlockVar;
-
-			throw new ArgumentException($"bad parameter type. {t} is not number, string nor bool");
+			
+			return AcceptedTypes.None;
 		}
 	}
 
@@ -211,9 +211,9 @@ namespace Scratch_Utils
 
 			fileText.Append("],\"targets\":[");
 			DoSpriteStuff(fileText, false, pr.background);
-			foreach(Sprite sprite in pr.sprites)
+			foreach(KeyValuePair<string, Sprite> sprite in pr._sprites)
 			{
-				DoSpriteStuff(fileText, true, sprite);
+				DoSpriteStuff(fileText, true, sprite.Value);
 			}
 
 			RemoveLast(fileText);

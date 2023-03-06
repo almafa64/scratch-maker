@@ -1,5 +1,6 @@
 ﻿using Scratch;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -74,6 +75,8 @@ namespace Scratch_Utils
 		internal bool needsNext = true;
 		internal string name;
 		internal BlockArgs args;
+		internal List<Block> kids = new List<Block>();
+
 		internal Block(string name, params object[] vals)
 		{
 			this.name = name;

@@ -95,6 +95,27 @@ namespace Scratch_Utils
 		}
 	}
 
+	public class SpriteDic
+	{
+		internal Project pr;
+		internal Dictionary<string, Sprite> sprites;
+
+		internal SpriteDic(Project pr, Dictionary<string, Sprite> sprites)
+		{
+			this.pr = pr;
+			this.sprites = sprites;
+		}
+
+		public Sprite this[string name]
+		{
+			get
+			{
+				if(pr._sprites.ContainsKey(name)) return sprites[name];
+				else throw new ArgumentException($"No list was found with the name \"{name}\"");
+			}
+		}
+	}
+
 	public class SObject
 	{
 		internal List<Column> columns;
@@ -163,18 +184,6 @@ namespace Scratch_Utils
 				_Sounds[s.Name] = s;
 			}
 		}
-
-		public void MakeVariable(string name, bool global = true, object value = null)
-		{
-			if(!global || this is Project.Background) new Var(this, name, value);
-			else new Var(Project.background, name, value);
-		}
-
-		public void MakeList(string name, bool global = true, object[] values = null)
-		{
-			if(!global || this is Project.Background) new List(this, name, values);
-			else new List(Project.background, name, values);
-		}
 	}
 }
 
@@ -214,7 +223,8 @@ namespace Scratch
 	{
 		public string name;
 		public Background background;
-		internal List<Sprite> sprites = new List<Sprite>();
+		internal Dictionary<string, Sprite> _sprites = new Dictionary<string, Sprite>();
+		public SpriteDic Sprites;
 
 		public bool openFolder;
 		public Extensions extensions;
@@ -227,9 +237,10 @@ namespace Scratch
 			this.background = new Background(this);
 			this.extensions = extensions;
 			this.openFolder = openFolder;
-		}
+			Sprites = new SpriteDic(this, _sprites);
+	}
 
-		public class Background : SObject, IDisposable
+	public class Background : SObject, IDisposable
 		{
 			internal int tempo = 60;
 			internal int videoTransparency = 50;
@@ -268,7 +279,7 @@ namespace Scratch
 		public Sprite(string name, Project project, double x = 0, double y = 0, int direction = 0, int size = 100, bool draggable = true, bool visible = true, RotationStyle rotationStyle = RotationStyle.AllAround) : base(project)
 		{
 			this.name = name;
-			project.sprites.Add(this);
+			project._sprites[name] = this;
 			this.x = x;
 			this.y = y;
 			this.direction = direction;
@@ -317,6 +328,10 @@ namespace Scratch
 					block.args.TopLevel = false;
 				}
 				else block.args.TopLevel = true;
+			}
+			foreach(Block b in block.kids)
+			{
+				blocks.Add(b);
 			}
 			blocks.Add(block);
 		}
