@@ -65,18 +65,18 @@ namespace Scratch
 				args = new BlockArgs("motion_glidesecstoxy");
 
 				string arg1;
-				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"36\"]]", this, bx.block);
-				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"]]";
+				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[2,\"{bx.block.args.Id}\",[4,\"26\"]]", this, bx.block);
+				else if(x is Var varx) arg1 = $"\"X\":[2,[12,\"{varx.Name}\",\"{varx.Id}\"]]";
 				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
 
 				string arg2;
-				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"36\"]]", this, by.block);
-				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"]]";
+				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[2,\"{by.block.args.Id}\",[4,\"26\"]]", this, by.block);
+				else if(y is Var vary) arg2 = $"\"Y\":[2,[12,\"{vary.Name}\",\"{vary.Id}\"]]";
 				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
 
 				string arg3;
-				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[3,\"{bsec.block.args.Id}\",[4,\"36\"]]", this, bsec.block);
-				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"]]";
+				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[2,\"{bsec.block.args.Id}\",[4,\"26\"]]", this, bsec.block);
+				else if(sec is Var varsec) arg3 = $"\"SECS\":[2,[12,\"{varsec.Name}\",\"{varsec.Id}\"]]";
 				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
 
 				args.Inputs = $"{arg3},{arg1},{arg2}";

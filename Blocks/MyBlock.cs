@@ -24,10 +24,12 @@ namespace Scratch
 				args = new BlockArgs("procedures_definition", null, null, null, null, false, true)
 			};
 			paramBlocks = new List<Block>();
-			parameters = new Dictionary<string, MyBlockVar>();
-			parameters[name] = new MyBlockVar(name, null);
+            parameters = new Dictionary<string, MyBlockVar>
+            {
+                [name] = new MyBlockVar(name, null)
+            };
 
-			prototype = new Block(null)
+            prototype = new Block(null)
 			{
 				args = new BlockArgs("procedures_prototype", null, null, null, def.args.Id, true, false, new Mutator())
 			};
