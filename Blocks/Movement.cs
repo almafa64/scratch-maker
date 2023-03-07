@@ -84,8 +84,6 @@ namespace Scratch
 
 			public Glide(object sec, object to) : base("Goto To", sec)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
-
 				if(to == null) throw new ArgumentException("to cannot be null");
 				else if(TypeCheck.Check(to) != AcceptedTypes.None) throw new ArgumentException("to is not a sprite or To element");
 
@@ -201,5 +199,85 @@ namespace Scratch
 				}
 			}
 		}
-	}
+
+		public static class Turn
+		{
+			public class Left : Block
+			{
+				public Left(object degrees) : base("Change X by", degrees)
+				{
+					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
+
+					args = new BlockArgs("motion_turnleft");
+
+					string arg1;
+					if (degrees is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DEGREES\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+
+			public class Right : Block
+			{
+				public Right(object degrees) : base("Change Y by", degrees)
+				{
+					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
+
+					args = new BlockArgs("motion_turnright");
+
+					string arg1;
+					if (degrees is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DEGREES\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+		}
+
+		public class Point : Block
+		{
+			public Point(object to) : base("Point to/in direction")
+			{
+				if (to is Sprite || to is To)
+				{
+					if (TypeCheck.Check(to) != AcceptedTypes.None) throw new ArgumentException("to is not a sprite or To element");
+
+					string arg;
+					if (to is Sprite s) arg = $"\"TOWARDS\":[\"{s.name}\",null]";
+					else if (to is To t)
+					{
+						if (t == To.Random) throw new ArgumentException("to cannot be random in this block");
+						arg = "\"TOWARDS\":[\"_mouse_\",null]";
+					}
+					else throw new ArgumentException("to cannot be the Stage");
+
+					args = new BlockArgs("motion_pointtowards");
+					Block tmp = new Block(null)
+					{
+						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, null, true)
+					};
+					tmp.args.ParentId = args.Id;
+					kids.Add(tmp);
+
+					args.Inputs = $"\"TOWARDS\":[1,\"{tmp.args.Id}\"]";
+				}
+				else
+				{
+					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
+
+					args = new BlockArgs("motion_pointindirection");
+
+					string arg1;
+					if (to is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DIRECTION\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					else if (to is Var varx) arg1 = $"\"DIRECTION\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
+					else arg1 = $"\"DIRECTION\":[1,[4,\"{to}\"]]";
+
+					args.Inputs = arg1;
+				}
+			}
+		}
+	}	
 }
