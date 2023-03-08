@@ -24,12 +24,12 @@ namespace Scratch
 				args = new BlockArgs("procedures_definition", null, null, null, null, false, true)
 			};
 			paramBlocks = new List<Block>();
-            parameters = new Dictionary<string, MyBlockVar>
-            {
-                [name] = new MyBlockVar(name, null)
-            };
+			parameters = new Dictionary<string, MyBlockVar>
+			{
+				[name] = new MyBlockVar(name, null)
+			};
 
-            prototype = new Block(null)
+			prototype = new Block(null)
 			{
 				args = new BlockArgs("procedures_prototype", null, null, null, def.args.Id, true, false, new Mutator())
 			};
@@ -100,14 +100,8 @@ namespace Scratch
 			get
 			{
 				MyBlockVar tmp = parameters[name];
-				if(((string)tmp.value).Contains("%"))
-				{
-					MyBlockVar newVar = new MyBlockVar(tmp.value, tmp.block.args.OpCode, tmp.Name);
-					blocks.Add(newVar.block);
-					return newVar;
-				}
-
-				throw new ArgumentException($"Varibale {name} doesn't exists in {def.name} block.");
+				if(((string)tmp.value).Contains("%")) return new MyBlockVar(tmp.value, tmp.block.args.OpCode, tmp.Name);
+				else throw new ArgumentException($"Varibale {name} doesn't exists in {def.name} block.");
 			}
 		}
 
@@ -158,7 +152,7 @@ namespace Scratch
 				sb4.Append(' ');
 			}
 
-			if(paramBlocks.Count > 0) Compiler.RemoveLast(sb5);
+			if(paramBlocks.Count > 0) Utils.RemoveLast(sb5);
 
 			m.Close(sb1, sb2, sb3, sb4);
 

@@ -55,6 +55,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
+    <Compile Include="Blocks\Extensions\Boost.cs" />
+    <Compile Include="Blocks\Control.cs" />
+    <Compile Include="Blocks\Extensions\EV3.cs" />
+    <Compile Include="Blocks\Events.cs" />
+    <Compile Include="Blocks\Extensions\ForceAndAcc.cs" />
+    <Compile Include="Blocks\Looks.cs" />
+    <Compile Include="Blocks\Extensions\MakeyMakey.cs" />
+    <Compile Include="Blocks\Extensions\Microbit.cs" />
+    <Compile Include="Blocks\Extensions\Music.cs" />
+    <Compile Include="Blocks\Operators.cs" />
+    <Compile Include="Blocks\Extensions\Pen.cs" />
+    <Compile Include="Blocks\Sensing.cs" />
+    <Compile Include="Blocks\Sounds.cs" />
+    <Compile Include="Blocks\Extensions\TextToSpeech.cs" />
+    <Compile Include="Blocks\Extensions\Translate.cs" />
+    <Compile Include="Blocks\Variables.cs" />
+    <Compile Include="Blocks\Extensions\Video.cs" />
+    <Compile Include="Blocks\Extensions\WeDo2.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="Base.cs" />
     <Compile Include="Blocks\MyBlock.cs" />

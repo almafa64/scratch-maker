@@ -2,34 +2,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Scratch.Movement;
 
 namespace Scratch_Utils
 {
 	internal enum InputType // from https://en.scratch-wiki.info/wiki/Scratch_File_Format#Blocks
 	{
-		Number = 4,			//value
-		PositiveNumber,		//null
-		PositiveInteger,    //null
-		Integer,			//null
-		Angle,				//null
-		Color,              //hex color (#abcdef)
-		String,             //value
-		Broadcast,          //name, ID
-		Var,                //null, null, x, y
-		List                //null
+		Number = 4,				//value
+		PositiveNumber = 5,		//null
+		PositiveInteger = 6,	//null
+		Integer = 7,			//null
+		Angle = 8,				//null
+		Color = 9,				//hex color (#abcdef)
+		String = 10,			//value
+		Broadcast = 11,			//name, ID
+		Var = 12,				//null, null, x, y
+		List = 13				//null
 	}
 
 	internal enum ShadowType
-    {
+	{
 		/* from https://github.com/LLK/scratch-vm/blob/e5950c3/src/serialization/sb3.js#L39-L41
 		const INPUT_SAME_BLOCK_SHADOW = 1; // unobscured shadow
 		const INPUT_BLOCK_NO_SHADOW = 2; // no shadow
 		const INPUT_DIFF_BLOCK_SHADOW = 3; // obscured shadow
 		*/
 		Shadow = 1,
-		NoShadow,
-		ObscureShadow
-    }
+		NoShadow = 2,
+		ObscureShadow = 3
+	}
 
 	public struct Mutator
 	{
@@ -51,10 +52,10 @@ namespace Scratch_Utils
 
 		internal void Close(StringBuilder defaults, StringBuilder ids, StringBuilder names, StringBuilder procode)
 		{
-			if(defaults.Length > 0) Compiler.RemoveLast(defaults);
-			if(names.Length > 0) Compiler.RemoveLast(names);
-			if(procode.Length > 0) Compiler.RemoveLast(procode);
-			if(ids.Length > 0) Compiler.RemoveLast(ids);
+			if(defaults.Length > 0) Utils.RemoveLast(defaults);
+			if(names.Length > 0) Utils.RemoveLast(names);
+			if(procode.Length > 0) Utils.RemoveLast(procode);
+			if(ids.Length > 0) Utils.RemoveLast(ids);
 
 			argumentDefaults += $"{defaults}]";
 			argumentIds += $"{ids}]";
@@ -121,10 +122,30 @@ namespace Scratch_Utils
 			}
 		}
 
-		internal static string MyBlockVarArg(string text, Block mainBlock, Block myBlock)
+		internal static string VarBlockId(string type, Block mainBlock, Block varBlock)
 		{
-			myBlock.args.ParentId = mainBlock.args.Id;
-			return text;
+			varBlock.args.ParentId = mainBlock.args.Id;
+			mainBlock.kids.Add(varBlock);
+			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[4,\"0\"]]";
+		}
+
+		internal static SpecVar GetVar(Dictionary<string, SpecVar> dir, Type enumType, object value)
+		{
+			return dir[Enum.GetName(enumType, value)];
+		}
+
+		internal static void BuiltInVars(ref object val)
+		{
+			if(val is Movement.Vars vM) val = GetVar(Movement.specVars, typeof(Movement.Vars), vM);
+			else if(val is Looks.Vars vL) val = GetVar(Looks.specVars, typeof(Looks.Vars), vL);
+		}
+	}
+
+	internal class SpecVar : Block
+	{
+		internal SpecVar(string opcode, string name = null, string field = null, string input = null) : base(name)
+		{
+			args = new BlockArgs(opcode, input, field);
 		}
 	}
 
@@ -136,100 +157,8 @@ namespace Scratch_Utils
 		String = 2,
 		Variable = 4,
 		List = 8,
-		BlockVar = 16,
-	}
-}
-
-namespace Scratch
-{
-
-	public static class Looks
-	{
-
-	}
-
-	public static class Sounds
-	{
-
-	}
-
-	public static class Events
-	{
-
-	}
-
-	public static class Control
-	{
-
-	}
-
-	public static class Sensing
-	{
-
-	}
-
-	public static class Operators
-	{
-
-	}
-
-	public static class Variables
-	{
-
-	}
-
-	public static class TextToSpeech
-	{
-
-	}
-
-	public static class Pen
-	{
-
-	}
-
-	public static class ForceAndAcc
-	{
-
-	}
-
-	public static class WeDo2
-	{
-
-	}
-
-	public static class Boost
-	{
-
-	}
-
-	public static class EV3
-	{
-
-	}
-
-	public static class Microbit
-	{
-
-	}
-
-	public static class MakeyMakey
-	{
-
-	}
-
-	public static class Translate
-	{
-
-	}
-
-	public static class Video
-	{
-
-	}
-
-	public static class Music
-	{
-
+		Enum = 16,
+		Sprite = 32,
+		MyBlockVar = 64,
 	}
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Reflection;
 using System.Threading;
 
 namespace Scratch_Utils
@@ -236,9 +237,25 @@ namespace Scratch
 			this.extensions = extensions;
 			this.openFolder = openFolder;
 			Sprites = new SpriteDic(this, _sprites);
-	}
 
-	public class Background : SObject, IDisposable
+			if(Movement.specVars.ContainsKey("dir")) return;
+
+			#region MovementVars
+			Movement.specVars["Direction"] = new SpecVar("motion_direction", "direction variable");
+			Movement.specVars["X"] = new SpecVar("motion_xposition", "x variable");
+			Movement.specVars["Y"] = new SpecVar("motion_yposition", "y variable");
+			#endregion
+
+			#region LooksVars
+			Movement.specVars["BackgroundNumber"] = new SpecVar("looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Movement.specVars["BackgroundName"] = new SpecVar("looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Movement.specVars["CostumeNumber"] = new SpecVar("looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Movement.specVars["CostumeName"] = new SpecVar("looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Movement.specVars["Size"] = new SpecVar("looks_size", "size variable");
+			#endregion
+		}
+
+		public class Background : SObject, IDisposable
 		{
 			internal int tempo = 60;
 			internal int videoTransparency = 50;
@@ -251,8 +268,8 @@ namespace Scratch
 				LayerOrder = 0;
 			}
 
-            public void Dispose(){}
-        }
+			public void Dispose(){}
+		}
 
 		public void Dispose() 
 		{
@@ -313,14 +330,13 @@ namespace Scratch
 			{
 				if(blocks.Count - 1 >= 0)
 				{
-					int counter = 0;
 					Block prev;
-					while(true)
+					for(int i = 0; ; i++)
 					{
-						prev = blocks[blocks.Count - (counter + 1)];
+						prev = blocks[blocks.Count - (i + 1)];
 						if(prev.needsNext) break;
-						counter++;
 					}
+
 					block.args.ParentId = prev.args.Id;
 					prev.args.NextId = block.args.Id;
 					block.args.TopLevel = false;

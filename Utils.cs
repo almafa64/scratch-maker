@@ -130,8 +130,10 @@ namespace Scratch_Utils
 			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
 			else if(t == typeof(List)) return AcceptedTypes.List;
-			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.BlockVar;
-			
+			else if(t.IsEnum) return AcceptedTypes.Enum;
+			else if(t == typeof(Sprite)) return AcceptedTypes.Sprite;
+			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.MyBlockVar;
+
 			return AcceptedTypes.None;
 		}
 	}
@@ -192,7 +194,7 @@ namespace Scratch_Utils
 					}
 					flagMask >>= 1;
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 
@@ -217,7 +219,7 @@ namespace Scratch_Utils
 				DoSpriteStuff(fileText, true, sprite.Value);
 			}
 
-			RemoveLast(fileText);
+			Utils.RemoveLast(fileText);
 
 			fileText.Append("]}");
 
@@ -233,7 +235,7 @@ namespace Scratch_Utils
 			string newPath = sObject.Project.name;
 
 			fileText.Append("{\"blocks\":{");
-			if(CountBlock(sObject) != 0)
+			if(Utils.CountBlock(sObject) != 0)
 			{
 				foreach(Column column in sObject.columns)
 				{
@@ -268,7 +270,7 @@ namespace Scratch_Utils
 							fileText.Append(m.proCode);
 
 							fileText.Append("\",\"warp\":\"");
-							fileText.Append(Small(m.warp));
+							fileText.Append(Utils.Small(m.warp));
 
 							fileText.Append("\",\"children\":[],\"tagName\":\"mutation\"");
 						}
@@ -296,10 +298,10 @@ namespace Scratch_Utils
 						fileText.Append('"');
 
 						fileText.Append(",\"shadow\":");
-						fileText.Append(Small(tmpArgs.Shadow));
+						fileText.Append(Utils.Small(tmpArgs.Shadow));
 
 						fileText.Append(",\"topLevel\":");
-						fileText.Append(Small(tmpArgs.TopLevel));
+						fileText.Append(Utils.Small(tmpArgs.TopLevel));
 
 						if(tmpArgs.TopLevel)
 						{
@@ -311,7 +313,7 @@ namespace Scratch_Utils
 						fileText.Append("},");
 					}
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"broadcasts\":{");
@@ -325,7 +327,7 @@ namespace Scratch_Utils
 					fileText.Append(map.Key);
 					fileText.Append("\",");
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"comments\":{");
@@ -353,7 +355,7 @@ namespace Scratch_Utils
 					fileText.Append(cm.width);
 
 					fileText.Append(",\"minimized\":");
-					fileText.Append(Small(cm.minimized));
+					fileText.Append(Utils.Small(cm.minimized));
 
 					fileText.Append(",\"x\":");
 					fileText.Append(cm.x);
@@ -365,7 +367,7 @@ namespace Scratch_Utils
 					fileText.Append(cm.text);
 					fileText.Append("\"},");
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			bool embedFile = false;
@@ -406,7 +408,7 @@ namespace Scratch_Utils
 				if(!embedFile) File.Copy(ct.path, $"{newPath}\\build\\{ct.md5ext}");
 				else File.WriteAllBytes($"{newPath}\\build\\{ct.md5ext}", ct.bytes);
 			}
-			RemoveLast(fileText);
+			Utils.RemoveLast(fileText);
 
 			fileText.Append("],\"sounds\":[");
 			if(sObject._Sounds.Count != 0)
@@ -439,7 +441,7 @@ namespace Scratch_Utils
 
 					File.Copy(sd.path, $"{newPath}\\build\\{sd.md5ext}");
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("],\"lists\":{");
@@ -463,12 +465,12 @@ namespace Scratch_Utils
 							fileText.Append(o);
 							fileText.Append("\",");
 						}
-						RemoveLast(fileText);
+						Utils.RemoveLast(fileText);
 					}
 
 					fileText.Append("]],");
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"variables\":{");
@@ -488,7 +490,7 @@ namespace Scratch_Utils
 
 					fileText.Append("\"],");
 				}
-				RemoveLast(fileText);
+				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"currentCostume\":");
@@ -508,7 +510,7 @@ namespace Scratch_Utils
 				fileText.Append(tmpSprite.direction);
 
 				fileText.Append(",\"draggable\":");
-				fileText.Append(Small(tmpSprite.draggable));
+				fileText.Append(Utils.Small(tmpSprite.draggable));
 
 				fileText.Append(",\"rotationStyle\":\"");
 				switch (tmpSprite.rotationStyle)
@@ -528,7 +530,7 @@ namespace Scratch_Utils
 				fileText.Append(tmpSprite.size);
 
 				fileText.Append(",\"visible\":");
-				fileText.Append(Small(tmpSprite.visible));
+				fileText.Append(Utils.Small(tmpSprite.visible));
 
 				fileText.Append(",\"x\":");
 				fileText.Append(tmpSprite.x);
@@ -568,8 +570,11 @@ namespace Scratch_Utils
 
 			fileText.Append("},");
 		}
+	}
 
-		private static int CountBlock(SObject sObject)
+	internal static class Utils
+	{
+		internal static int CountBlock(SObject sObject)
 		{
 			int tmp = 0;
 			for(int i = 0; i < sObject.columns.Count; i++)
@@ -585,8 +590,8 @@ namespace Scratch_Utils
 		}
 
 		internal static string Small(bool b)
-        {
+		{
 			return b.ToString().ToLower();
-        }
+		}
 	}
 }

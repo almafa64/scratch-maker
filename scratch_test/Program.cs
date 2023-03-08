@@ -21,45 +21,13 @@ namespace scratch_test
 
 					using(Column column = new Column(sprite))
 					{
-						column.Add(new Movement.Goto(2, 200));
-						column.Add(new Movement.Goto(sprite.Vars["te"], sprite.Vars["fwafwa"]));
-						column.Add(new Movement.Glide(2, sprite.Vars["fwafwa"], sprite.Vars["te"]));
-						column.Add(new Movement.Goto(project.Sprites["test2"]));
-						column.Add(new Movement.Goto(Movement.To.Mouse));
-						column.Add(new Movement.Glide(2, project.Sprites["test2"]));
-						column.Add(new Movement.Glide(2, Movement.To.Random));
-						column.Add(new Movement.Move(42));
-						column.Add(new Movement.Move(sprite.Vars["te"]));
-						column.Add(new Movement.Change.X(42));
-						column.Add(new Movement.Change.X(sprite.Vars["te"]));
-						column.Add(new Movement.Change.Y(42));
-						column.Add(new Movement.Change.Y(sprite.Vars["te"]));
-						column.Add(new Movement.Set.X(42));
-						column.Add(new Movement.Set.X(sprite.Vars["te"]));
-						column.Add(new Movement.Set.Y(42));
-						column.Add(new Movement.Set.Y(sprite.Vars["te"]));
-						column.Add(new Movement.Turn.Left(42));
-						column.Add(new Movement.Turn.Left(sprite.Vars["te"]));
-						column.Add(new Movement.Turn.Right(42));
-						column.Add(new Movement.Turn.Right(sprite.Vars["te"]));
-						column.Add(new Movement.Point(43));
-						column.Add(new Movement.Point(sprite.Vars["te"]));
-						column.Add(new Movement.Point(project.Sprites["test2"]));
-						column.Add(new Movement.Point(Movement.To.Mouse));
+						
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())
 					{
-						b.Add(new Movement.Goto(4242, b["x"]));
-						b.Add(new Movement.Glide(b["x"], b["x"], b["x"]));
-						b.Add(new Movement.Move(b["x"]));
-						b.Add(new Movement.Change.X(b["x"]));
-						b.Add(new Movement.Change.Y(b["x"]));
-						b.Add(new Movement.Set.X(b["x"]));
-						b.Add(new Movement.Set.Y(b["x"]));
-						b.Add(new Movement.Turn.Left(b["x"]));
-						b.Add(new Movement.Turn.Right(b["x"]));
-						b.Add(new Movement.Point(b["x"]));
+						//b.Add(new Movement.Goto(4242, b["x"]));
+						
 					}
 
 					using(Column column = new Column(sprite))
@@ -67,8 +35,8 @@ namespace scratch_test
 						column.Add(new Movement.Goto(sprite.Vars["te"], 53));
 					}
 
-					//sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					//sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
+					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
+					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
 				}
 
 				using(Project.Background bg = project.background)

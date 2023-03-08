@@ -1,5 +1,7 @@
 ﻿using Scratch_Utils;
 using System;
+using System.Collections.Generic;
+using static Scratch.Movement;
 
 namespace Scratch
 {
@@ -11,6 +13,15 @@ namespace Scratch
 			Mouse
 		}
 
+		public enum Vars
+		{
+			X,
+			Y,
+			Direction
+		}
+
+		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>();
+
 		public class Goto : Block
 		{
 			public Goto(object x, object y) : base("Goto X Y", x,y)
@@ -20,28 +31,30 @@ namespace Scratch
 
 				args = new BlockArgs("motion_gotoxy");
 
+				BuiltInVars(ref x);
+				BuiltInVars(ref y);
+
 				string arg1;
-				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				if(x is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
+				else if(x is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
 				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
 
 				string arg2;
-				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"0\"]]", this, by.block);
+				if(y is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
+				else if(y is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
 				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
 				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
 
 				args.Inputs = $"{arg1},{arg2}";
 			}
 
-			public Goto(object to):base("Goto To")
+			public Goto(object to):base("Goto To", to)
 			{
-				if(to == null) throw new ArgumentException("to cannot be null");
-				else if(TypeCheck.Check(to) != AcceptedTypes.None) throw new ArgumentException("to is not a sprite or To element");
-
 				string arg;
 				if(to is Sprite s) arg = $"\"TO\":[\"{s.name}\",null]";
 				else if(to is To t) arg = (t == To.Mouse) ? "\"TO\":[\"_mouse_\",null]" : "\"TO\":[\"_random_\",null]";
-				else throw new ArgumentException("to cannot be the Stage");
+				else throw new ArgumentException("to is not a Sprite or To element");
 
 				args = new BlockArgs("motion_goto");
 				Block tmp = new Block(null) {
@@ -64,33 +77,37 @@ namespace Scratch
 
 				args = new BlockArgs("motion_glidesecstoxy");
 
+				BuiltInVars(ref x);
+				BuiltInVars(ref y);
+				BuiltInVars(ref sec);
+
 				string arg1;
-				if(x is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				if(x is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
+				else if(x is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
 				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
 
 				string arg2;
-				if(y is MyBlock.MyBlockVar by) arg2 = MyBlockVarArg($"\"Y\":[3,\"{by.block.args.Id}\",[4,\"0\"]]", this, by.block);
+				if(y is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
+				else if(y is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
 				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
 				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
 
 				string arg3;
-				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[3,\"{bsec.block.args.Id}\",[4,\"0\"]]", this, bsec.block);
+				if(sec is SpecVar svarsec) arg3 = VarBlockId("SECS", this, svarsec);
+				else if(sec is MyBlock.MyBlockVar bsec) arg3 = VarBlockId("SECS", this, bsec.block);
 				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
 				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
 
 				args.Inputs = $"{arg3},{arg1},{arg2}";
 			}
 
-			public Glide(object sec, object to) : base("Goto To", sec)
+			public Glide(object sec, object to) : base("Goto To", sec, to)
 			{
-				if(to == null) throw new ArgumentException("to cannot be null");
-				else if(TypeCheck.Check(to) != AcceptedTypes.None) throw new ArgumentException("to is not a sprite or To element");
-
 				string arg;
 				if(to is Sprite s) arg = $"\"TO\":[\"{s.name}\",null]";
 				else if(to is To t) arg = (t == To.Mouse) ? "\"TO\":[\"_mouse_\",null]" : "\"TO\":[\"_random_\",null]";
-				else throw new ArgumentException("to cannot be the Stage");
+				else throw new ArgumentException("to is not a sprite or To element");
 
 				args = new BlockArgs("motion_glideto");
 				Block tmp = new Block(null)
@@ -100,8 +117,11 @@ namespace Scratch
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
+				BuiltInVars(ref sec);
+
 				string arg3;
-				if(sec is MyBlock.MyBlockVar bsec) arg3 = MyBlockVarArg($"\"SECS\":[3,\"{bsec.block.args.Id}\",[4,\"0\"]]", this, bsec.block);
+				if(sec is SpecVar sv) arg3 = VarBlockId("SECS", this, sv);
+				else if(sec is MyBlock.MyBlockVar bsec) arg3 = VarBlockId("SECS", this, bsec.block);
 				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
 				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
 
@@ -117,8 +137,11 @@ namespace Scratch
 
 				args = new BlockArgs("motion_movesteps");
 
+				BuiltInVars(ref steps);
+
 				string arg1;
-				if(steps is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"STEPS\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+				if(steps is SpecVar sv) arg1 = VarBlockId("STEPS", this, sv);
+				else if(steps is MyBlock.MyBlockVar bx) arg1 = VarBlockId("STEPS", this, bx.block);
 				else if(steps is Var varx) arg1 = $"\"STEPS\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 				else arg1 = $"\"STEPS\":[1,[4,\"{steps}\"]]";
 
@@ -136,8 +159,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_changexby");
 
+					BuiltInVars(ref by);
+
 					string arg1;
-					if(by is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DX\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(by is SpecVar sv) arg1 = VarBlockId("DX", this, sv);
+					else if(by is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DX", this, bx.block);
 					else if(by is Var varx) arg1 = $"\"DX\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"DX\":[1,[4,\"{by}\"]]";
 
@@ -153,8 +179,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_changeyby");
 
+					BuiltInVars(ref by);
+
 					string arg1;
-					if(by is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DY\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(by is SpecVar sv) arg1 = VarBlockId("DY", this, sv);
+					else if(by is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DY", this, bx.block);
 					else if(by is Var varx) arg1 = $"\"DY\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"DY\":[1,[4,\"{by}\"]]";
 
@@ -173,8 +202,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_setx");
 
+					BuiltInVars(ref value);
+
 					string arg1;
-					if(value is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"X\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(value is SpecVar sv) arg1 = VarBlockId("X", this, sv);
+					else if(value is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
 					else if(value is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"X\":[1,[4,\"{value}\"]]";
 
@@ -190,8 +222,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_sety");
 
+					BuiltInVars(ref value);
+
 					string arg1;
-					if(value is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"Y\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(value is SpecVar sv) arg1 = VarBlockId("Y", this, sv);
+					else if(value is MyBlock.MyBlockVar bx) arg1 = VarBlockId("Y", this, bx.block);
 					else if(value is Var varx) arg1 = $"\"Y\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"Y\":[1,[4,\"{value}\"]]";
 
@@ -210,8 +245,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_turnleft");
 
+					BuiltInVars(ref degrees);
+
 					string arg1;
-					if (degrees is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DEGREES\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(degrees is SpecVar sv) arg1 = VarBlockId("DEGREES", this, sv);
+					else if(degrees is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DEGREES", this, bx.block);
 					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
 
@@ -227,8 +265,11 @@ namespace Scratch
 
 					args = new BlockArgs("motion_turnright");
 
+					BuiltInVars(ref degrees);
+
 					string arg1;
-					if (degrees is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DEGREES\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(degrees is SpecVar sv) arg1 = VarBlockId("DEGREES", this, sv);
+					else if(degrees is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DEGREES", this, bx.block);
 					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
 
@@ -239,12 +280,10 @@ namespace Scratch
 
 		public class Point : Block
 		{
-			public Point(object to) : base("Point to/in direction")
+			public Point(object to) : base("Point to/in direction", to)
 			{
 				if (to is Sprite || to is To)
 				{
-					if (TypeCheck.Check(to) != AcceptedTypes.None) throw new ArgumentException("to is not a sprite or To element");
-
 					string arg;
 					if (to is Sprite s) arg = $"\"TOWARDS\":[\"{s.name}\",null]";
 					else if (to is To t)
@@ -252,7 +291,7 @@ namespace Scratch
 						if (t == To.Random) throw new ArgumentException("to cannot be random in this block");
 						arg = "\"TOWARDS\":[\"_mouse_\",null]";
 					}
-					else throw new ArgumentException("to cannot be the Stage");
+					else throw new ArgumentException("to is not a sprite or To element");
 
 					args = new BlockArgs("motion_pointtowards");
 					Block tmp = new Block(null)
@@ -270,13 +309,52 @@ namespace Scratch
 
 					args = new BlockArgs("motion_pointindirection");
 
+					BuiltInVars(ref to);
+
 					string arg1;
-					if (to is MyBlock.MyBlockVar bx) arg1 = MyBlockVarArg($"\"DIRECTION\":[3,\"{bx.block.args.Id}\",[4,\"0\"]]", this, bx.block);
+					if(to is SpecVar sv) arg1 = VarBlockId("DIRECTION", this, sv);
+					else if(to is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DIRECTION", this, bx.block);
 					else if (to is Var varx) arg1 = $"\"DIRECTION\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
 					else arg1 = $"\"DIRECTION\":[1,[4,\"{to}\"]]";
 
 					args.Inputs = arg1;
 				}
+			}
+		}
+
+		public class OnEdgeBounce : Block
+		{
+			public OnEdgeBounce() : base("On edge bounce")
+			{
+				args = new BlockArgs("motion_ifonedgebounce");
+			}
+		}
+
+		public class RotationStyle : Block
+		{
+			public enum RotStyle
+			{
+				Dont,
+				LeftRight,
+				Around
+			}
+
+			public RotationStyle(RotStyle rs) : base("Rotation style")
+			{
+				string field = $"\"STYLE\":[\"";
+				switch(rs)
+				{
+					case RotStyle.Dont:
+						field += "don't rotate";
+						break;
+					case RotStyle.LeftRight:
+						field += "left-right";
+						break;
+					case RotStyle.Around:
+						field += "all around";
+						break;
+				}
+				args = new BlockArgs("motion_setrotationstyle", null, field + "\",null]");
 			}
 		}
 	}	
