@@ -49,6 +49,7 @@ namespace scratch_test
 }*/
 
 using Scratch;
+using System.Data.Common;
 
 namespace scratch_test
 {
@@ -69,8 +70,10 @@ namespace scratch_test
 					sprite.Vars["te"] = new Var(43);
 					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
 
-					using(Column column = new Column(sprite))
+					using(Column column = new Column(sprite)) //Movement
 					{
+						column.Add(new Movement.Goto(2, 200));
+						column.Add(new Movement.Glide(Movement.Vars.Direction, Movement.Vars.X, Movement.Vars.Y));
 						column.Add(new Movement.Goto(2, 200));
 						column.Add(new Movement.Goto(sprite.Vars["te"], sprite.Vars["fwafwa"]));
 						column.Add(new Movement.Glide(2, sprite.Vars["fwafwa"], sprite.Vars["te"]));
@@ -102,7 +105,26 @@ namespace scratch_test
 						column.Add(new Movement.RotationStyle(Movement.RotationStyle.RotStyle.LeftRight));
 					}
 
-					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())
+					using(Column column = new Column(sprite, 300, 0)) //Looks
+					{
+						column.Add(new Looks.Say("test"));
+						column.Add(new Looks.Say(Looks.Vars.BackdropName));
+						column.Add(new Looks.Say(Looks.Vars.BackdropNumber));
+						column.Add(new Looks.Say(Looks.Vars.CostumeName));
+						column.Add(new Looks.Say(Looks.Vars.CostumeNumber));
+						column.Add(new Looks.Say(Looks.Vars.Size));
+						column.Add(new Looks.Say(42, sprite.Vars["fwafwa"]));
+						column.Add(new Looks.Think(sprite.Vars["te"]));
+						column.Add(new Looks.Think(sprite.Vars["te"], sprite.Vars["fwafwa"]));
+						column.Add(new Looks.Show());
+						column.Add(new Looks.Hide());
+						column.Add(new Looks.Size.Change(421));
+						column.Add(new Looks.Size.Set(6343));
+						column.Add(new Looks.Size.Change(sprite.Vars["te"]));
+						column.Add(new Looks.Size.Set(sprite.Vars["fwafwa"]));
+					}
+
+					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
 					{
 						b.Add(new Movement.Goto(4242, b["x"]));
 						b.Add(new Movement.Glide(b["x"], b["x"], b["x"]));
@@ -114,15 +136,15 @@ namespace scratch_test
 						b.Add(new Movement.Turn.Left(b["x"]));
 						b.Add(new Movement.Turn.Right(b["x"]));
 						b.Add(new Movement.Point(b["x"]));
+
+						b.Add(new Looks.Say(b["x"], b["x"]));
+						b.Add(new Looks.Think(b["x"], b["x"]));
+						b.Add(new Looks.Size.Change(b["x"]));
+						b.Add(new Looks.Size.Set(b["x"]));
 					}
 
-					using(Column column = new Column(sprite))
-					{
-						column.Add(new Movement.Goto(sprite.Vars["te"], 53));
-					}
-
-					//sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					//sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
+					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
+					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
 				}
 
 				using(Project.Background bg = project.background)

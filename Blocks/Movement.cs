@@ -1,6 +1,8 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using static Scratch.Looks;
+using static Scratch.Looks.Effect;
 using static Scratch.Movement;
 
 namespace Scratch
@@ -32,22 +34,7 @@ namespace Scratch
 				args = new BlockArgs("motion_gotoxy");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref x);
-				BuiltInVars(ref y);
-
-				string arg1;
-				if(x is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(x is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
-
-				string arg2;
-				if(y is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
-				else if(y is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
-				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
-				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
-
-				args.Inputs = $"{arg1},{arg2}";
+				args.Inputs = $"{MakeInput("X", x)},{MakeInput("Y", y)}";
 			}
 
 			public Goto(object to):base("Goto To", to)
@@ -81,29 +68,7 @@ namespace Scratch
 				args = new BlockArgs("motion_glidesecstoxy");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref x);
-				BuiltInVars(ref y);
-				BuiltInVars(ref sec);
-
-				string arg1;
-				if(x is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(x is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(x is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{x}\"]]";
-
-				string arg2;
-				if(y is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
-				else if(y is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
-				else if(y is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
-				else arg2 = $"\"Y\":[1,[4,\"{y}\"]]";
-
-				string arg3;
-				if(sec is SpecVar svarsec) arg3 = VarBlockId("SECS", this, svarsec);
-				else if(sec is MyBlock.MyBlockVar bsec) arg3 = VarBlockId("SECS", this, bsec.block);
-				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
-				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
-
-				args.Inputs = $"{arg3},{arg1},{arg2}";
+				args.Inputs = $"{MakeInput("SECS", sec)},{MakeInput("X", x)},{MakeInput("Y", y)}";
 			}
 
 			public Glide(object sec, object to) : base("Goto To", sec, to)
@@ -123,15 +88,7 @@ namespace Scratch
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
-				BuiltInVars(ref sec);
-
-				string arg3;
-				if(sec is SpecVar sv) arg3 = VarBlockId("SECS", this, sv);
-				else if(sec is MyBlock.MyBlockVar bsec) arg3 = VarBlockId("SECS", this, bsec.block);
-				else if(sec is Var varsec) arg3 = $"\"SECS\":[3,[12,\"{varsec.Name}\",\"{varsec.Id}\"],[4,\"0\"]]";
-				else arg3 = $"\"SECS\":[1,[4,\"{sec}\"]]";
-
-				args.Inputs = $"{arg3},\"TO\":[1,\"{tmp.args.Id}\"]";
+				args.Inputs = $"{MakeInput("SECS", sec)},\"TO\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
 
@@ -144,15 +101,7 @@ namespace Scratch
 				args = new BlockArgs("motion_movesteps");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref steps);
-
-				string arg1;
-				if(steps is SpecVar sv) arg1 = VarBlockId("STEPS", this, sv);
-				else if(steps is MyBlock.MyBlockVar bx) arg1 = VarBlockId("STEPS", this, bx.block);
-				else if(steps is Var varx) arg1 = $"\"STEPS\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"STEPS\":[1,[4,\"{steps}\"]]";
-
-				args.Inputs = arg1;
+				args.Inputs = MakeInput("STEPS", steps);
 			}
 		}
 
@@ -167,15 +116,7 @@ namespace Scratch
 					args = new BlockArgs("motion_changexby");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref by);
-
-					string arg1;
-					if(by is SpecVar sv) arg1 = VarBlockId("DX", this, sv);
-					else if(by is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DX", this, bx.block);
-					else if(by is Var varx) arg1 = $"\"DX\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"DX\":[1,[4,\"{by}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("DX", by);
 				}
 			}
 
@@ -188,15 +129,7 @@ namespace Scratch
 					args = new BlockArgs("motion_changeyby");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref by);
-
-					string arg1;
-					if(by is SpecVar sv) arg1 = VarBlockId("DY", this, sv);
-					else if(by is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DY", this, bx.block);
-					else if(by is Var varx) arg1 = $"\"DY\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"DY\":[1,[4,\"{by}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("DY", by);
 				}
 			}
 		}
@@ -212,15 +145,7 @@ namespace Scratch
 					args = new BlockArgs("motion_setx");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref value);
-
-					string arg1;
-					if(value is SpecVar sv) arg1 = VarBlockId("X", this, sv);
-					else if(value is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-					else if(value is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"X\":[1,[4,\"{value}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("X", value);
 				}
 			}
 
@@ -233,15 +158,7 @@ namespace Scratch
 					args = new BlockArgs("motion_sety");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref value);
-
-					string arg1;
-					if(value is SpecVar sv) arg1 = VarBlockId("Y", this, sv);
-					else if(value is MyBlock.MyBlockVar bx) arg1 = VarBlockId("Y", this, bx.block);
-					else if(value is Var varx) arg1 = $"\"Y\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"Y\":[1,[4,\"{value}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("Y", value);
 				}
 			}
 		}
@@ -257,15 +174,7 @@ namespace Scratch
 					args = new BlockArgs("motion_turnleft");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref degrees);
-
-					string arg1;
-					if(degrees is SpecVar sv) arg1 = VarBlockId("DEGREES", this, sv);
-					else if(degrees is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DEGREES", this, bx.block);
-					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("DEGREES", degrees);
 				}
 			}
 
@@ -278,15 +187,7 @@ namespace Scratch
 					args = new BlockArgs("motion_turnright");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref degrees);
-
-					string arg1;
-					if(degrees is SpecVar sv) arg1 = VarBlockId("DEGREES", this, sv);
-					else if(degrees is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DEGREES", this, bx.block);
-					else if (degrees is Var varx) arg1 = $"\"DEGREES\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"DEGREES\":[1,[4,\"{degrees}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("DEGREES", degrees);
 				}
 			}
 		}
@@ -325,15 +226,7 @@ namespace Scratch
 					args = new BlockArgs("motion_pointindirection");
 					usagePlace = UsagePlace.Sprite;
 
-					BuiltInVars(ref to);
-
-					string arg1;
-					if(to is SpecVar sv) arg1 = VarBlockId("DIRECTION", this, sv);
-					else if(to is MyBlock.MyBlockVar bx) arg1 = VarBlockId("DIRECTION", this, bx.block);
-					else if (to is Var varx) arg1 = $"\"DIRECTION\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-					else arg1 = $"\"DIRECTION\":[1,[4,\"{to}\"]]";
-
-					args.Inputs = arg1;
+					args.Inputs = MakeInput("DIRECTION", to);
 				}
 			}
 		}
@@ -344,7 +237,6 @@ namespace Scratch
 			{
 				args = new BlockArgs("motion_ifonedgebounce");
 				usagePlace = UsagePlace.Sprite;
-
 			}
 		}
 
@@ -359,22 +251,21 @@ namespace Scratch
 
 			public RotationStyle(RotStyle rs) : base("Rotation style")
 			{
-				string field = $"\"STYLE\":[\"";
+				string tmp = "";
 				switch(rs)
 				{
 					case RotStyle.Dont:
-						field += "don't rotate";
+						tmp = "don't rotate";
 						break;
 					case RotStyle.LeftRight:
-						field += "left-right";
+						tmp = "left-right";
 						break;
 					case RotStyle.Around:
-						field += "all around";
+						tmp = "all around";
 						break;
 				}
-				args = new BlockArgs("motion_setrotationstyle", null, field + "\",null]");
+				args = new BlockArgs("motion_setrotationstyle", null, $"\"STYLE\":[\"{tmp}\",null]");
 				usagePlace = UsagePlace.Sprite;
-
 			}
 		}
 	}	

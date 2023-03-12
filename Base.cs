@@ -247,11 +247,11 @@ namespace Scratch
 			#endregion
 
 			#region LooksVars
-			Movement.specVars["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Movement.specVars["BackdropName"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Movement.specVars["CostumeNumber"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Movement.specVars["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Movement.specVars["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable");
+			Looks.specVars["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Looks.specVars["BackdropName"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Looks.specVars["CostumeNumber"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Looks.specVars["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Looks.specVars["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable");
 			#endregion
 		}
 
@@ -315,7 +315,7 @@ namespace Scratch
 		public int x;
 		public int y;
 
-		public Column(SObject sprite, int x = 200, int y = 200)
+		public Column(SObject sprite, int x = 0, int y = 0)
 		{
 			this.blocks = new List<Block>();
 			this.sObject = sprite;

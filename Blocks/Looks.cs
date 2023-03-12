@@ -21,43 +21,20 @@ namespace Scratch
 		{
 			public Say(object text, object sec) : base("Say text for seconds", text, sec)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
+				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
 
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_sayforsecs");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref text);
-				BuiltInVars(ref sec);
-
-				string arg1;
-				/*if(text is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(text is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(text is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{text}\"]]";*/
-
-				string arg2;
-				/*if(sec is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
-				else if(sec is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
-				else if(sec is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
-				else arg2 = $"\"Y\":[1,[4,\"{sec}\"]]";*/
-
-				args.Inputs = $"{arg1},{arg2}";
+				args.Inputs = $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}";
 			}
 
 			public Say(object text) : base("Say text", text)
 			{
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_say");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref text);
-
-				string arg1;
-				/*if(text is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(text is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(text is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{text}\"]]";*/
-
-				args.Inputs = arg1;
+				args.Inputs = MakeInput("MESSAGE", text, true);
 			}
 		}
 
@@ -65,43 +42,20 @@ namespace Scratch
 		{
 			public Think(object text, object sec) : base("Think text for seconds", text, sec)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
+				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
 
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_thinkforsecs");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref text);
-				BuiltInVars(ref sec);
-
-				string arg1;
-				/*if(text is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(text is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(text is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{text}\"]]";*/
-
-				string arg2;
-				/*if(sec is SpecVar svary) arg2 = VarBlockId("Y", this, svary);
-				else if(sec is MyBlock.MyBlockVar by) arg2 = VarBlockId("Y", this, by.block);
-				else if(sec is Var vary) arg2 = $"\"Y\":[3,[12,\"{vary.Name}\",\"{vary.Id}\"],[4,\"0\"]]";
-				else arg2 = $"\"Y\":[1,[4,\"{sec}\"]]";*/
-
-				args.Inputs = $"{arg1},{arg2}";
+				args.Inputs = $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}";
 			}
 
 			public Think(object text) : base("Think text", text)
 			{
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_think");
 				usagePlace = UsagePlace.Sprite;
 
-				BuiltInVars(ref text);
-
-				string arg1;
-				/*if(text is SpecVar svarx) arg1 = VarBlockId("X", this, svarx);
-				else if(text is MyBlock.MyBlockVar bx) arg1 = VarBlockId("X", this, bx.block);
-				else if(text is Var varx) arg1 = $"\"X\":[3,[12,\"{varx.Name}\",\"{varx.Id}\"],[4,\"0\"]]";
-				else arg1 = $"\"X\":[1,[4,\"{text}\"]]";*/
-
-				args.Inputs = arg1;
+				args.Inputs = MakeInput("MESSAGE", text, true);
 			}
 		}
 
@@ -162,8 +116,10 @@ namespace Scratch
 			{
 				public Set(object to) : base("Set size", to)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_setsizeto");
 					usagePlace = UsagePlace.Sprite;
+
+					args.Inputs = MakeInput("SIZE", to);
 				}
 			}
 
@@ -171,8 +127,10 @@ namespace Scratch
 			{
 				public Change(object by) : base("Change size", by)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_changesizeby");
 					usagePlace = UsagePlace.Sprite;
+
+					args.Inputs = MakeInput("CHANGE", by);
 				}
 			}
 		}
@@ -213,7 +171,7 @@ namespace Scratch
 		{
 			public Show() : base("Show")
 			{
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_show");
 				usagePlace = UsagePlace.Sprite;
 			}
 		}
@@ -222,7 +180,7 @@ namespace Scratch
 		{
 			public Hide() : base("Hide")
 			{
-				//args = new BlockArgs("motion_gotoxy");
+				args = new BlockArgs("looks_hide");
 				usagePlace = UsagePlace.Sprite;
 			}
 		}

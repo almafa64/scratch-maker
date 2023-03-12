@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static Scratch.Looks;
 using static Scratch.Movement;
 
 namespace Scratch_Utils
@@ -130,11 +131,25 @@ namespace Scratch_Utils
 			col.Add(this);
 		}
 
-		internal static string VarBlockId(string type, Block mainBlock, Block varBlock)
+		private readonly string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
+		private readonly Random rd = new Random();
+
+		internal string MakeInput(string name, object val, bool isString = false)
+		{
+			//needs TypeCheck !!!
+			BuiltInVars(ref val);
+			string def = isString ? $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\"" : "4,\"0\"";
+			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
+			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
+			else if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
+			else return $"\"{name}\":[1,[{(isString?"10":"4")},\"{val}\"]]";
+		}
+
+		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
 		{
 			varBlock.args.ParentId = mainBlock.args.Id;
 			mainBlock.kids.Add(varBlock);
-			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[4,\"0\"]]";
+			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[{def}]]";
 		}
 
 		internal static SpecVar GetVar(Dictionary<string, SpecVar> dir, Type enumType, object value)
