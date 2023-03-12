@@ -1,6 +1,8 @@
 ﻿using Scratch;
+using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using static Scratch.Movement;
 
@@ -101,6 +103,7 @@ namespace Scratch_Utils
 		internal string name;
 		internal BlockArgs args;
 		internal List<Block> kids = new List<Block>();
+		internal UsagePlace usagePlace = UsagePlace.Both;
 
 		internal Block(string name, params object[] vals)
 		{
@@ -120,6 +123,11 @@ namespace Scratch_Utils
 						break;
 				}
 			}
+		}
+
+		public void PlaceIn(Column col)
+		{
+			col.Add(this);
 		}
 
 		internal static string VarBlockId(string type, Block mainBlock, Block varBlock)
@@ -143,11 +151,21 @@ namespace Scratch_Utils
 
 	internal class SpecVar : Block
 	{
-		internal SpecVar(string opcode, string name = null, string field = null, string input = null) : base(name)
+		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, vals)
 		{
 			args = new BlockArgs(opcode, input, field);
+			this.usagePlace = usagePlace;
 		}
 	}
+
+	/*internal class SpecBlock : SpecVar
+	{
+		internal Block main;
+		internal SpecBlock(UsagePlace usagePlace, string name, params object[] vals) : base(usagePlace, name, null, null, null, vals)
+		{
+			
+		}
+	}*/
 
 	[Flags]
 	internal enum AcceptedTypes
@@ -160,5 +178,12 @@ namespace Scratch_Utils
 		Enum = 16,
 		Sprite = 32,
 		MyBlockVar = 64,
+	}
+
+	internal enum UsagePlace
+	{
+		Sprite,
+		Background,
+		Both
 	}
 }

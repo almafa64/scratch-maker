@@ -241,17 +241,17 @@ namespace Scratch
 			if(Movement.specVars.ContainsKey("dir")) return;
 
 			#region MovementVars
-			Movement.specVars["Direction"] = new SpecVar("motion_direction", "direction variable");
-			Movement.specVars["X"] = new SpecVar("motion_xposition", "x variable");
-			Movement.specVars["Y"] = new SpecVar("motion_yposition", "y variable");
+			Movement.specVars["Direction"] = new SpecVar(UsagePlace.Sprite, "motion_direction", "direction variable");
+			Movement.specVars["X"] = new SpecVar(UsagePlace.Sprite, "motion_xposition", "x variable");
+			Movement.specVars["Y"] = new SpecVar(UsagePlace.Sprite, "motion_yposition", "y variable");
 			#endregion
 
 			#region LooksVars
-			Movement.specVars["BackgroundNumber"] = new SpecVar("looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Movement.specVars["BackgroundName"] = new SpecVar("looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Movement.specVars["CostumeNumber"] = new SpecVar("looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Movement.specVars["CostumeName"] = new SpecVar("looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Movement.specVars["Size"] = new SpecVar("looks_size", "size variable");
+			Movement.specVars["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Movement.specVars["BackdropName"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Movement.specVars["CostumeNumber"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
+			Movement.specVars["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
+			Movement.specVars["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable");
 			#endregion
 		}
 
@@ -345,9 +345,17 @@ namespace Scratch
 			}
 			foreach(Block b in block.kids)
 			{
+				checkBlockUsage(sObject is Sprite, b);
 				blocks.Add(b);
 			}
+			checkBlockUsage(sObject is Sprite, block);
 			blocks.Add(block);
+		}
+
+		internal static void checkBlockUsage(bool isSprite, Block b)
+		{
+			if(isSprite) { if(b.usagePlace == UsagePlace.Background) throw new Exception($"Block \"{b.name}\" can only be used in sprites but it was used in the backdrop"); }
+			else if(b.usagePlace == UsagePlace.Sprite) throw new Exception($"Block \"{b.name}\" can only be used in the backdrop but it was used in sprite");
 		}
 
 		public void Dispose() { }

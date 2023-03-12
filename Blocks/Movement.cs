@@ -30,6 +30,7 @@ namespace Scratch
 				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
 
 				args = new BlockArgs("motion_gotoxy");
+				usagePlace = UsagePlace.Sprite;
 
 				BuiltInVars(ref x);
 				BuiltInVars(ref y);
@@ -57,6 +58,8 @@ namespace Scratch
 				else throw new ArgumentException("to is not a Sprite or To element");
 
 				args = new BlockArgs("motion_goto");
+				usagePlace = UsagePlace.Sprite;
+
 				Block tmp = new Block(null) {
 					args = new BlockArgs("motion_goto_menu", null, arg, null, null, true)
 				};
@@ -76,6 +79,7 @@ namespace Scratch
 				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
 
 				args = new BlockArgs("motion_glidesecstoxy");
+				usagePlace = UsagePlace.Sprite;
 
 				BuiltInVars(ref x);
 				BuiltInVars(ref y);
@@ -110,6 +114,8 @@ namespace Scratch
 				else throw new ArgumentException("to is not a sprite or To element");
 
 				args = new BlockArgs("motion_glideto");
+				usagePlace = UsagePlace.Sprite;
+
 				Block tmp = new Block(null)
 				{
 					args = new BlockArgs("motion_glideto_menu", null, arg, null, null, true)
@@ -136,6 +142,7 @@ namespace Scratch
 				if(TypeCheck.Check(steps) == AcceptedTypes.String) throw new ArgumentException($"steps is string, which is not accepted");
 
 				args = new BlockArgs("motion_movesteps");
+				usagePlace = UsagePlace.Sprite;
 
 				BuiltInVars(ref steps);
 
@@ -158,6 +165,7 @@ namespace Scratch
 					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
 
 					args = new BlockArgs("motion_changexby");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref by);
 
@@ -178,6 +186,7 @@ namespace Scratch
 					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
 
 					args = new BlockArgs("motion_changeyby");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref by);
 
@@ -201,6 +210,7 @@ namespace Scratch
 					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
 
 					args = new BlockArgs("motion_setx");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref value);
 
@@ -221,6 +231,7 @@ namespace Scratch
 					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
 
 					args = new BlockArgs("motion_sety");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref value);
 
@@ -244,6 +255,7 @@ namespace Scratch
 					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
 
 					args = new BlockArgs("motion_turnleft");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref degrees);
 
@@ -264,6 +276,7 @@ namespace Scratch
 					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
 
 					args = new BlockArgs("motion_turnright");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref degrees);
 
@@ -294,6 +307,8 @@ namespace Scratch
 					else throw new ArgumentException("to is not a sprite or To element");
 
 					args = new BlockArgs("motion_pointtowards");
+					usagePlace = UsagePlace.Sprite;
+
 					Block tmp = new Block(null)
 					{
 						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, null, true)
@@ -308,6 +323,7 @@ namespace Scratch
 					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
 
 					args = new BlockArgs("motion_pointindirection");
+					usagePlace = UsagePlace.Sprite;
 
 					BuiltInVars(ref to);
 
@@ -327,6 +343,8 @@ namespace Scratch
 			public OnEdgeBounce() : base("On edge bounce")
 			{
 				args = new BlockArgs("motion_ifonedgebounce");
+				usagePlace = UsagePlace.Sprite;
+
 			}
 		}
 
@@ -355,6 +373,8 @@ namespace Scratch
 						break;
 				}
 				args = new BlockArgs("motion_setrotationstyle", null, field + "\",null]");
+				usagePlace = UsagePlace.Sprite;
+
 			}
 		}
 	}	
