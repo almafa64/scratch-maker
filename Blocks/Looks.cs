@@ -61,13 +61,20 @@ namespace Scratch
 
 		public static class Switch
 		{
-			public class Costume : Block
+			public class Costumes : Block
 			{
-				public Costume(Costume costume) : base("Switch costume")
+				public Costumes(Costume costume) : base("Switch costume")
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					Block tmp = new Block(null)
+					{
+						args = new BlockArgs("looks_costume", null, $"\"COSTUME\":[\"{costume.Name}\",null]")
+					};
+
+					args = new BlockArgs("looks_switchcostumeto", $"\"COSTUME\":[1,{tmp.args.Id}]");
 					usagePlace = UsagePlace.Sprite;
 
+					tmp.args.ParentId = args.Id;
+					kids.Add(tmp);
 				}
 			}
 
@@ -95,7 +102,7 @@ namespace Scratch
 			{
 				public Costume() : base("next Costume")
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_nextcostume");
 					usagePlace = UsagePlace.Sprite;
 
 				}
@@ -105,7 +112,7 @@ namespace Scratch
 			{
 				public Backdrop() : base("next Backdrop")
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_nextbackdrop");
 				}
 			}
 		}
@@ -139,30 +146,55 @@ namespace Scratch
 		{
 			public enum Effects
 			{
+				Color,
+				Fisheye,
+				Whirl,
+				Pixelate,
+				Mosaic,
+				Brightness,
+				Ghost
+			}
 
+			private static string EffField(Effects eff)
+            {
+				switch (eff)
+				{
+					case Effects.Color: return Block.MakeField("EFFECT", "COLOR");
+					case Effects.Fisheye: return Block.MakeField("EFFECT", "FISHEYE");
+					case Effects.Whirl: return Block.MakeField("EFFECT", "WHIRL");
+					case Effects.Pixelate: return Block.MakeField("EFFECT", "PIXELATE");
+					case Effects.Mosaic: return Block.MakeField("EFFECT", "MOSAIC");
+					case Effects.Brightness: return Block.MakeField("EFFECT", "BRIGHTNESS");
+					case Effects.Ghost: return Block.MakeField("EFFECT", "GHOST");
+					default: return null;
+				}
 			}
 
 			public class Change : Block
 			{
-				public Change(Effects effect) : base($"Change effect")
+				public Change(Effects effect, object by) : base("Change effect", by)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
+
+					args = new BlockArgs("looks_changeeffectby", MakeInput("CHANGE", by), EffField(effect));
 				}
 			}
 
 			public class Set : Block
 			{
-				public Set(Effects effect) : base($"Set effect")
+				public Set(Effects effect, object to) : base("Set effect", to)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
+
+					args = new BlockArgs("looks_seteffectto", MakeInput("VALUE", to), EffField(effect));
 				}
 			}
 
 			public class Clear : Block
 			{
-				public Clear() : base($"Clear effects")
+				public Clear() : base("Clear effects")
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_cleargraphiceffects");
 				}
 			}
 		}
@@ -196,8 +228,11 @@ namespace Scratch
 				}
 				public GoTo(To to) : base("Go to layer")
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					args = new BlockArgs("looks_gotofrontback");
 					usagePlace = UsagePlace.Sprite;
+
+					if(to == To.Back) args.Fields = MakeField("FRONT_BACK", "back");
+					else args.Fields = MakeField("FRONT_BACK", "front");
 				}
 			}
 
@@ -208,10 +243,17 @@ namespace Scratch
 					Forward,
 					Backward
 				}
-				public Go(WhereTo whereTo) : base("Go layer")
+				public Go(WhereTo whereTo, object times) : base("Go layer", times)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					if (TypeCheck.Check(times) == AcceptedTypes.String) throw new ArgumentException($"times is string, which is not accepted");
+
+					args = new BlockArgs("looks_goforwardbackwardlayers");
 					usagePlace = UsagePlace.Sprite;
+
+					if (whereTo == WhereTo.Forward) args.Fields = MakeField("FORWARD_BACKWARD", "forward");
+					else args.Fields = MakeField("FORWARD_BACKWARD", "backward");
+
+					args.Inputs = MakeInput("NUM", times);
 				}
 			}
 		}
