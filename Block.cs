@@ -145,6 +145,11 @@ namespace Scratch_Utils
 			else return $"\"{name}\":[1,[{(isString?"10":"4")},\"{val}\"]]";
 		}
 
+		internal static string MakeField(string name, string data)
+        {
+			return $"\"{name}\":[\"{data}\",null]";
+        }
+
 		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
 		{
 			varBlock.args.ParentId = mainBlock.args.Id;
