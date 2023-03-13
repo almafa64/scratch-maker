@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Threading;
 
 namespace Scratch_Utils
@@ -311,6 +313,7 @@ namespace Scratch
 	{
 		public SObject sObject;
 		internal List<Block> blocks;
+		internal bool isSpriteCol;
 
 		public int x;
 		public int y;
@@ -322,6 +325,7 @@ namespace Scratch
 			this.sObject.columns.Add(this);
 			this.x = x;
 			this.y = y;
+			this.isSpriteCol = sObject is Sprite;
 		}
 
 		public void Add(Block block)
@@ -345,17 +349,16 @@ namespace Scratch
 			}
 			foreach(Block b in block.kids)
 			{
-				checkBlockUsage(sObject is Sprite, b);
-				blocks.Add(b);
+				CheckBlockUsage(b);
 			}
-			checkBlockUsage(sObject is Sprite, block);
-			blocks.Add(block);
+			CheckBlockUsage(block);
 		}
 
-		internal static void checkBlockUsage(bool isSprite, Block b)
+		internal void CheckBlockUsage(Block b)
 		{
-			if(isSprite) { if(b.usagePlace == UsagePlace.Background) throw new Exception($"Block \"{b.name}\" can only be used in sprites but it was used in the backdrop"); }
-			else if(b.usagePlace == UsagePlace.Sprite) throw new Exception($"Block \"{b.name}\" can only be used in the backdrop but it was used in sprite");
+			if(isSpriteCol) { if(b.usagePlace == UsagePlace.Background) throw new Exception($"Block \"{b.name}\" can only be used in the backdrop but it was used in sprite"); }
+			else if(b.usagePlace == UsagePlace.Sprite) throw new Exception($"Block \"{b.name}\" can only be used in sprites but it was used in the backdrop");
+			blocks.Add(b);
 		}
 
 		public void Dispose() { }

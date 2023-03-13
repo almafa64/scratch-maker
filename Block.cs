@@ -106,8 +106,9 @@ namespace Scratch_Utils
 		internal List<Block> kids = new List<Block>();
 		internal UsagePlace usagePlace = UsagePlace.Both;
 
-		internal Block(string name, params object[] vals)
+		internal Block(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals)
 		{
+			this.usagePlace = usagePlace;
 			this.name = name;
 			for(int i = 0; i < vals.Length; i++)
 			{
@@ -146,9 +147,9 @@ namespace Scratch_Utils
 		}
 
 		internal static string MakeField(string name, string data)
-        {
+		{
 			return $"\"{name}\":[\"{data}\",null]";
-        }
+		}
 
 		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
 		{
@@ -171,7 +172,7 @@ namespace Scratch_Utils
 
 	internal class SpecVar : Block
 	{
-		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, vals)
+		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, usagePlace, vals)
 		{
 			args = new BlockArgs(opcode, input, field);
 			this.usagePlace = usagePlace;

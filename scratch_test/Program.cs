@@ -49,7 +49,9 @@ namespace scratch_test
 }*/
 
 using Scratch;
+using System;
 using System.Data.Common;
+using System.Threading;
 
 namespace scratch_test
 {
@@ -65,8 +67,25 @@ namespace scratch_test
 					s.Vars["fwafwa", true] = new Var(69);
 				}
 
+				using(Project.Background bg = project.background)
+				{
+					bg.AddCostumes(new Costume("blackness.png", "testBackdrop"));
+
+					using(Column column = new Column(bg, 0, 0))
+					{
+						column.Add(new Looks.Effect.Set(Looks.Effect.Effects.Ghost, bg.Vars["fwafwa"]));
+						column.Add(new Looks.Switch.BackdropWait(Looks.Switch.Which.RandomBackdrop));
+						column.Add(new Looks.Switch.BackdropWait(Looks.Switch.Which.NextBackdrop));
+						column.Add(new Looks.Switch.BackdropWait(Looks.Switch.Which.PreviousBackdrop));
+						column.Add(new Looks.Switch.BackdropWait(bg.Costumes["testBackdrop"]));
+					}
+				}
+
 				using(Sprite sprite = new Sprite("testSprite", project))
 				{
+					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
+					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
+
 					sprite.Vars["te"] = new Var(43);
 					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
 
@@ -133,7 +152,11 @@ namespace scratch_test
 						column.Add(new Looks.Effect.Set(Looks.Effect.Effects.Ghost, sprite.Vars["te"]));
 						column.Add(new Looks.Effect.Change(Looks.Effect.Effects.Fisheye, 242));
 						column.Add(new Looks.Effect.Change(Looks.Effect.Effects.Pixelate, sprite.Vars["te"]));
-						//column.Add(new Looks.Switch.Costumes(sprite.Costumes["testCostume"]));
+						column.Add(new Looks.Switch.Costumes(sprite.Costumes["testCostume"]));
+						column.Add(new Looks.Switch.Backdrop(Looks.Switch.Which.RandomBackdrop));
+						column.Add(new Looks.Switch.Backdrop(Looks.Switch.Which.NextBackdrop));
+						column.Add(new Looks.Switch.Backdrop(Looks.Switch.Which.PreviousBackdrop));
+						column.Add(new Looks.Switch.Backdrop(sprite.Costumes["testCostume"]));
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
@@ -157,14 +180,6 @@ namespace scratch_test
 						b.Add(new Looks.Effect.Set(Looks.Effect.Effects.Color, b["x"]));
 						b.Add(new Looks.Effect.Change(Looks.Effect.Effects.Whirl, b["x"]));
 					}
-
-					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
-				}
-
-				using(Project.Background bg = project.background)
-				{
-
 				}
 			}
 		}

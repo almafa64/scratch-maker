@@ -1,6 +1,7 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using static Scratch.Looks.Switch.Backdrop;
 
 namespace Scratch
 {
@@ -19,20 +20,18 @@ namespace Scratch
 
 		public class Say : Block
 		{
-			public Say(object text, object sec) : base("Say text for seconds", text, sec)
+			public Say(object text, object sec) : base("Say text for seconds", UsagePlace.Sprite, text, sec)
 			{
 				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
 
 				args = new BlockArgs("looks_sayforsecs");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}";
 			}
 
-			public Say(object text) : base("Say text", text)
+			public Say(object text) : base("Say text", UsagePlace.Sprite, text)
 			{
 				args = new BlockArgs("looks_say");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = MakeInput("MESSAGE", text, true);
 			}
@@ -40,20 +39,18 @@ namespace Scratch
 
 		public class Think : Block
 		{
-			public Think(object text, object sec) : base("Think text for seconds", text, sec)
+			public Think(object text, object sec) : base("Think text for seconds", UsagePlace.Sprite, text, sec)
 			{
 				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
 
 				args = new BlockArgs("looks_thinkforsecs");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}";
 			}
 
-			public Think(object text) : base("Think text", text)
+			public Think(object text) : base("Think text", UsagePlace.Sprite, text)
 			{
 				args = new BlockArgs("looks_think");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = MakeInput("MESSAGE", text, true);
 			}
@@ -63,35 +60,77 @@ namespace Scratch
 		{
 			public class Costumes : Block
 			{
-				public Costumes(Costume costume) : base("Switch costume")
+				public Costumes(Costume costume) : base("Switch costume", UsagePlace.Sprite)
 				{
 					Block tmp = new Block(null)
 					{
-						args = new BlockArgs("looks_costume", null, $"\"COSTUME\":[\"{costume.Name}\",null]")
+						args = new BlockArgs("looks_costume", null, $"\"COSTUME\":[\"{costume.Name}\",null]", null, null, true)
 					};
 
-					args = new BlockArgs("looks_switchcostumeto", $"\"COSTUME\":[1,{tmp.args.Id}]");
-					usagePlace = UsagePlace.Sprite;
+					args = new BlockArgs("looks_switchcostumeto", $"\"COSTUME\":[1,\"{tmp.args.Id}\"]");
 
 					tmp.args.ParentId = args.Id;
 					kids.Add(tmp);
 				}
 			}
 
+			public enum Which
+			{
+				NextBackdrop,
+				PreviousBackdrop,
+				RandomBackdrop
+			}
+
+			private static Block BackBlock(object costume)
+			{
+				string cosName = "";
+				if(costume is Costume cos) cosName = cos.Name;
+				else if(costume is Which w)
+				{
+					switch(w)
+					{
+						case Which.NextBackdrop:
+							cosName = "next backdrop";
+							break;
+						case Which.PreviousBackdrop:
+							cosName = "previous backdrop";
+							break;
+						case Which.RandomBackdrop:
+							cosName = "random backdrop";
+							break;
+					}
+				}
+				else throw new ArgumentException("costume was not a Costume object or a Which element");
+
+				return new Block(null)
+				{
+					args = new BlockArgs("looks_backdrops", null, $"\"BACKDROP\":[\"{cosName}\",null]", null, null, true)
+				};
+			}
+
 			public class Backdrop : Block
 			{
-				public Backdrop(Costume costume) : base($"Switch backdrop")
+				public Backdrop(object costume) : base($"Switch backdrop", UsagePlace.Both)
 				{
-					//args = new BlockArgs("motion_gotoxy");
+					Block tmp = BackBlock(costume);
+
+					args = new BlockArgs("looks_switchbackdropto", $"\"BACKDROP\":[1,\"{tmp.args.Id}\"]");
+
+					tmp.args.ParentId = args.Id;
+					kids.Add(tmp);
 				}
 			}
 
-			public class BackdropWrait : Block
+			public class BackdropWait : Block
 			{
-				public BackdropWrait(Costume costume) : base($"Switch backdrop and wait")
+				public BackdropWait(object costume) : base($"Switch backdrop and wait", UsagePlace.Background)
 				{
-					//args = new BlockArgs("motion_gotoxy");
-					usagePlace = UsagePlace.Background;
+					Block tmp = BackBlock(costume);
+
+					args = new BlockArgs("looks_switchbackdroptoandwait", $"\"BACKDROP\":[1,\"{tmp.args.Id}\"]");
+
+					tmp.args.ParentId = args.Id;
+					kids.Add(tmp);
 				}
 			}
 		}
@@ -100,10 +139,9 @@ namespace Scratch
 		{
 			public class Costume : Block
 			{
-				public Costume() : base("next Costume")
+				public Costume() : base("next Costume", UsagePlace.Sprite)
 				{
 					args = new BlockArgs("looks_nextcostume");
-					usagePlace = UsagePlace.Sprite;
 
 				}
 			}
@@ -121,10 +159,9 @@ namespace Scratch
 		{
 			public class Set : Block
 			{
-				public Set(object to) : base("Set size", to)
+				public Set(object to) : base("Set size", UsagePlace.Sprite, to)
 				{
 					args = new BlockArgs("looks_setsizeto");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("SIZE", to);
 				}
@@ -132,10 +169,9 @@ namespace Scratch
 
 			public class Change : Block
 			{
-				public Change(object by) : base("Change size", by)
+				public Change(object by) : base("Change size", UsagePlace.Sprite, by)
 				{
 					args = new BlockArgs("looks_changesizeby");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("CHANGE", by);
 				}
@@ -156,7 +192,7 @@ namespace Scratch
 			}
 
 			private static string EffField(Effects eff)
-            {
+			{
 				switch (eff)
 				{
 					case Effects.Color: return Block.MakeField("EFFECT", "COLOR");
@@ -172,7 +208,7 @@ namespace Scratch
 
 			public class Change : Block
 			{
-				public Change(Effects effect, object by) : base("Change effect", by)
+				public Change(Effects effect, object by) : base("Change effect", UsagePlace.Both, by)
 				{
 					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
 
@@ -182,7 +218,7 @@ namespace Scratch
 
 			public class Set : Block
 			{
-				public Set(Effects effect, object to) : base("Set effect", to)
+				public Set(Effects effect, object to) : base("Set effect", UsagePlace.Both, to)
 				{
 					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
 
@@ -192,7 +228,7 @@ namespace Scratch
 
 			public class Clear : Block
 			{
-				public Clear() : base("Clear effects")
+				public Clear() : base("Clear effects", UsagePlace.Both)
 				{
 					args = new BlockArgs("looks_cleargraphiceffects");
 				}
@@ -201,19 +237,17 @@ namespace Scratch
 
 		public class Show : Block
 		{
-			public Show() : base("Show")
+			public Show() : base("Show", UsagePlace.Sprite)
 			{
 				args = new BlockArgs("looks_show");
-				usagePlace = UsagePlace.Sprite;
 			}
 		}
 
 		public class Hide : Block
 		{
-			public Hide() : base("Hide")
+			public Hide() : base("Hide", UsagePlace.Sprite)
 			{
 				args = new BlockArgs("looks_hide");
-				usagePlace = UsagePlace.Sprite;
 			}
 		}
 
@@ -226,10 +260,9 @@ namespace Scratch
 					Front,
 					Back
 				}
-				public GoTo(To to) : base("Go to layer")
+				public GoTo(To to) : base("Go to layer", UsagePlace.Sprite)
 				{
 					args = new BlockArgs("looks_gotofrontback");
-					usagePlace = UsagePlace.Sprite;
 
 					if(to == To.Back) args.Fields = MakeField("FRONT_BACK", "back");
 					else args.Fields = MakeField("FRONT_BACK", "front");
@@ -243,12 +276,11 @@ namespace Scratch
 					Forward,
 					Backward
 				}
-				public Go(WhereTo whereTo, object times) : base("Go layer", times)
+				public Go(WhereTo whereTo, object times) : base("Go layer", UsagePlace.Sprite, times)
 				{
 					if (TypeCheck.Check(times) == AcceptedTypes.String) throw new ArgumentException($"times is string, which is not accepted");
 
 					args = new BlockArgs("looks_goforwardbackwardlayers");
-					usagePlace = UsagePlace.Sprite;
 
 					if (whereTo == WhereTo.Forward) args.Fields = MakeField("FORWARD_BACKWARD", "forward");
 					else args.Fields = MakeField("FORWARD_BACKWARD", "backward");

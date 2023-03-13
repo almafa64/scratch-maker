@@ -26,18 +26,17 @@ namespace Scratch
 
 		public class Goto : Block
 		{
-			public Goto(object x, object y) : base("Goto X Y", x,y)
+			public Goto(object x, object y) : base("Goto X Y", UsagePlace.Sprite, x, y)
 			{
 				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException($"x is string, which is not accepted"); 
 				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
 
 				args = new BlockArgs("motion_gotoxy");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = $"{MakeInput("X", x)},{MakeInput("Y", y)}";
 			}
 
-			public Goto(object to):base("Goto To", to)
+			public Goto(object to):base("Goto To", UsagePlace.Sprite, to)
 			{
 				string arg;
 				if(to is Sprite s) arg = $"\"TO\":[\"{s.name}\",null]";
@@ -45,7 +44,6 @@ namespace Scratch
 				else throw new ArgumentException("to is not a Sprite or To element");
 
 				args = new BlockArgs("motion_goto");
-				usagePlace = UsagePlace.Sprite;
 
 				Block tmp = new Block(null) {
 					args = new BlockArgs("motion_goto_menu", null, arg, null, null, true)
@@ -59,19 +57,18 @@ namespace Scratch
 
 		public class Glide : Block
 		{
-			public Glide(object sec, object x, object y) : base("Goto X Y", sec, x, y)
+			public Glide(object sec, object x, object y) : base("Goto X Y", UsagePlace.Sprite, sec, x, y)
 			{
 				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException($"sec is string, which is not accepted");
 				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException($"x is string, which is not accepted");
 				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException($"y is string, which is not accepted");
 
 				args = new BlockArgs("motion_glidesecstoxy");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = $"{MakeInput("SECS", sec)},{MakeInput("X", x)},{MakeInput("Y", y)}";
 			}
 
-			public Glide(object sec, object to) : base("Goto To", sec, to)
+			public Glide(object sec, object to) : base("Goto To", UsagePlace.Sprite, sec, to)
 			{
 				string arg;
 				if(to is Sprite s) arg = $"\"TO\":[\"{s.name}\",null]";
@@ -79,7 +76,6 @@ namespace Scratch
 				else throw new ArgumentException("to is not a sprite or To element");
 
 				args = new BlockArgs("motion_glideto");
-				usagePlace = UsagePlace.Sprite;
 
 				Block tmp = new Block(null)
 				{
@@ -94,12 +90,11 @@ namespace Scratch
 
 		public class Move : Block
 		{
-			public Move(object steps) : base("Move steps", steps)
+			public Move(object steps) : base("Move steps", UsagePlace.Sprite, steps)
 			{
 				if(TypeCheck.Check(steps) == AcceptedTypes.String) throw new ArgumentException($"steps is string, which is not accepted");
 
 				args = new BlockArgs("motion_movesteps");
-				usagePlace = UsagePlace.Sprite;
 
 				args.Inputs = MakeInput("STEPS", steps);
 			}
@@ -109,12 +104,11 @@ namespace Scratch
 		{
 			public class X : Block
 			{
-				public X(object by) : base("Change X by", by)
+				public X(object by) : base("Change X by", UsagePlace.Sprite, by)
 				{
 					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
 
 					args = new BlockArgs("motion_changexby");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("DX", by);
 				}
@@ -122,12 +116,11 @@ namespace Scratch
 
 			public class Y : Block
 			{
-				public Y(object by) : base("Change Y by", by)
+				public Y(object by) : base("Change Y by", UsagePlace.Sprite, by)
 				{
 					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
 
 					args = new BlockArgs("motion_changeyby");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("DY", by);
 				}
@@ -138,12 +131,11 @@ namespace Scratch
 		{
 			public class X : Block
 			{
-				public X(object value) : base("Change X by", value)
+				public X(object value) : base("Change X by", UsagePlace.Sprite, value)
 				{
 					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
 
 					args = new BlockArgs("motion_setx");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("X", value);
 				}
@@ -151,12 +143,11 @@ namespace Scratch
 
 			public class Y : Block
 			{
-				public Y(object value) : base("Change Y value", value)
+				public Y(object value) : base("Change Y value", UsagePlace.Sprite, value)
 				{
 					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException($"value is string, which is not accepted");
 
 					args = new BlockArgs("motion_sety");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("Y", value);
 				}
@@ -167,12 +158,11 @@ namespace Scratch
 		{
 			public class Left : Block
 			{
-				public Left(object degrees) : base("Change X by", degrees)
+				public Left(object degrees) : base("Change X by", UsagePlace.Sprite, degrees)
 				{
 					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
 
 					args = new BlockArgs("motion_turnleft");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("DEGREES", degrees);
 				}
@@ -180,12 +170,11 @@ namespace Scratch
 
 			public class Right : Block
 			{
-				public Right(object degrees) : base("Change Y by", degrees)
+				public Right(object degrees) : base("Change Y by", UsagePlace.Sprite, degrees)
 				{
 					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException($"degrees is string, which is not accepted");
 
 					args = new BlockArgs("motion_turnright");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("DEGREES", degrees);
 				}
@@ -194,7 +183,7 @@ namespace Scratch
 
 		public class Point : Block
 		{
-			public Point(object to) : base("Point to/in direction", to)
+			public Point(object to) : base("Point to/in direction", UsagePlace.Sprite, to)
 			{
 				if (to is Sprite || to is To)
 				{
@@ -208,7 +197,6 @@ namespace Scratch
 					else throw new ArgumentException("to is not a sprite or To element");
 
 					args = new BlockArgs("motion_pointtowards");
-					usagePlace = UsagePlace.Sprite;
 
 					Block tmp = new Block(null)
 					{
@@ -224,7 +212,6 @@ namespace Scratch
 					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
 
 					args = new BlockArgs("motion_pointindirection");
-					usagePlace = UsagePlace.Sprite;
 
 					args.Inputs = MakeInput("DIRECTION", to);
 				}
@@ -233,10 +220,9 @@ namespace Scratch
 
 		public class OnEdgeBounce : Block
 		{
-			public OnEdgeBounce() : base("On edge bounce")
+			public OnEdgeBounce() : base("On edge bounce", UsagePlace.Sprite)
 			{
 				args = new BlockArgs("motion_ifonedgebounce");
-				usagePlace = UsagePlace.Sprite;
 			}
 		}
 
@@ -249,7 +235,7 @@ namespace Scratch
 				Around
 			}
 
-			public RotationStyle(RotStyle rs) : base("Rotation style")
+			public RotationStyle(RotStyle rs) : base("Rotation style", UsagePlace.Sprite)
 			{
 				string tmp = "";
 				switch(rs)
@@ -265,7 +251,6 @@ namespace Scratch
 						break;
 				}
 				args = new BlockArgs("motion_setrotationstyle", null, $"\"STYLE\":[\"{tmp}\",null]");
-				usagePlace = UsagePlace.Sprite;
 			}
 		}
 	}	
