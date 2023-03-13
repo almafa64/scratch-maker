@@ -105,7 +105,7 @@ namespace scratch_test
 						column.Add(new Movement.RotationStyle(Movement.RotationStyle.RotStyle.LeftRight));
 					}
 
-					using(Column column = new Column(sprite, 300, 0)) //Looks
+					using (Column column = new Column(sprite, 300, 0)) //Looks
 					{
 						column.Add(new Looks.Say("test"));
 						column.Add(new Looks.Say(Looks.Vars.BackdropName));
@@ -122,6 +122,18 @@ namespace scratch_test
 						column.Add(new Looks.Size.Set(6343));
 						column.Add(new Looks.Size.Change(sprite.Vars["te"]));
 						column.Add(new Looks.Size.Set(sprite.Vars["fwafwa"]));
+						column.Add(new Looks.Next.Backdrop());
+						column.Add(new Looks.Next.Costume());
+						column.Add(new Looks.Layer.GoTo(Looks.Layer.GoTo.To.Back));
+						column.Add(new Looks.Layer.GoTo(Looks.Layer.GoTo.To.Front));
+						column.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Backward, 43));
+						column.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Forward, sprite.Vars["te"]));
+						column.Add(new Looks.Effect.Clear());
+						column.Add(new Looks.Effect.Set(Looks.Effect.Effects.Brightness, 242));
+						column.Add(new Looks.Effect.Set(Looks.Effect.Effects.Ghost, sprite.Vars["te"]));
+						column.Add(new Looks.Effect.Change(Looks.Effect.Effects.Fisheye, 242));
+						column.Add(new Looks.Effect.Change(Looks.Effect.Effects.Pixelate, sprite.Vars["te"]));
+						//column.Add(new Looks.Switch.Costumes(sprite.Costumes["testCostume"]));
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
@@ -141,6 +153,9 @@ namespace scratch_test
 						b.Add(new Looks.Think(b["x"], b["x"]));
 						b.Add(new Looks.Size.Change(b["x"]));
 						b.Add(new Looks.Size.Set(b["x"]));
+						b.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Forward, b["x"]));
+						b.Add(new Looks.Effect.Set(Looks.Effect.Effects.Color, b["x"]));
+						b.Add(new Looks.Effect.Change(Looks.Effect.Effects.Whirl, b["x"]));
 					}
 
 					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
