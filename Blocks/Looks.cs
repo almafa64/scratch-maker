@@ -195,13 +195,13 @@ namespace Scratch
 			{
 				switch (eff)
 				{
-					case Effects.Color: return Block.MakeField("EFFECT", "COLOR");
-					case Effects.Fisheye: return Block.MakeField("EFFECT", "FISHEYE");
-					case Effects.Whirl: return Block.MakeField("EFFECT", "WHIRL");
-					case Effects.Pixelate: return Block.MakeField("EFFECT", "PIXELATE");
-					case Effects.Mosaic: return Block.MakeField("EFFECT", "MOSAIC");
-					case Effects.Brightness: return Block.MakeField("EFFECT", "BRIGHTNESS");
-					case Effects.Ghost: return Block.MakeField("EFFECT", "GHOST");
+					case Effects.Color: return Block.MakeEffectField("COLOR");
+					case Effects.Fisheye: return Block.MakeEffectField("FISHEYE");
+					case Effects.Whirl: return Block.MakeEffectField("WHIRL");
+					case Effects.Pixelate: return Block.MakeEffectField("PIXELATE");
+					case Effects.Mosaic: return Block.MakeEffectField("MOSAIC");
+					case Effects.Brightness: return Block.MakeEffectField("BRIGHTNESS");
+					case Effects.Ghost: return Block.MakeEffectField("GHOST");
 					default: return null;
 				}
 			}

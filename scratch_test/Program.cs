@@ -1,57 +1,5 @@
-﻿/*using Scratch;
-
-namespace scratch_test
-{
-	internal class Program
-	{
-		static void Main(string[] args)
-		{
-			using(Project project = new Project("test", Extensions.Translate, false))
-			{
-				using(Sprite s = new Sprite("test2", project))
-				{
-					s.Vars["te"] = new Var(96);
-					s.Vars["fwafwa", true] = new Var(69);
-				}
-
-				using(Sprite sprite = new Sprite("testSprite", project))
-				{
-					sprite.Vars["te"] = new Var(43);
-					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
-
-					using(Column column = new Column(sprite))
-					{
-						new Movement.Goto(200, 200).PlaceIn(column);
-					}
-
-					using(MyBlock b = new MyBlock(sprite, "test", 100, 100).AddValue("x").Build())
-					{
-						//b.Add(new Movement.Goto(4242, b["x"]));
-						
-					}
-
-					using(Column column = new Column(sprite))
-					{
-						column.Add(new Movement.Goto(sprite.Vars["te"], 53));
-					}
-
-					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
-				}
-
-				using(Project.Background bg = project.background)
-				{
-					
-				}
-			}
-		}
-	}
-}*/
-
-using Scratch;
+﻿using Scratch;
 using System;
-using System.Data.Common;
-using System.Threading;
 
 namespace scratch_test
 {
@@ -84,7 +32,7 @@ namespace scratch_test
 				using(Sprite sprite = new Sprite("testSprite", project))
 				{
 					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting"));
+					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting")); //make recording
 
 					sprite.Vars["te"] = new Var(43);
 					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
@@ -159,6 +107,23 @@ namespace scratch_test
 						column.Add(new Looks.Switch.Backdrop(sprite.Costumes["testCostume"]));
 					}
 
+					using (Column column = new Column(sprite, 300, 0)) //Sounds
+					{
+						column.Add(new Sounds.Sound.Stop());
+						column.Add(new Sounds.Effect.Clear());
+						column.Add(new Sounds.Volume.Change(Sounds.Vars.Volume));
+						column.Add(new Sounds.Volume.Change(43));
+						column.Add(new Sounds.Volume.Change(sprite.Vars["te"]));
+						column.Add(new Sounds.Volume.Set(76));
+						column.Add(new Sounds.Volume.Set(sprite.Vars["te"]));
+						column.Add(new Sounds.Sound.Play(sprite.Sounds["catting"]));
+						column.Add(new Sounds.Sound.PlayAndWait(sprite.Sounds["catting"]));
+						column.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, 43));
+						column.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pitch, sprite.Vars["te"]));
+						column.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, 76));
+						column.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pan, sprite.Vars["te"]));
+					}
+
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
 					{
 						b.Add(new Movement.Goto(4242, b["x"]));
@@ -179,6 +144,11 @@ namespace scratch_test
 						b.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Forward, b["x"]));
 						b.Add(new Looks.Effect.Set(Looks.Effect.Effects.Color, b["x"]));
 						b.Add(new Looks.Effect.Change(Looks.Effect.Effects.Whirl, b["x"]));
+
+						b.Add(new Sounds.Volume.Set(b["x"]));
+						b.Add(new Sounds.Volume.Change(b["x"]));
+						b.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, b["x"]));
+						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
 					}
 				}
 			}

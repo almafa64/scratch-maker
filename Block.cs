@@ -132,8 +132,8 @@ namespace Scratch_Utils
 			col.Add(this);
 		}
 
-		private readonly string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
-		private readonly Random rd = new Random();
+		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
+		private readonly static Random rd = new Random();
 
 		internal string MakeInput(string name, object val, bool isString = false)
 		{
@@ -149,6 +149,11 @@ namespace Scratch_Utils
 		internal static string MakeField(string name, string data)
 		{
 			return $"\"{name}\":[\"{data}\",null]";
+		}
+
+		internal static string MakeEffectField(string data)
+		{
+			return MakeField("EFFECT", data);
 		}
 
 		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
