@@ -124,6 +124,16 @@ namespace scratch_test
 						column.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pan, sprite.Vars["te"]));
 					}
 
+					using (Column column = new Column(sprite, 300, 0)) //Variables
+					{
+						column.Add(new Variables.Change(sprite.Vars["te"], 64));
+						column.Add(new Variables.Change(sprite.Vars["te"], sprite.Vars["te"]));
+						column.Add(new Variables.Change(sprite.Set["te"], 64));
+						column.Add(new Variables.Change(sprite.Set["te"], sprite.Vars["te"]));
+						column.Add(new Variables.Show(sprite.Vars["te"]));
+						column.Add(new Variables.Hide(sprite.Vars["te"]));
+					}
+
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
 					{
 						b.Add(new Movement.Goto(4242, b["x"]));
@@ -149,6 +159,9 @@ namespace scratch_test
 						b.Add(new Sounds.Volume.Change(b["x"]));
 						b.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, b["x"]));
 						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
+
+						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
+						b.Add(new Variables.Change(sprite.Set["te"], b["x"]));
 					}
 				}
 			}

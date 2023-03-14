@@ -67,7 +67,7 @@ namespace Scratch
 			{
 				public Change(object by) : base("Change volume by", UsagePlace.Both, by)
 				{
-					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
+					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
 
 					args = new BlockArgs("sound_changevolumeby", MakeInput("VOLUME", by));
 				}
@@ -77,7 +77,7 @@ namespace Scratch
 			{
 				public Set(object to) : base("Set volume to", UsagePlace.Both, to)
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
+					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
 
 					args = new BlockArgs("sound_setvolumeto", MakeInput("VOLUME", to));
 				}
@@ -101,7 +101,7 @@ namespace Scratch
 			{
 				public Change(Effects effect, object by) : base("Change effect by", UsagePlace.Both, by)
 				{
-					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException($"by is string, which is not accepted");
+					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
 
 					args = new BlockArgs("looks_changeeffectby", MakeInput("VALUE", by), EffField(effect));
 				}
@@ -111,7 +111,7 @@ namespace Scratch
 			{
 				public Set(Effects effect, object to) : base("Set effect to", UsagePlace.Both, to)
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException($"to is string, which is not accepted");
+					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
 
 					args = new BlockArgs("looks_seteffectto", MakeInput("VALUE", to), EffField(effect));
 				}
