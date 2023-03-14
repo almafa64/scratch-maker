@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using static Scratch.Project;
 
 namespace Scratch_Utils
@@ -209,11 +210,26 @@ namespace Scratch
 			}
 			else
 			{
-				/*using(Bitmap a = new Bitmap(path))
+				using(FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
 				{
-					baseX = a.Width / 2;
-					baseY = a.Height / 2;
-				}*/
+					fs.Seek(1, SeekOrigin.Begin);
+					byte[] btype = new byte[3];
+					fs.Read(btype, 0, 3);
+					switch(Encoding.Default.GetString(btype))
+					{
+						case "PNG":
+							fs.Seek(12, SeekOrigin.Current);
+							byte[] bwidth = new byte[4];
+							fs.Read(bwidth, 0, 4);
+							Array.Reverse(bwidth);
+							baseX = BitConverter.ToInt32(bwidth, 0) / 2f;
+							byte[] bheight = new byte[4];
+							fs.Read(bheight, 0, 4);
+							Array.Reverse(bheight);
+							baseY = BitConverter.ToInt32(bheight, 0) / 2f;
+							break;
+					}
+				}
 			}
 			this.x = x + baseX;
 			this.y = y + baseY;

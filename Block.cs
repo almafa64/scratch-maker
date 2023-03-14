@@ -167,6 +167,7 @@ namespace Scratch_Utils
 		{
 			if(val is Movement.Vars vM) val = GetVar(Movement.specVars, typeof(Movement.Vars), vM);
 			else if(val is Looks.Vars vL) val = GetVar(Looks.specVars, typeof(Looks.Vars), vL);
+			else if(val is Sounds.Vars vS) val = GetVar(Sounds.specVars, typeof(Sounds.Vars), vS);
 		}
 	}
 

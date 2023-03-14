@@ -255,6 +255,10 @@ namespace Scratch
 			Looks.specVars["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
 			Looks.specVars["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable");
 			#endregion
+
+			#region SoundsVars
+			Looks.specVars["Volume"] = new SpecVar(UsagePlace.Both, "sound_volume", "current volume of sprite");
+			#endregion
 		}
 
 		public class Background : SObject, IDisposable
