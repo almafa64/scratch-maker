@@ -142,7 +142,30 @@ namespace scratch_test
 						column.Add(new Events.Broadcasts.SendAndWait(sprite.Broadcasts["test"]));
 					}
 
-					using (Column column = new Column(sprite, 1200, 0)) //Variables
+					using(Column column = new Column(sprite, 1200, 0)) //Control
+					{
+						column.Add(new Control.Wait(20));
+						column.Add(new Control.Wait(sprite.Vars["te"]));
+						column.Add(new Control.Stop(Control.Stop.What.All));
+					}
+					using(Column column = new Column(sprite, 1200, 300)) //Control2
+					{
+						column.Add(new Control.Stop(Control.Stop.What.This));
+					}
+					using(Control.Clone.StartAs column = new Control.Clone.StartAs(sprite, 1200, 400)) //Control3
+					{
+						column.Add(new Control.Clone.Create(Control.Clone.Create.What.Myself));
+						column.Add(new Control.Clone.Create(project.Sprites["test2"]));
+						column.Add(new Control.Stop(Control.Stop.What.OtherScripts));
+						column.Add(new Control.Clone.Delete());
+					}
+
+					using(Column column = new Column(sprite, 1500, 0)) //Operators
+					{
+						column.Add(new Operators.Add(new Operators.Subtract(42, new Operators.Divide(sprite.Vars["te"], 4)), new Operators.Multiply(sprite.Vars["te"], 69)));
+					}
+
+					using (Column column = new Column(sprite, 1800, 0)) //Variables
 					{
 
 						column.Add(new Variables.Change(sprite.Vars["te"], 64)).AddComment("trying to test");
@@ -179,7 +202,8 @@ namespace scratch_test
 						b.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, b["x"]));
 						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
 
-						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
+						b.Add(new Control.Wait(b["x"]));
+
 						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
 					}
 				}

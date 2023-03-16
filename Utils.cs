@@ -275,20 +275,28 @@ namespace Scratch_Utils
 
 							fileText.Append("},\"mutation\":{");
 
-							fileText.Append("\"argumentdefaults\":\"");
-							fileText.Append(m.argumentDefaults);
+							if(m.hasNext != null)
+							{
+								if((int)m.hasNext == 0) fileText.Append("\"hasnext\":\"false");
+								else fileText.Append("\"hasnext\":\"true");
+							}
+							else
+							{
+								fileText.Append("\"argumentdefaults\":\"");
+								fileText.Append(m.argumentDefaults);
 
-							fileText.Append("\",\"argumentids\":\"");
-							fileText.Append(m.argumentIds);
+								fileText.Append("\",\"argumentids\":\"");
+								fileText.Append(m.argumentIds);
 
-							fileText.Append("\",\"argumentnames\":\"");
-							fileText.Append(m.argumentNames);
+								fileText.Append("\",\"argumentnames\":\"");
+								fileText.Append(m.argumentNames);
 
-							fileText.Append("\",\"proccode\":\"");
-							fileText.Append(m.proCode);
+								fileText.Append("\",\"proccode\":\"");
+								fileText.Append(m.proCode);
 
-							fileText.Append("\",\"warp\":\"");
-							fileText.Append(Utils.Small(m.warp));
+								fileText.Append("\",\"warp\":\"");
+								fileText.Append(Utils.Small(m.warp));
+							}
 
 							fileText.Append("\",\"children\":[],\"tagName\":\"mutation\"");
 						}

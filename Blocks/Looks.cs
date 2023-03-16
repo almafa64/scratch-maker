@@ -56,7 +56,8 @@ namespace Scratch
 				{
 					Block tmp = new Block(null)
 					{
-						args = new BlockArgs("looks_costume", null, $"\"COSTUME\":[\"{costume.Name}\",null]", null, null, true)
+						args = new BlockArgs("looks_costume", null, $"\"COSTUME\":[\"{costume.Name}\",null]", null, null, true),
+						needsNext = false
 					};
 
 					args = new BlockArgs("looks_switchcostumeto", $"\"COSTUME\":[1,\"{tmp.args.Id}\"]");
@@ -96,7 +97,8 @@ namespace Scratch
 
 				return new Block(null)
 				{
-					args = new BlockArgs("looks_backdrops", null, $"\"BACKDROP\":[\"{cosName}\",null]", null, null, true)
+					args = new BlockArgs("looks_backdrops", null, $"\"BACKDROP\":[\"{cosName}\",null]", null, null, true),
+					needsNext = false
 				};
 			}
 

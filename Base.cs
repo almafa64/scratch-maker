@@ -434,7 +434,7 @@ namespace Scratch
 			}
 			foreach(Block b in block.kids)
 			{
-				CheckBlockUsage(b);
+				Add(b);
 			}
 			CheckBlockUsage(block);
 			return block;

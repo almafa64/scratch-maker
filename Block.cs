@@ -2,10 +2,7 @@
 using Scratch_Utils;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
-using static Scratch.Looks;
-using static Scratch.Movement;
 
 namespace Scratch_Utils
 {
@@ -41,7 +38,8 @@ namespace Scratch_Utils
 		internal string argumentIds;
 		internal string argumentNames;
 		internal string proCode;
-		
+		internal object hasNext;
+
 		public bool warp;
 
 		internal void Reset()
@@ -64,6 +62,8 @@ namespace Scratch_Utils
 			argumentIds += $"{ids}]";
 			argumentNames += $"{names}]";
 			proCode = procode.ToString();
+
+			hasNext = null;
 		}
 	}
 
@@ -104,49 +104,22 @@ namespace Scratch_Utils
 			};
 			if(addMain) blocks.Add(mainBlock);
 		}
-	}
 
-	internal class SpecVar : Block
-	{
-		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, usagePlace, vals)
+		public TopBlock AddComment(Comment comment)
 		{
-			args = new BlockArgs(opcode, input, field);
-			this.usagePlace = usagePlace;
+			if(mainBlock.comment != null) throw new ArgumentException($"Comment already assigned to mainBlock Block with text \"{mainBlock.comment.text}\"");
+			mainBlock.comment = comment;
+			comment.block = mainBlock;
+			return this;
+		}
+
+		public TopBlock AddComment(string text, bool minimized = false, int height = 200, int width = 200)
+		{
+			if(mainBlock.comment != null) throw new ArgumentException($"Comment already assigned to mainBlock Block with text \"{mainBlock.comment.text}\"");
+			return AddComment(new Comment(text, 0, 0, minimized, height, width));
 		}
 	}
 
-	/*internal class SpecBlock : SpecVar
-	{
-		internal Block main;
-		internal SpecBlock(UsagePlace usagePlace, string name, params object[] vals) : base(usagePlace, name, null, null, null, vals)
-		{
-			
-		}
-	}*/
-
-	[Flags]
-	internal enum AcceptedTypes
-	{
-		None = 0,
-		Number = 1,
-		String = 2,
-		Variable = 4,
-		List = 8,
-		Enum = 16,
-		Sprite = 32,
-		MyBlockVar = 64,
-	}
-
-	internal enum UsagePlace
-	{
-		Sprite,
-		Background,
-		Both
-	}
-}
-
-namespace Scratch
-{
 	public class Block
 	{
 		internal bool needsNext = true;
@@ -199,6 +172,7 @@ namespace Scratch
 		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
 		{
 			varBlock.args.ParentId = mainBlock.args.Id;
+			varBlock.needsNext = false;
 			mainBlock.kids.Add(varBlock);
 			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[{def}]]";
 		}
@@ -226,10 +200,44 @@ namespace Scratch
 		public Block AddComment(string text, bool minimized = false, int height = 200, int width = 200)
 		{
 			if(this.comment != null) throw new ArgumentException($"Comment already assigned to this Block with text \"{this.comment.text}\"");
-			Comment comment = new Comment(text, 200, 200, minimized, height, width);
-			this.comment = comment;
-			comment.block = this;
-			return this;
+			return AddComment(new Comment(text, 0, 0, minimized, height, width));
 		}
+	}
+
+	public class SpecVar : Block
+	{
+		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, usagePlace, vals)
+		{
+			args = new BlockArgs(opcode, input, field);
+			this.usagePlace = usagePlace;
+		}
+	}
+
+	public class SpecBlock : SpecVar
+	{
+		internal SpecBlock(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals) : base(usagePlace, name, null, null, null, vals)
+		{
+			
+		}
+	}
+
+	[Flags]
+	internal enum AcceptedTypes
+	{
+		None = 0,
+		Number = 1,
+		String = 2,
+		Variable = 4,
+		List = 8,
+		Enum = 16,
+		Sprite = 32,
+		MyBlockVar = 64,
+	}
+
+	internal enum UsagePlace
+	{
+		Sprite,
+		Background,
+		Both
 	}
 }

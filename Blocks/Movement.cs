@@ -46,7 +46,8 @@ namespace Scratch
 				args = new BlockArgs("motion_goto");
 
 				Block tmp = new Block(null) {
-					args = new BlockArgs("motion_goto_menu", null, arg, null, null, true)
+					args = new BlockArgs("motion_goto_menu", null, arg, null, null, true),
+					needsNext = false
 				};
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
@@ -79,7 +80,8 @@ namespace Scratch
 
 				Block tmp = new Block(null)
 				{
-					args = new BlockArgs("motion_glideto_menu", null, arg, null, null, true)
+					args = new BlockArgs("motion_glideto_menu", null, arg, null, null, true),
+					needsNext = false
 				};
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
@@ -200,7 +202,8 @@ namespace Scratch
 
 					Block tmp = new Block(null)
 					{
-						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, null, true)
+						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, null, true),
+						needsNext = false 
 					};
 					tmp.args.ParentId = args.Id;
 					kids.Add(tmp);

@@ -17,7 +17,8 @@ namespace Scratch
 		{
 			return new Block(null)
 			{
-				args = new BlockArgs("sound_sounds_menu", null, $"\"SOUND_MENU\":[\"{s.Name}\",null]", null, null, true)
+				args = new BlockArgs("sound_sounds_menu", null, $"\"SOUND_MENU\":[\"{s.Name}\",null]", null, null, true),
+				needsNext = false
 			};
 		}
 
