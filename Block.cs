@@ -95,84 +95,14 @@ namespace Scratch_Utils
 
 	public class TopBlock : Column
 	{
-		public TopBlock(SObject sprite, int x = 200, int y = 200) : base(sprite, x, y){}
-	}
-
-	public class Block
-	{
-		internal bool needsNext = true;
-		internal string name;
-		internal BlockArgs args;
-		internal List<Block> kids = new List<Block>();
-		internal UsagePlace usagePlace = UsagePlace.Both;
-
-		internal Block(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals)
+		internal Block mainBlock;
+		public TopBlock(string opcode, string name, SObject sprite, int x = 200, int y = 200, bool addMain = true) : base(sprite, x, y)
 		{
-			this.usagePlace = usagePlace;
-			this.name = name;
-			for(int i = 0; i < vals.Length; i++)
+			mainBlock = new Block(name)
 			{
-				object o = vals[i];
-				switch(TypeCheck.Check(o))
-				{
-					case AcceptedTypes.None:
-						throw new ArgumentException($"Argument is null at place {i} on block {name}");
-					case AcceptedTypes.Variable:
-						if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {i} on block {name}");
-						break;
-					case AcceptedTypes.List:
-						if((o as List).vars == null) throw new ArgumentException($"Not initalized list at place {i} on block {name}");
-						break;
-				}
-			}
-		}
-
-		public void PlaceIn(Column col)
-		{
-			col.Add(this);
-		}
-
-		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
-		private readonly static Random rd = new Random();
-
-		internal string MakeInput(string name, object val, bool isString = false)
-		{
-			//needs TypeCheck !!!
-			BuiltInVars(ref val);
-			string def = isString ? $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\"" : "4,\"0\"";
-			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
-			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
-			else if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
-			else return $"\"{name}\":[1,[{(isString?"10":"4")},\"{val}\"]]";
-		}
-
-		internal static string MakeField(string name, string data)
-		{
-			return $"\"{name}\":[\"{data}\",null]";
-		}
-
-		internal static string MakeEffectField(string data)
-		{
-			return MakeField("EFFECT", data);
-		}
-
-		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
-		{
-			varBlock.args.ParentId = mainBlock.args.Id;
-			mainBlock.kids.Add(varBlock);
-			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[{def}]]";
-		}
-
-		internal static SpecVar GetVar(Dictionary<string, SpecVar> dir, Type enumType, object value)
-		{
-			return dir[Enum.GetName(enumType, value)];
-		}
-
-		internal static void BuiltInVars(ref object val)
-		{
-			if(val is Movement.Vars vM) val = GetVar(Movement.specVars, typeof(Movement.Vars), vM);
-			else if(val is Looks.Vars vL) val = GetVar(Looks.specVars, typeof(Looks.Vars), vL);
-			else if(val is Sounds.Vars vS) val = GetVar(Sounds.specVars, typeof(Sounds.Vars), vS);
+				args = new BlockArgs(opcode, null, null, null, null, false, true)
+			};
+			if(addMain) blocks.Add(mainBlock);
 		}
 	}
 
@@ -212,5 +142,94 @@ namespace Scratch_Utils
 		Sprite,
 		Background,
 		Both
+	}
+}
+
+namespace Scratch
+{
+	public class Block
+	{
+		internal bool needsNext = true;
+		internal string name;
+		internal Comment comment = null;
+		internal BlockArgs args;
+		internal List<Block> kids = new List<Block>();
+		internal UsagePlace usagePlace = UsagePlace.Both;
+
+		internal Block(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals)
+		{
+			this.usagePlace = usagePlace;
+			this.name = name;
+			for(int i = 0; i < vals.Length; i++)
+			{
+				TypeCheck.BaseCheck(vals[i], name);
+			}
+		}
+
+		public Block PlaceIn(Column col)
+		{
+			return col.Add(this);
+		}
+
+		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
+		private readonly static Random rd = new Random();
+
+		internal string MakeInput(string name, object val, bool isString = false)
+		{
+			//needs TypeCheck !!!
+			BuiltInVars(ref val);
+			string def = isString ? $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\"" : "4,\"0\"";
+			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
+			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
+			else if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
+			else return $"\"{name}\":[1,[{(isString ? "10" : "4")},\"{val}\"]]";
+		}
+
+		internal static string MakeField(string name, string data, bool needQuote = true)
+		{
+			if(needQuote) return $"\"{name}\":[\"{data}\",null]";
+			else return $"\"{name}\":[{data},null]";
+		}
+
+		internal static string MakeEffectField(string data)
+		{
+			return MakeField("EFFECT", data);
+		}
+
+		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
+		{
+			varBlock.args.ParentId = mainBlock.args.Id;
+			mainBlock.kids.Add(varBlock);
+			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[{def}]]";
+		}
+
+		internal static SpecVar GetVar(Dictionary<string, SpecVar> dir, Type enumType, object value)
+		{
+			return dir[enumType.GetEnumName(value)];
+		}
+
+		internal static void BuiltInVars(ref object val)
+		{
+			if(val is Movement.Vars vM) val = GetVar(Movement.specVars, typeof(Movement.Vars), vM);
+			else if(val is Looks.Vars vL) val = GetVar(Looks.specVars, typeof(Looks.Vars), vL);
+			else if(val is Sounds.Vars vS) val = GetVar(Sounds.specVars, typeof(Sounds.Vars), vS);
+		}
+
+		public Block AddComment(Comment comment)
+		{
+			if(this.comment != null) throw new ArgumentException($"Comment already assigned to this Block with text \"{this.comment.text}\"");
+			this.comment = comment;
+			comment.block = this;
+			return this;
+		}
+
+		public Block AddComment(string text, bool minimized = false, int height = 200, int width = 200)
+		{
+			if(this.comment != null) throw new ArgumentException($"Comment already assigned to this Block with text \"{this.comment.text}\"");
+			Comment comment = new Comment(text, 200, 200, minimized, height, width);
+			this.comment = comment;
+			comment.block = this;
+			return this;
+		}
 	}
 }

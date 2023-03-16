@@ -9,15 +9,25 @@ namespace scratch_test
 		{
 			using(Project project = new Project("test", Extensions.Translate, false))
 			{
-				using(Sprite s = new Sprite("test2", project))
-				{
-					s.Vars["te"] = new Var(96);
-					s.Vars["fwafwa", true] = new Var(69);
-				}
-
 				using(Project.Background bg = project.background)
 				{
-					bg.AddCostumes(new Costume("blackness.png", "testBackdrop"));
+					bg.Costumes["testBackdrop"] = new Costume("blackness.png");
+
+					using(Events.ClickStage c = new Events.ClickStage(bg, 400)) { }
+
+					using(Sprite s = new Sprite("test2", project))
+					{
+						s.Vars["te"] = new Var(96);
+						s.Vars["fwafwa", true] = new Var(69);
+						s.Broadcasts["test"] = new Broadcast();
+
+						using(Events.ClickSprite c = new Events.ClickSprite(s, 0)) { }
+						using(Events.ClickFlag c = new Events.ClickFlag(s, 0, 100)) { }
+						using(Events.KeyPress c = new Events.KeyPress(Events.KeyPress.Keys.UpArrow, s, 0, 200)) { }
+						using(Events.BackdropSwitch c = new Events.BackdropSwitch(bg.Costumes["testBackdrop"], s, 0, 300)) { }
+						using(Events.Greater c = new Events.Greater(Events.Greater.What.Loudness, 20, s, 0, 400)) { }
+						using(Events.Broadcasts.Recive c = new Events.Broadcasts.Recive(s.Broadcasts["test"], s, 0, 500)) { }
+					}
 
 					using(Column column = new Column(bg, 0, 0))
 					{
@@ -31,8 +41,10 @@ namespace scratch_test
 
 				using(Sprite sprite = new Sprite("testSprite", project))
 				{
-					sprite.AddCostumes(new Costume("6a952345f4af816734ce38eb69bfea8a.png", "testCostume"));
-					sprite.AddSounds(new Sound("83c36d806dc92327b9e7049a565c6bff.wav", "catting")); //make recording
+					sprite.Costumes["testCostume"] = new Costume("6a952345f4af816734ce38eb69bfea8a.png");
+					sprite.Sounds["catting"] = new Sound("83c36d806dc92327b9e7049a565c6bff.wav"); //make recording
+
+					sprite.AddComments(new Comment("testing", 200, 200, true));
 
 					sprite.Vars["te"] = new Var(43);
 					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
@@ -107,31 +119,38 @@ namespace scratch_test
 						column.Add(new Looks.Switch.Backdrop(sprite.Costumes["testCostume"]));
 					}
 
-					using (Column column = new Column(sprite, 300, 0)) //Sounds
+					using (Column column = new Column(sprite, 600, 0)) //Sounds
 					{
-						column.Add(new Sounds.Sound.Stop());
+						column.Add(new Sounds.Stop());
 						column.Add(new Sounds.Effect.Clear());
 						column.Add(new Sounds.Volume.Change(Sounds.Vars.Volume));
 						column.Add(new Sounds.Volume.Change(43));
 						column.Add(new Sounds.Volume.Change(sprite.Vars["te"]));
 						column.Add(new Sounds.Volume.Set(76));
 						column.Add(new Sounds.Volume.Set(sprite.Vars["te"]));
-						column.Add(new Sounds.Sound.Play(sprite.Sounds["catting"]));
-						column.Add(new Sounds.Sound.PlayAndWait(sprite.Sounds["catting"]));
+						column.Add(new Sounds.Play(sprite.Sounds["catting"]));
+						column.Add(new Sounds.PlayAndWait(sprite.Sounds["catting"]));
 						column.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, 43));
 						column.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pitch, sprite.Vars["te"]));
 						column.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, 76));
 						column.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pan, sprite.Vars["te"]));
 					}
 
-					using (Column column = new Column(sprite, 300, 0)) //Variables
+					using(Column column = new Column(sprite, 900, 0)) //Events
 					{
-						column.Add(new Variables.Change(sprite.Vars["te"], 64));
-						column.Add(new Variables.Change(sprite.Vars["te"], sprite.Vars["te"]));
-						column.Add(new Variables.Change(sprite.Set["te"], 64));
-						column.Add(new Variables.Change(sprite.Set["te"], sprite.Vars["te"]));
+						column.Add(new Events.Broadcasts.Send(sprite.Broadcasts["test"]));
+						column.Add(new Events.Broadcasts.SendAndWait(sprite.Broadcasts["test"]));
+					}
+
+					using (Column column = new Column(sprite, 1200, 0)) //Variables
+					{
+
+						column.Add(new Variables.Change(sprite.Vars["te"], 64)).AddComment("trying to test");
+						column.Add(new Variables.Change(sprite.Vars["fwafwa"], sprite.Vars["te"]));
+						column.Add(new Variables.Set(sprite.Vars["te"], 64));
+						column.Add(new Variables.Set(sprite.Vars["fwafwa"], sprite.Vars["te"]));
 						column.Add(new Variables.Show(sprite.Vars["te"]));
-						column.Add(new Variables.Hide(sprite.Vars["te"]));
+						column.Add(new Variables.Hide(sprite.Vars["fwafwa"]));
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
@@ -161,7 +180,7 @@ namespace scratch_test
 						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
 
 						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
-						b.Add(new Variables.Change(sprite.Set["te"], b["x"]));
+						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
 					}
 				}
 			}

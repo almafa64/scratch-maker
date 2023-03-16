@@ -136,6 +136,22 @@ namespace Scratch_Utils
 
 			return AcceptedTypes.None;
 		}
+
+		internal static void BaseCheck(object o, string blockName, int index = 0)
+		{
+			string i = (index == 0) ? "" : index.ToString();
+			switch(Check(o))
+			{
+				case AcceptedTypes.None:
+					throw new ArgumentException($"Argument is null at place {i} on block {blockName}");
+				case AcceptedTypes.Variable:
+					if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {i} on block \"{blockName}\"");
+					break;
+				case AcceptedTypes.List:
+					if((o as List).vars == null) throw new ArgumentException($"Not initalized list at place {i} on block \"{blockName}\"");
+					break;
+			}
+		}
 	}
 
 	internal class Compiler
@@ -241,6 +257,8 @@ namespace Scratch_Utils
 				{
 					foreach(Block block in column.blocks)
 					{
+						if(block.comment != null) sObject._Comments.Add(block.comment);
+
 						fileText.Append('"');
 						BlockArgs tmpArgs = block.args;
 						fileText.Append(tmpArgs.Id);
@@ -293,6 +311,13 @@ namespace Scratch_Utils
 						}
 						else fileText.Append("null");
 
+						if(block.comment != null)
+						{
+							fileText.Append(",\"comment\":\"");
+							fileText.Append(block.comment.Id);
+							fileText.Append('"');
+						}
+
 						fileText.Append(",\"opcode\":\"");
 						fileText.Append(tmpArgs.OpCode);
 						fileText.Append('"');
@@ -317,35 +342,47 @@ namespace Scratch_Utils
 			}
 
 			fileText.Append("},\"broadcasts\":{");
-			if(!isSprite && sObject._Broadcasts.Count != 0)
+			if(!isSprite)
 			{
-				foreach(KeyValuePair<string, Broadcast> map in sObject._Broadcasts)
+				Background bg = sObject as Background;
+				if(bg._Broadcasts.Count != 0)
 				{
-					fileText.Append('"');
-					fileText.Append(map.Value.Id);
-					fileText.Append("\":\"");
-					fileText.Append(map.Key);
-					fileText.Append("\",");
+					foreach(KeyValuePair<string, Broadcast> map in bg._Broadcasts)
+					{
+						fileText.Append('"');
+						fileText.Append(map.Value.Id);
+						fileText.Append("\":\"");
+						fileText.Append(map.Key);
+						fileText.Append("\",");
+					}
+					Utils.RemoveLast(fileText);
 				}
-				Utils.RemoveLast(fileText);
 			}
 
 			fileText.Append("},\"comments\":{");
 			if(sObject._Comments.Count != 0)
 			{
-				foreach(KeyValuePair<string, Comment> map in sObject._Comments)
+				foreach(Comment cm in sObject._Comments)
 				{
-					Comment cm = map.Value;
 					fileText.Append('"');
 					fileText.Append(cm.Id);
 					fileText.Append("\":{\"blockId\":");
 
-					if(cm.blockId == null) fileText.Append("null");
+					if(cm.block == null)
+					{
+						fileText.Append("null");
+
+						fileText.Append(",\"x\":");
+						fileText.Append(cm.x);
+
+						fileText.Append(",\"y\":");
+						fileText.Append(cm.y);
+					}
 					else
 					{
-						fileText.Append('"');
-						fileText.Append(cm.blockId);
-						fileText.Append('"');
+						fileText.Append("\"");
+						fileText.Append(cm.block.args.Id);
+						fileText.Append("\"");
 					}
 
 					fileText.Append(",\"height\":");
@@ -356,12 +393,6 @@ namespace Scratch_Utils
 
 					fileText.Append(",\"minimized\":");
 					fileText.Append(Utils.Small(cm.minimized));
-
-					fileText.Append(",\"x\":");
-					fileText.Append(cm.x);
-
-					fileText.Append(",\"y\":");
-					fileText.Append(cm.y);
 
 					fileText.Append(",\"text\":\"");
 					fileText.Append(cm.text);

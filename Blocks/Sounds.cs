@@ -1,4 +1,5 @@
 ﻿using Scratch_Utils;
+using System;
 using System.Collections.Generic;
 
 namespace Scratch
@@ -7,57 +8,50 @@ namespace Scratch
 	{
 		public enum Vars
 		{
-			Size,
-			CostumeName,
-			CostumeNumber,
-			BackdropName,
-			BackdropNumber
+			Volume
 		}
 
 		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>();
 
-		public static class Sound
+		private static Block SoundBlock(Sound s)
 		{
-			private static Block SoundBlock(Sound s)
+			return new Block(null)
 			{
-				return new Block(null)
-				{
-					args = new BlockArgs("sound_sounds_menu", null, $"\"SOUND_MENU\":[\"{s.Name}\",null]", null, null, true)
-				};
+				args = new BlockArgs("sound_sounds_menu", null, $"\"SOUND_MENU\":[\"{s.Name}\",null]", null, null, true)
+			};
+		}
+
+		public class Play : Block
+		{
+			public Play(Sound sound) : base("Play sound")
+			{
+				Block tmp = SoundBlock(sound);
+
+				args = new BlockArgs("sound_play", $"\"SOUND_MENU\":[1,\"{tmp.args.Id}\"]");
+
+				tmp.args.ParentId = args.Id;
+				kids.Add(tmp);
 			}
+		}
 
-			public class Play : Block
+		public class PlayAndWait : Block
+		{
+			public PlayAndWait(Sound sound) : base("Play sound until done")
 			{
-				public Play(Sound sound) : base("Play sound")
-				{
-					Block tmp = SoundBlock();
+				Block tmp = SoundBlock(sound);
 
-					args = new BlockArgs("sound_play", $"\"SOUND_MENU\":[1,\"{tmp.args.Id}\"]");
+				args = new BlockArgs("sound_playuntildone", $"\"SOUND_MENU\":[1,\"{tmp.args.Id}\"]");
 
-					tmp.args.ParentId = args.Id;
-					kids.Add(tmp);
-				}
+				tmp.args.ParentId = args.Id;
+				kids.Add(tmp);
 			}
+		}
 
-			public class PlayAndWait : Block
+		public class Stop : Block
+		{
+			public Stop() : base("Stop sounds")
 			{
-				public PlayAndWait(Sound sound) : base("Play sound until done")
-				{
-					Block tmp = SoundBlock();
-
-					args = new BlockArgs("sound_playuntildone", $"\"SOUND_MENU\":[1,\"{tmp.args.Id}\"]");
-
-					tmp.args.ParentId = args.Id;
-					kids.Add(tmp);
-				}
-			}
-
-			public class Stop: Block
-			{
-				public Stop() : base("Stop sounds")
-				{
-					args = new BlockArgs("sound_stopallsounds");
-				}
+				args = new BlockArgs("sound_stopallsounds");
 			}
 		}
 
@@ -103,7 +97,7 @@ namespace Scratch
 				{
 					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
 
-					args = new BlockArgs("looks_changeeffectby", MakeInput("VALUE", by), EffField(effect));
+					args = new BlockArgs("sound_changeeffectby", MakeInput("VALUE", by), EffField(effect));
 				}
 			}
 
@@ -113,7 +107,7 @@ namespace Scratch
 				{
 					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
 
-					args = new BlockArgs("looks_seteffectto", MakeInput("VALUE", to), EffField(effect));
+					args = new BlockArgs("sound_seteffectto", MakeInput("VALUE", to), EffField(effect));
 				}
 			}
 

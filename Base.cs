@@ -1,34 +1,36 @@
 ﻿using Scratch;
 using Scratch_Utils;
+using Scratch_Utils.Dics;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
 using System.Threading;
 
-namespace Scratch_Utils
+namespace Scratch_Utils.Dics
 {
-	public class VarDic
+	public class DataDic<TVal>
 	{
+		internal Dictionary<string, TVal> dic;
 		internal SObject sObject;
-		internal Dictionary<string, Var> vars;
 
-		internal VarDic(SObject sObject, Dictionary<string, Var> vars)
+		internal DataDic(SObject sObject, Dictionary<string, TVal> dic)
 		{
 			this.sObject = sObject;
-			this.vars = vars;
+			this.dic = dic;
 		}
+	}
+
+	public class VarDic : DataDic<Var>
+	{
+		internal VarDic(SObject sObject, Dictionary<string, Var> vars) : base(sObject, vars) { }
 
 		public Var this[string name, bool global = false]
 		{
 			get
 			{
-				if(Var.Has(sObject, name)) return vars[name];
+				if(Var.Has(sObject, name)) return dic[name];
 				else if(Var.BgHas(sObject, name)) return sObject.Project.background._Vars[name];
-				else throw new ArgumentException($"No variable was found with the name \"{name}\"");
+				else throw new ArgumentException($"No Var was found with the name \"{name}\"");
 			}
 
 			set
@@ -37,30 +39,23 @@ namespace Scratch_Utils
 
 				value.Name = name;
 				value.sObject = sObject;
-				if(!global || sObject is Project.Background) vars[name] = value;
+				if(!global || sObject is Project.Background) dic[name] = value;
 				else sObject.Project.background._Vars[name] = value;
 			}
 		}
 	}
 
-	public class ListDic
+	public class ListDic : DataDic<List>
 	{
-		internal SObject sObject;
-		internal Dictionary<string, List> lists;
-
-		internal ListDic(SObject sObject, Dictionary<string, List> lists)
-		{
-			this.sObject = sObject;
-			this.lists = lists;
-		}
+		internal ListDic(SObject sObject, Dictionary<string, List> lists) : base(sObject, lists) { }
 
 		public List this[string name, bool global = false]
 		{
 			get
 			{
-				if(List.Has(sObject, name)) return lists[name];
+				if(List.Has(sObject, name)) return dic[name];
 				else if(List.BgHas(sObject, name)) return sObject.Project.background._Lists[name];
-				else throw new ArgumentException($"No list was found with the name \"{name}\"");
+				else throw new ArgumentException($"No List was found with the name \"{name}\"");
 			}
 
 			set
@@ -69,29 +64,93 @@ namespace Scratch_Utils
 
 				value.Name = name;
 				value.sObject = sObject;
-				if(!global || sObject is Project.Background) lists[name] = value;
+				if(!global || sObject is Project.Background) dic[name] = value;
 				else sObject.Project.background._Lists[name] = value;
 			}
 		}
 	}
 
-	public class MyBlockDic
+	public class BroadcastDic
 	{
-		internal SObject sObject;
-		internal Dictionary<string, MyBlock> myBlocks;
-
-		internal MyBlockDic(SObject sObject, Dictionary<string, MyBlock> myBlocks)
+		SObject sObject;
+		internal BroadcastDic(SObject sObject)
 		{
 			this.sObject = sObject;
-			this.myBlocks = myBlocks;
 		}
+
+		public Broadcast this[string name]
+		{
+			get
+			{
+				if(Broadcast.Has(sObject, name)) return sObject.Project.background._Broadcasts[name];
+				else throw new ArgumentException($"No Broadcast was found with the name \"{name}\"");
+			}
+
+			set
+			{
+				if(Broadcast.Has(sObject, name)) throw new ArgumentException($"Broadcast with the name \"{name}\" already exists");
+
+				value.Name = name;
+				sObject.Project.background._Broadcasts[name] = value;
+			}
+		}
+	}
+
+	public class SoundDic : DataDic<Sound>
+	{
+		internal SoundDic(SObject sObject, Dictionary<string, Sound> broadcast) : base(sObject, broadcast) { }
+
+		public Sound this[string name]
+		{
+			get
+			{
+				if(Sound.Has(sObject, name)) return dic[name];
+				else throw new ArgumentException($"No Sound was found with the name \"{name}\"");
+			}
+
+			set
+			{
+				if(Sound.Has(sObject, name)) throw new ArgumentException($"Sound with the name \"{name}\" already exists");
+
+				value.Name = name;
+				dic[name] = value;
+			}
+		}
+	}
+
+	public class CostumeDic : DataDic<Costume>
+	{
+		internal CostumeDic(SObject sObject, Dictionary<string, Costume> costume) : base(sObject, costume) { }
+
+		public Costume this[string name]
+		{
+			get
+			{
+				if(Costume.Has(sObject, name)) return dic[name];
+				else throw new ArgumentException($"No Costume was found with the name \"{name}\"");
+			}
+
+			set
+			{
+				if(value.Name != null) throw new ArgumentException("Wrong Costume class was used");
+				else if(Costume.Has(sObject, name)) throw new ArgumentException($"Costume with the name \"{name}\" already exists");
+
+				value.Name = name;
+				dic[name] = value;
+			}
+		}
+	}
+
+	public class MyBlockDic : DataDic<MyBlock>
+	{
+		internal MyBlockDic(SObject sObject, Dictionary<string, MyBlock> myBlocks) : base(sObject, myBlocks) { }
 
 		public MyBlock this[string name]
 		{
 			get
 			{
-				if(sObject._MyBlocks.ContainsKey(name)) return myBlocks[name];
-				else throw new ArgumentException($"No list was found with the name \"{name}\"");
+				if(sObject._MyBlocks.ContainsKey(name)) return dic[name];
+				else throw new ArgumentException($"No MyBlock was found with the name \"{name}\"");
 			}
 		}
 	}
@@ -116,73 +175,92 @@ namespace Scratch_Utils
 			}
 		}
 	}
+}
 
+namespace Scratch_Utils
+{
 	public class SObject
 	{
 		internal List<Column> columns;
 
-		public ReadOnlyDictionary<string, Broadcast> Broadcasts { get; internal set; }
-		public ReadOnlyDictionary<string, Comment> Comments { get; internal set; }
-		public ReadOnlyDictionary<string, Sound> Sounds { get; internal set; }
-		public ReadOnlyDictionary<string, Costume> Costumes { get; internal set; }
-
-		internal Dictionary<string, Broadcast> _Broadcasts;
-		internal Dictionary<string, Comment> _Comments;
 		internal Dictionary<string, Sound> _Sounds;
 		internal Dictionary<string, Costume> _Costumes;
-
 		internal Dictionary<string, List> _Lists;
 		internal Dictionary<string, Var> _Vars;
+		internal Dictionary<string, MyBlock> _MyBlocks;
+
 		public VarDic Vars { get; internal set; }
 		public ListDic Lists { get; internal set; }
-
-		internal Dictionary<string, MyBlock> _MyBlocks;
+		public SoundDic Sounds { get; internal set; }
+		public CostumeDic Costumes { get; internal set; }
 		public MyBlockDic MyBlocks { get; internal set; }
+
+		public BroadcastDic Broadcasts { get; internal set; }
+
+		internal List<Comment> _Comments;
 
 		internal Project Project;
 
-		public int CurrentCostume { get; set; }
-		public int LayerOrder { get; set; }
+		public int CurrentCostume = 0;
+		public int LayerOrder = 1;
 
-		public SObject(Project project) 
+		public SObject(Project project)
 		{
 			_Sounds = new Dictionary<string, Sound>();
-			_Broadcasts = new Dictionary<string, Broadcast>();
-			_Comments = new Dictionary<string, Comment>();
 			_Costumes = new Dictionary<string, Costume>();
-
 			_MyBlocks = new Dictionary<string, MyBlock>();
-			MyBlocks = new MyBlockDic(this, _MyBlocks);
-
 			_Vars = new Dictionary<string, Var>();
-			Vars = new VarDic(this, _Vars);
 			_Lists = new Dictionary<string, List>();
-			Lists = new ListDic(this, _Lists);
 
-			Sounds = new ReadOnlyDictionary<string, Sound>(_Sounds);
-			Broadcasts = new ReadOnlyDictionary<string, Broadcast>(_Broadcasts);
-			Comments = new ReadOnlyDictionary<string, Comment>(_Comments);
-			Costumes = new ReadOnlyDictionary<string, Costume>(_Costumes);
+			MyBlocks = new MyBlockDic(this, _MyBlocks);
+			Vars = new VarDic(this, _Vars);
+			Lists = new ListDic(this, _Lists);
+			Sounds = new SoundDic(this, _Sounds);
+			Costumes = new CostumeDic(this, _Costumes);
+
+			_Comments = new List<Comment>();
+
+			Broadcasts = new BroadcastDic(this);
 
 			Project = project;
-			CurrentCostume = 0;
-			LayerOrder = 1;
 			columns = new List<Column>();
 		}
 
 		public void AddCostumes(params Costume[] costumes)
 		{
-			foreach(Costume c in costumes)
+			for(int i = 0; i < costumes.Length; i++)
 			{
+				Costume c = costumes[i];
+				if(c.Name == null) throw new ArgumentException($"Costume at index {i} doesn't has name");
 				_Costumes[c.Name] = c;
 			}
 		}
 
 		public void AddSounds(params Sound[] sounds)
 		{
-			foreach(Sound s in sounds)
+			for(int i = 0; i < sounds.Length; i++)
 			{
+				Sound s = sounds[i];
+				if(s.Name == null) throw new ArgumentException($"Sound at index {i} doesn't has name");
 				_Sounds[s.Name] = s;
+			}
+		}
+
+		public void AddComments(params Comment[] comments)
+		{
+			foreach(Comment c in comments)
+			{
+				_Comments.Add(c);
+			}
+		}
+
+		public void AddBroadcasts(params Broadcast[] broadcasts)
+		{
+			for(int i = 0; i < broadcasts.Length; i++)
+			{
+				Broadcast b = broadcasts[i];
+				if(b.Name == null) throw new ArgumentException($"Broadcast at index {i} doesn't has name");
+				Project.background._Broadcasts[b.Name] = b;
 			}
 		}
 	}
@@ -257,7 +335,7 @@ namespace Scratch
 			#endregion
 
 			#region SoundsVars
-			Looks.specVars["Volume"] = new SpecVar(UsagePlace.Both, "sound_volume", "current volume of sprite");
+			Sounds.specVars["Volume"] = new SpecVar(UsagePlace.Both, "sound_volume", "current volume of sprite");
 			#endregion
 		}
 
@@ -269,9 +347,12 @@ namespace Scratch
 			internal int volume = 100;
 			internal TextToSpeechLanguages textToSpeechLanguage = TextToSpeechLanguages.None;
 
+			internal Dictionary<string, Broadcast> _Broadcasts;
+
 			internal Background(Project project) : base(project)
 			{
 				LayerOrder = 0;
+				_Broadcasts = new Dictionary<string, Broadcast>();
 			}
 
 			public void Dispose(){}
@@ -332,7 +413,7 @@ namespace Scratch
 			this.isSpriteCol = sObject is Sprite;
 		}
 
-		public void Add(Block block)
+		public Block Add(Block block)
 		{
 			if(block.needsNext)
 			{
@@ -356,6 +437,7 @@ namespace Scratch
 				CheckBlockUsage(b);
 			}
 			CheckBlockUsage(block);
+			return block;
 		}
 
 		internal void CheckBlockUsage(Block b)

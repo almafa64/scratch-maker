@@ -1,11 +1,14 @@
-﻿namespace Scratch
+﻿using Scratch_Utils;
+using System;
+
+namespace Scratch
 {
 	public static class Variables
 	{
-		private string MakeVarField(Var v)
+		private static string MakeVarField(Var v)
 		{
-			if(v is MyBlock.MyBlockVar || v is SpecVar) throw new ArgumentException($"Variable {v.Name} is not user made, so it cannot modify");
-			return MakeField("VARIABLE", $"{v.Name},{v.Id}");
+			if(v is MyBlock.MyBlockVar) throw new ArgumentException($"Variable {v.Name} is not user made, so it cannot modify");
+			return Block.MakeField("VARIABLE", $"\"{v.Name}\",\"{v.Id}\"", false);
 		}
 
 		public class Change : Block

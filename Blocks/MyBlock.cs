@@ -10,19 +10,14 @@ namespace Scratch
 	{
 		internal Dictionary<string, MyBlockVar> parameters;
 		internal Block prototype;
-		internal Block def;
 		internal List<Block> paramBlocks;
 
 		internal bool made = false;
 
-		public MyBlock(SObject sObject, string name, int x = 200, int y = 200) : base(sObject, x, y)
+		public MyBlock(SObject sObject, string name, int x = 200, int y = 200) : base("procedures_definition", "MyBlock", sObject, x, y, false)
 		{
 			sObject._MyBlocks[name] = this;
 
-			def = new Block(name)
-			{
-				args = new BlockArgs("procedures_definition", null, null, null, null, false, true)
-			};
 			paramBlocks = new List<Block>();
 			parameters = new Dictionary<string, MyBlockVar>
 			{
@@ -31,10 +26,10 @@ namespace Scratch
 
 			prototype = new Block(null)
 			{
-				args = new BlockArgs("procedures_prototype", null, null, null, def.args.Id, true, false, new Mutator())
+				args = new BlockArgs("procedures_prototype", null, null, null, mainBlock.args.Id, true, false, new Mutator())
 			};
 
-			def.args.Inputs = $"\"custom_block\":[1,\"{prototype.args.Id}\"]";
+			mainBlock.args.Inputs = $"\"custom_block\":[1,\"{prototype.args.Id}\"]";
 
 			blocks.Add(prototype);
 
@@ -44,13 +39,13 @@ namespace Scratch
 		public MyBlock Build()
 		{
 			made = true;
-			blocks.Add(def);
+			blocks.Add(mainBlock);
 			return this;
 		}
 
 		public MyBlock AddDesc(string name, string text)
 		{
-			if(made) throw new Exception($"Block \"{def.name}\" is builded, so no more variable can be added!");
+			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
 			parameters[name] = new MyBlockVar(text, null);
 			Update();
 			return this;
@@ -75,7 +70,7 @@ namespace Scratch
 
 		public MyBlock AddBool(string name)
 		{
-			if(made) throw new Exception($"Block \"{def.name}\" is builded, so no more variable can be added!");
+			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
 			parameters[name] = new MyBlockVar("%b", "argument_reporter_boolean", name);
 
 			ArgBlocker(name, "argument_reporter_boolean");
@@ -86,7 +81,7 @@ namespace Scratch
 
 		public MyBlock AddValue(string name)
 		{
-			if(made) throw new Exception($"Block \"{def.name}\" is builded, so no more variable can be added!");
+			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
 			parameters[name] = new MyBlockVar("%s", "argument_reporter_string_number", name);
 
 			ArgBlocker(name, "argument_reporter_string_number");
@@ -101,7 +96,7 @@ namespace Scratch
 			{
 				MyBlockVar tmp = parameters[name];
 				if(((string)tmp.value).Contains("%")) return new MyBlockVar(tmp.value, tmp.block.args.OpCode, tmp.Name);
-				else throw new ArgumentException($"Varibale {name} doesn't exists in {def.name} block.");
+				else throw new ArgumentException($"Varibale {name} doesn't exists in {mainBlock.name} block.");
 			}
 		}
 
@@ -160,10 +155,10 @@ namespace Scratch
 			prototype.args.Mutatator = m;
 		}
 
-		public new void Add(Block block)
+		public new Block Add(Block block)
 		{
-			if(!made) throw new Exception($"Block \"{def.name}\" is not builded!");
-			base.Add(block);
+			if(!made) throw new Exception($"Block \"{mainBlock.name}\" is not builded!");
+			return base.Add(block);
 		}
 
 		public class MyBlockVar : Var

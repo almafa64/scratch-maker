@@ -84,7 +84,7 @@ namespace Scratch
 		{
 			if(value == null) value = 0;
 			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("Variable value cannot be another variable or list");
-			
+
 			this.value = value;
 		}
 
@@ -118,7 +118,7 @@ namespace Scratch
 			sObject._Lists[name] = this;
 		}
 
-		public List(params object[] vars) : base(null, null)
+		public List(string name, params object[] vars) : base(null, name)
 		{
 			if(vars != null)
 			{
@@ -129,6 +129,8 @@ namespace Scratch
 				this.vars.AddRange(vars);
 			}
 		}
+
+		public List(params object[] vars) : this(null, vars) { }
 
 		internal static bool Has(SObject sObject, string name)
 		{
@@ -143,17 +145,17 @@ namespace Scratch
 
 	public class Broadcast : Ided
 	{
-		public Broadcast(SObject sObject, string name) : base(name)
+		public Broadcast() : base(null) {}
+
+		internal static bool Has(SObject sObject, string name)
 		{
-			if(sObject is Background bg) bg._Broadcasts[name] = this;
-			else sObject.Project.background._Broadcasts[name] = this;
+			return sObject.Project.background._Broadcasts.ContainsKey(name);
 		}
 	}
 
 	public class Comment : Ided
 	{
-		internal string name;
-		internal string blockId = null;
+		internal Block block = null;
 		public int height;
 		public bool minimized;
 		public string text;
@@ -161,16 +163,14 @@ namespace Scratch
 		public double x;
 		public double y;
 
-		public Comment(SObject sObject, string name, string text = "", bool minimized = false, int height = 200, int width = 200, double x = 200, double y = 200) : base("")
+		public Comment(string text, double x = 200, double y = 200, bool minimized = false, int height = 200, int width = 200) : base(null)
 		{
 			this.text = text;
-			this.name = name;
 			this.minimized = minimized;
 			this.height = height;
 			this.width = width;
 			this.x = x;
 			this.y = y;
-			sObject._Comments[name] = this;
 		}
 	}
 
@@ -184,7 +184,7 @@ namespace Scratch
 		internal float baseY;
 		internal byte[] bytes;
 
-		public Costume(string path, string name, float x = 0, float y = 0) : base(path, name)
+		public Costume(string path, float x = 0, float y = 0) : base(path, null)
 		{
 			bitmapResolution = (byte)((dataFormat == "svg") ? 1 : 2);
 			if(bitmapResolution == 1)
@@ -235,7 +235,7 @@ namespace Scratch
 			this.y = y + baseY;
 		}
 
-		internal Costume(bool isBg) : base("0")
+		internal Costume(bool isBg) : base(isBg?"backdrop":"cat")
 		{
 			bitmapResolution = 1;
 			if(isBg)
@@ -253,6 +253,16 @@ namespace Scratch
 			this.x = baseX;
 			this.y = baseY;
 		}
+
+		internal static bool Has(SObject sObject, string name)
+		{
+			return sObject._Costumes.ContainsKey(name);
+		}
+
+		internal static bool BgHas(SObject sObject, string name)
+		{
+			return sObject.Project.background._Costumes.ContainsKey(name);
+		}
 	}
 
 	public class Sound : Accessories
@@ -261,11 +271,21 @@ namespace Scratch
 		internal int rate;
 		internal int sampleCount;
 
-		public Sound(string path, string name, string format = "", int rate = 48000, int sampleCount = 1123) : base(path, name)
+		public Sound(string path, int rate = 48000, int sampleCount = 1123) : base(path, null)
 		{
-			this.format = format;
+			this.format = "";
 			this.rate = rate;
 			this.sampleCount = sampleCount;
+		}
+
+		internal static bool Has(SObject sObject, string name)
+		{
+			return sObject._Sounds.ContainsKey(name);
+		}
+
+		internal static bool BgHas(SObject sObject, string name)
+		{
+			return sObject.Project.background._Sounds.ContainsKey(name);
 		}
 	}
 }
