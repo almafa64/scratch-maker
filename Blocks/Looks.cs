@@ -16,7 +16,14 @@ namespace Scratch
 			BackdropNumber
 		}
 
-		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>();
+		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>() 
+		{
+			["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]"),
+			["BackdropName"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]"),
+			["CostumeNumber"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]"),
+			["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]"),
+			["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable")
+		};
 
 		public class Say : Block
 		{
@@ -24,12 +31,12 @@ namespace Scratch
 			{
 				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException("sec is string, which is not accepted");
 
-				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}");
+				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Say(object text) : base("Say text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, true));
+				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true));
 			}
 		}
 
@@ -37,14 +44,12 @@ namespace Scratch
 		{
 			public Think(object text, object sec) : base("Think text for seconds", UsagePlace.Sprite, text, sec)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException("sec is string, which is not accepted");
-
-				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, true)},{MakeInput("SECS", sec)}");
+				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Think(object text) : base("Think text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, true));
+				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true));
 			}
 		}
 
@@ -155,7 +160,7 @@ namespace Scratch
 			{
 				public Set(object to) : base("Set size", UsagePlace.Sprite, to)
 				{
-					args = new BlockArgs("looks_setsizeto", MakeInput("SIZE", to));
+					args = new BlockArgs("looks_setsizeto", MakeInput("SIZE", to, "to"));
 				}
 			}
 
@@ -163,7 +168,7 @@ namespace Scratch
 			{
 				public Change(object by) : base("Change size", UsagePlace.Sprite, by)
 				{
-					args = new BlockArgs("looks_changesizeby", MakeInput("CHANGE", by));
+					args = new BlockArgs("looks_changesizeby", MakeInput("CHANGE", by, "by"));
 				}
 			}
 		}
@@ -200,9 +205,7 @@ namespace Scratch
 			{
 				public Change(Effects effect, object by) : base("Change effect", UsagePlace.Both, by)
 				{
-					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-					args = new BlockArgs("looks_changeeffectby", MakeInput("CHANGE", by), EffField(effect));
+					args = new BlockArgs("looks_changeeffectby", MakeInput("CHANGE", by, "by"), EffField(effect));
 				}
 			}
 
@@ -210,9 +213,7 @@ namespace Scratch
 			{
 				public Set(Effects effect, object to) : base("Set effect", UsagePlace.Both, to)
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
-
-					args = new BlockArgs("looks_seteffectto", MakeInput("VALUE", to), EffField(effect));
+					args = new BlockArgs("looks_seteffectto", MakeInput("VALUE", to, "to"), EffField(effect));
 				}
 			}
 
@@ -265,9 +266,7 @@ namespace Scratch
 				}
 				public Go(WhereTo whereTo, object times) : base("Go layer", UsagePlace.Sprite, times)
 				{
-					if (TypeCheck.Check(times) == AcceptedTypes.String) throw new ArgumentException("times is string, which is not accepted");
-
-					args = new BlockArgs("looks_goforwardbackwardlayers", MakeInput("NUM", times), (whereTo == WhereTo.Forward)?MakeField("FORWARD_BACKWARD", "forward"):MakeField("FORWARD_BACKWARD", "backward"));
+					args = new BlockArgs("looks_goforwardbackwardlayers", MakeInput("NUM", times, "times"), (whereTo == WhereTo.Forward)?MakeField("FORWARD_BACKWARD", "forward"):MakeField("FORWARD_BACKWARD", "backward"));
 				}
 			}
 		}

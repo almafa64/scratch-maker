@@ -121,6 +121,18 @@ namespace Scratch_Utils
 
 	internal static class TypeCheck
 	{
+		internal static void Check(string blockName, string nameOfVar, object val, AcceptedTypes notAcceptedTypes)
+		{
+			AcceptedTypes tmp = Check(val);
+
+			if(tmp == AcceptedTypes.None) throw new ArgumentException($"{nameOfVar} is null or other object on block \"{blockName}\", which it cannot be");
+
+			if(notAcceptedTypes.HasFlag(tmp))
+			{
+				throw new ArgumentException($"{nameOfVar} is {typeof(AcceptedTypes).GetEnumName(tmp)} on block \"{blockName}\", which it cannot be");
+			}
+		}
+
 		internal static AcceptedTypes Check(object o)
 		{
 			if (o == null) return AcceptedTypes.None;
@@ -129,7 +141,7 @@ namespace Scratch_Utils
 				return AcceptedTypes.Number;
 			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
-			else if(t == typeof(List)) return AcceptedTypes.List;
+			//else if(t == typeof(ListElement)) return AcceptedTypes.ListElement;
 			else if(t.IsEnum) return AcceptedTypes.Enum;
 			else if(t == typeof(Sprite)) return AcceptedTypes.Sprite;
 			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.MyBlockVar;
@@ -137,19 +149,18 @@ namespace Scratch_Utils
 			return AcceptedTypes.None;
 		}
 
-		internal static void BaseCheck(object o, string blockName, int index = 0)
+		internal static void BaseCheck(object o, string blockName, int index)
 		{
-			string i = (index == 0) ? "" : index.ToString();
 			switch(Check(o))
 			{
 				case AcceptedTypes.None:
-					throw new ArgumentException($"Argument is null at place {i} on block {blockName}");
+					throw new ArgumentException($"Argument is null at place {index} on block {blockName}");
 				case AcceptedTypes.Variable:
-					if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {i} on block \"{blockName}\"");
+					if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {index} on block \"{blockName}\"");
 					break;
-				case AcceptedTypes.List:
+				/*case AcceptedTypes.List:
 					if((o as List).vars == null) throw new ArgumentException($"Not initalized list at place {i} on block \"{blockName}\"");
-					break;
+					break;*/
 			}
 		}
 	}

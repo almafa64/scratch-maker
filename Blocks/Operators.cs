@@ -1,22 +1,25 @@
 ﻿using Scratch_Utils;
 using System;
+using System.Collections.Generic;
 
 namespace Scratch
 {
 	public static class Operators
 	{
-		private static string MakeNumInput(Block b, object data1, object data2)
+		private static string MakeNumInput(Block bl, object a, object b)
 		{
-			return $"{b.MakeInput("NUM1", data1)},{b.MakeInput("NUM2", data2)}";
+			return $"{bl.MakeInput("NUM1", a, "a")},{bl.MakeInput("NUM2", b, "b")}";
+		}
+
+		private static string MakeOperandInput(Block bl, object a, object b)
+		{
+			return $"{bl.MakeInput("OPERAND1", a, "a", AcceptedTypes.None, true)},{bl.MakeInput("OPERAND2", b, "b", AcceptedTypes.None, true)}";
 		}
 
 		public class Add : SpecBlock
 		{
 			public Add(object a, object b) : base("Add a and b", UsagePlace.Both, a, b) 
 			{
-				if(TypeCheck.Check(a) == AcceptedTypes.String) throw new ArgumentException("a is string, which is not accepted");
-				else if(TypeCheck.Check(b) == AcceptedTypes.String) throw new ArgumentException("b is string, which is not accepted");
-
 				args = new BlockArgs("operator_add", MakeNumInput(this, a, b));
 			}
 		}
@@ -25,9 +28,6 @@ namespace Scratch
 		{
 			public Subtract(object a, object b) : base("Subtract b from a", UsagePlace.Both, a, b)
 			{
-				if(TypeCheck.Check(a) == AcceptedTypes.String) throw new ArgumentException("a is string, which is not accepted");
-				else if(TypeCheck.Check(b) == AcceptedTypes.String) throw new ArgumentException("b is string, which is not accepted");
-
 				args = new BlockArgs("operator_subtract", MakeNumInput(this, a, b));
 			}
 		}
@@ -36,9 +36,6 @@ namespace Scratch
 		{
 			public Multiply(object a, object b) : base("Multiply a and b", UsagePlace.Both, a, b)
 			{
-				if(TypeCheck.Check(a) == AcceptedTypes.String) throw new ArgumentException("a is string, which is not accepted");
-				else if(TypeCheck.Check(b) == AcceptedTypes.String) throw new ArgumentException("b is string, which is not accepted");
-
 				args = new BlockArgs("operator_multiply", MakeNumInput(this, a, b));
 			}
 		}
@@ -47,26 +44,7 @@ namespace Scratch
 		{
 			public Divide(object a, object b) : base("Divide b from a", UsagePlace.Both, a, b)
 			{
-				if(TypeCheck.Check(a) == AcceptedTypes.String) throw new ArgumentException("a is string, which is not accepted");
-				else if(TypeCheck.Check(b) == AcceptedTypes.String) throw new ArgumentException("b is string, which is not accepted");
-
 				args = new BlockArgs("operator_divide", MakeNumInput(this, a, b));
-			}
-		}
-
-		public class Greater : SpecBlock
-		{
-			public Greater(object a, object b) : base("If a greater than b", UsagePlace.Both, a, b)
-			{
-
-			}
-		}
-
-		public class Lesser : SpecBlock
-		{
-			public Lesser(object a, object b) : base("If a lesser than b", UsagePlace.Both, a, b)
-			{
-
 			}
 		}
 
@@ -74,31 +52,23 @@ namespace Scratch
 		{
 			public Mod(object a, object b) : base("a mod b", UsagePlace.Both, a, b)
 			{
-
+				args = new BlockArgs("operator_mod", MakeNumInput(this, a, b));
 			}
 		}
 
-		public class Not: SpecBlock
+		public class Greater : SpecBlock
 		{
-			public Not(object a) : base("Not a", UsagePlace.Both, a)
+			public Greater(object a, object b) : base("If a greater than b", UsagePlace.Both, a, b)
 			{
-
+				args = new BlockArgs("operator_gt", MakeOperandInput(this, a, b));
 			}
 		}
 
-		public class Or : SpecBlock
+		public class Lesser : SpecBlock
 		{
-			public Or(object a, object b) : base("a or b", UsagePlace.Both, a, b)
+			public Lesser(object a, object b) : base("If a lesser than b", UsagePlace.Both, a, b)
 			{
-
-			}
-		}
-
-		public class And : SpecBlock
-		{
-			public And(object a, object b) : base("a and b", UsagePlace.Both, a, b)
-			{
-
+				args = new BlockArgs("operator_lt", MakeOperandInput(this, a, b));
 			}
 		}
 
@@ -106,15 +76,31 @@ namespace Scratch
 		{
 			public Equal(object a, object b) : base("a equal b", UsagePlace.Both, a, b)
 			{
-
+				args = new BlockArgs("operator_equals", MakeOperandInput(this, a, b));
 			}
 		}
 
-		public class Round : SpecBlock
+		public class Not: SpecBlock
 		{
-			public Round(object a) : base("Round a", UsagePlace.Both, a)
+			public Not(object a) : base("Not a", UsagePlace.Both, a)
 			{
+				args = new BlockArgs("operator_not", MakeInput("OPERAND", a, "a"));
+			}
+		}
 
+		public class Or : SpecBlock
+		{
+			public Or(object a, object b) : base("a or b", UsagePlace.Both, a, b)
+			{
+				args = new BlockArgs("operator_or", MakeOperandInput(this, a, b));
+			}
+		}
+
+		public class And : SpecBlock
+		{
+			public And(object a, object b) : base("a and b", UsagePlace.Both, a, b)
+			{
+				args = new BlockArgs("operator_and", MakeOperandInput(this, a, b));
 			}
 		}
 
@@ -153,6 +139,14 @@ namespace Scratch
 		public class Letter : SpecBlock
 		{
 			public Letter(object character, object text) : base("If letter character of text", UsagePlace.Both, character, text)
+			{
+
+			}
+		}
+
+		public class Round : SpecBlock
+		{
+			public Round(object a) : base("Round a", UsagePlace.Both, a)
 			{
 
 			}

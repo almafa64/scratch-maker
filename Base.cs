@@ -317,26 +317,6 @@ namespace Scratch
 			this.extensions = extensions;
 			this.openFolder = openFolder;
 			Sprites = new SpriteDic(this, _sprites);
-
-			if(Movement.specVars.ContainsKey("dir")) return;
-
-			#region MovementVars
-			Movement.specVars["Direction"] = new SpecVar(UsagePlace.Sprite, "motion_direction", "direction variable");
-			Movement.specVars["X"] = new SpecVar(UsagePlace.Sprite, "motion_xposition", "x variable");
-			Movement.specVars["Y"] = new SpecVar(UsagePlace.Sprite, "motion_yposition", "y variable");
-			#endregion
-
-			#region LooksVars
-			Looks.specVars["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Looks.specVars["BackdropName"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Looks.specVars["CostumeNumber"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume number variable", "\"NUMBER_NAME\":[\"number\",null]");
-			Looks.specVars["CostumeName"] = new SpecVar(UsagePlace.Sprite, "looks_costumenumbername", "costume name variable", "\"NUMBER_NAME\":[\"name\",null]");
-			Looks.specVars["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable");
-			#endregion
-
-			#region SoundsVars
-			Sounds.specVars["Volume"] = new SpecVar(UsagePlace.Both, "sound_volume", "current volume of sprite");
-			#endregion
 		}
 
 		public class Background : SObject, IDisposable
@@ -347,12 +327,11 @@ namespace Scratch
 			internal int volume = 100;
 			internal TextToSpeechLanguages textToSpeechLanguage = TextToSpeechLanguages.None;
 
-			internal Dictionary<string, Broadcast> _Broadcasts;
+			internal Dictionary<string, Broadcast> _Broadcasts = new Dictionary<string, Broadcast>();
 
 			internal Background(Project project) : base(project)
 			{
 				LayerOrder = 0;
-				_Broadcasts = new Dictionary<string, Broadcast>();
 			}
 
 			public void Dispose(){}
@@ -397,7 +376,7 @@ namespace Scratch
 	public class Column : IDisposable
 	{
 		public SObject sObject;
-		internal List<Block> blocks;
+		internal List<Block> blocks = new List<Block>();
 		internal bool isSpriteCol;
 
 		public int x;
@@ -405,7 +384,6 @@ namespace Scratch
 
 		public Column(SObject sprite, int x = 0, int y = 0)
 		{
-			this.blocks = new List<Block>();
 			this.sObject = sprite;
 			this.sObject.columns.Add(this);
 			this.x = x;

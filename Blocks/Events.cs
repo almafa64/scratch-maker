@@ -80,7 +80,7 @@ namespace Scratch
 				name = isTimer ? "When timer bigger than" : "When loudness bigger than";
 
 				mainBlock.name = name;
-				mainBlock.args.Inputs = mainBlock.MakeInput("VALUE", number);
+				mainBlock.args.Inputs = mainBlock.MakeInput("VALUE", number, "number");
 				mainBlock.args.Fields = Block.MakeField("WHENGREATERTHANMENU", isTimer?"TIMER":"LOUDNESS");
 			}
 		}

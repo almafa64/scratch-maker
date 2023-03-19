@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
-using static Scratch.Project;
 
 namespace Scratch_Utils
 {
@@ -74,7 +72,7 @@ namespace Scratch
 			if(Has(sObject, name) || BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
 			
 			if(value == null) value = 0;
-			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("Variable value cannot be another variable or list");
+			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.ListElement) throw new ArgumentException("Variable value cannot be another variable or list");
 			
 			this.value = value;
 			sObject._Vars[name] = this;
@@ -82,8 +80,9 @@ namespace Scratch
 
 		public Var(object value) : base(null, null)
 		{
+			AcceptedTypes tmp = TypeCheck.Check(value);
 			if(value == null) value = 0;
-			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("Variable value cannot be another variable or list");
+			else if(tmp == AcceptedTypes.Variable || tmp == AcceptedTypes.ListElement) throw new ArgumentException("Variable value cannot be another variable or list");
 
 			this.value = value;
 		}
@@ -111,7 +110,7 @@ namespace Scratch
 			{
 				foreach(object value in vars)
 				{
-					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
+					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.ListElement) throw new ArgumentException("List value cannot be another variable or list");
 				}
 				this.vars.AddRange(vars);
 			}
@@ -124,7 +123,8 @@ namespace Scratch
 			{
 				foreach(object value in vars)
 				{
-					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.List) throw new ArgumentException("List value cannot be another variable or list");
+					AcceptedTypes tmp = TypeCheck.Check(value);
+					if(tmp == AcceptedTypes.Variable || tmp == AcceptedTypes.ListElement) throw new ArgumentException("List value cannot be another variable or list");
 				}
 				this.vars.AddRange(vars);
 			}
@@ -267,13 +267,12 @@ namespace Scratch
 
 	public class Sound : Accessories
 	{
-		internal string format;
+		internal string format = "";
 		internal int rate;
 		internal int sampleCount;
 
 		public Sound(string path, int rate = 48000, int sampleCount = 1123) : base(path, null)
 		{
-			this.format = "";
 			this.rate = rate;
 			this.sampleCount = sampleCount;
 		}

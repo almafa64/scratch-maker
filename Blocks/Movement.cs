@@ -1,9 +1,6 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
-using static Scratch.Looks;
-using static Scratch.Looks.Effect;
-using static Scratch.Movement;
 
 namespace Scratch
 {
@@ -22,18 +19,18 @@ namespace Scratch
 			Direction
 		}
 
-		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>();
+		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>()
+		{
+			["Direction"] = new SpecVar(UsagePlace.Sprite, "motion_direction", "direction variable"),
+			["X"] = new SpecVar(UsagePlace.Sprite, "motion_xposition", "x variable"),
+			["Y"] = new SpecVar(UsagePlace.Sprite, "motion_yposition", "y variable")
+		};
 
 		public class Goto : Block
 		{
 			public Goto(object x, object y) : base("Goto X Y", UsagePlace.Sprite, x, y)
 			{
-				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException("x is string, which is not accepted"); 
-				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException("y is string, which is not accepted");
-
-				args = new BlockArgs("motion_gotoxy");
-
-				args.Inputs = $"{MakeInput("X", x)},{MakeInput("Y", y)}";
+				args = new BlockArgs("motion_gotoxy", $"{MakeInput("X", x, "x")},{MakeInput("Y", y, "y")}");
 			}
 
 			public Goto(object to):base("Goto To", UsagePlace.Sprite, to)
@@ -60,13 +57,7 @@ namespace Scratch
 		{
 			public Glide(object sec, object x, object y) : base("Goto X Y", UsagePlace.Sprite, sec, x, y)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException("sec is string, which is not accepted");
-				if(TypeCheck.Check(x) == AcceptedTypes.String) throw new ArgumentException("x is string, which is not accepted");
-				if(TypeCheck.Check(y) == AcceptedTypes.String) throw new ArgumentException("y is string, which is not accepted");
-
-				args = new BlockArgs("motion_glidesecstoxy");
-
-				args.Inputs = $"{MakeInput("SECS", sec)},{MakeInput("X", x)},{MakeInput("Y", y)}";
+				args = new BlockArgs("motion_glidesecstoxy", $"{MakeInput("SECS", sec, "sec")},{MakeInput("X", x, "x")},{MakeInput("Y", y, "y")}");
 			}
 
 			public Glide(object sec, object to) : base("Goto To", UsagePlace.Sprite, sec, to)
@@ -86,7 +77,7 @@ namespace Scratch
 				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
-				args.Inputs = $"{MakeInput("SECS", sec)},\"TO\":[1,\"{tmp.args.Id}\"]";
+				args.Inputs = $"{MakeInput("SECS", sec, "sec")},\"TO\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
 
@@ -94,11 +85,7 @@ namespace Scratch
 		{
 			public Move(object steps) : base("Move steps", UsagePlace.Sprite, steps)
 			{
-				if(TypeCheck.Check(steps) == AcceptedTypes.String) throw new ArgumentException("steps is string, which is not accepted");
-
-				args = new BlockArgs("motion_movesteps");
-
-				args.Inputs = MakeInput("STEPS", steps);
+				args = new BlockArgs("motion_movesteps", MakeInput("STEPS", steps, "steps"));
 			}
 		}
 
@@ -108,11 +95,7 @@ namespace Scratch
 			{
 				public X(object by) : base("Change X by", UsagePlace.Sprite, by)
 				{
-					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-					args = new BlockArgs("motion_changexby");
-
-					args.Inputs = MakeInput("DX", by);
+					args = new BlockArgs("motion_changexby", MakeInput("DX", by, "by"));
 				}
 			}
 
@@ -120,11 +103,7 @@ namespace Scratch
 			{
 				public Y(object by) : base("Change Y by", UsagePlace.Sprite, by)
 				{
-					if(TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-					args = new BlockArgs("motion_changeyby");
-
-					args.Inputs = MakeInput("DY", by);
+					args = new BlockArgs("motion_changeyby", MakeInput("DY", by, "by"));
 				}
 			}
 		}
@@ -135,11 +114,7 @@ namespace Scratch
 			{
 				public X(object value) : base("Change X by", UsagePlace.Sprite, value)
 				{
-					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException("value is string, which is not accepted");
-
-					args = new BlockArgs("motion_setx");
-
-					args.Inputs = MakeInput("X", value);
+					args = new BlockArgs("motion_setx", MakeInput("X", value, "value"));
 				}
 			}
 
@@ -147,11 +122,7 @@ namespace Scratch
 			{
 				public Y(object value) : base("Change Y value", UsagePlace.Sprite, value)
 				{
-					if(TypeCheck.Check(value) == AcceptedTypes.String) throw new ArgumentException("value is string, which is not accepted");
-
-					args = new BlockArgs("motion_sety");
-
-					args.Inputs = MakeInput("Y", value);
+					args = new BlockArgs("motion_sety", MakeInput("Y", value, "value"));
 				}
 			}
 		}
@@ -162,11 +133,7 @@ namespace Scratch
 			{
 				public Left(object degrees) : base("Change X by", UsagePlace.Sprite, degrees)
 				{
-					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException("degrees is string, which is not accepted");
-
-					args = new BlockArgs("motion_turnleft");
-
-					args.Inputs = MakeInput("DEGREES", degrees);
+					args = new BlockArgs("motion_turnleft", MakeInput("DEGREES", degrees, "degrees"));
 				}
 			}
 
@@ -174,11 +141,7 @@ namespace Scratch
 			{
 				public Right(object degrees) : base("Change Y by", UsagePlace.Sprite, degrees)
 				{
-					if (TypeCheck.Check(degrees) == AcceptedTypes.String) throw new ArgumentException("degrees is string, which is not accepted");
-
-					args = new BlockArgs("motion_turnright");
-
-					args.Inputs = MakeInput("DEGREES", degrees);
+					args = new BlockArgs("motion_turnright", MakeInput("DEGREES", degrees, "degrees"));
 				}
 			}
 		}
@@ -212,11 +175,7 @@ namespace Scratch
 				}
 				else
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
-
-					args = new BlockArgs("motion_pointindirection");
-
-					args.Inputs = MakeInput("DIRECTION", to);
+					args = new BlockArgs("motion_pointindirection", MakeInput("DIRECTION", to, "to"));
 				}
 			}
 		}

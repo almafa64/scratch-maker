@@ -11,7 +11,10 @@ namespace Scratch
 			Volume
 		}
 
-		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>();
+		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>()
+		{
+			["Volume"] = new SpecVar(UsagePlace.Both, "sound_volume", "current volume of sprite")
+		};
 
 		private static Block SoundBlock(Sound s)
 		{
@@ -62,9 +65,7 @@ namespace Scratch
 			{
 				public Change(object by) : base("Change volume by", UsagePlace.Both, by)
 				{
-					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-					args = new BlockArgs("sound_changevolumeby", MakeInput("VOLUME", by));
+					args = new BlockArgs("sound_changevolumeby", MakeInput("VOLUME", by, "by"));
 				}
 			}
 
@@ -72,9 +73,7 @@ namespace Scratch
 			{
 				public Set(object to) : base("Set volume to", UsagePlace.Both, to)
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
-
-					args = new BlockArgs("sound_setvolumeto", MakeInput("VOLUME", to));
+					args = new BlockArgs("sound_setvolumeto", MakeInput("VOLUME", to, "to"));
 				}
 			}
 		}
@@ -96,9 +95,7 @@ namespace Scratch
 			{
 				public Change(Effects effect, object by) : base("Change effect by", UsagePlace.Both, by)
 				{
-					if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-					args = new BlockArgs("sound_changeeffectby", MakeInput("VALUE", by), EffField(effect));
+					args = new BlockArgs("sound_changeeffectby", MakeInput("VALUE", by, "by"), EffField(effect));
 				}
 			}
 
@@ -106,9 +103,7 @@ namespace Scratch
 			{
 				public Set(Effects effect, object to) : base("Set effect to", UsagePlace.Both, to)
 				{
-					if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
-
-					args = new BlockArgs("sound_seteffectto", MakeInput("VALUE", to), EffField(effect));
+					args = new BlockArgs("sound_seteffectto", MakeInput("VALUE", to, "to"), EffField(effect));
 				}
 			}
 

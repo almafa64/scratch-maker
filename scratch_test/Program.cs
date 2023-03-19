@@ -164,6 +164,10 @@ namespace scratch_test
 					{
 						column.Add(new Operators.Add(new Operators.Subtract(42, new Operators.Divide(sprite.Vars["te"], 4)), new Operators.Multiply(sprite.Vars["te"], 69)));
 					}
+					using(Column column = new Column(sprite, 1500, 100)) //Operators2
+					{
+						column.Add(new Operators.Not(new Operators.And(new Operators.Or(new Operators.Greater(53, sprite.Vars["te"]), new Operators.Lesser(new Operators.Greater(25, sprite.Vars["te"]), sprite.Vars["te"])), new Operators.Not(new Operators.Equal(53, sprite.Vars["te"])))));
+					}
 
 					using (Column column = new Column(sprite, 1800, 0)) //Variables
 					{

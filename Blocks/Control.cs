@@ -47,9 +47,7 @@ namespace Scratch
 		{
 			public Wait(object secs) : base("Wait secs", UsagePlace.Both, secs)
 			{
-				if(TypeCheck.Check(secs) == AcceptedTypes.String) throw new ArgumentException("secs is string, which is not accepted");
-
-				args = new BlockArgs("control_wait", MakeInput("DURATION", secs));
+				args = new BlockArgs("control_wait", MakeInput("DURATION", secs, "secs"));
 			}
 		}
 

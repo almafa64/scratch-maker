@@ -124,7 +124,7 @@ namespace Scratch_Utils
 	{
 		internal bool needsNext = true;
 		internal string name;
-		internal Comment comment = null;
+		internal Comment comment;
 		internal BlockArgs args;
 		internal List<Block> kids = new List<Block>();
 		internal UsagePlace usagePlace = UsagePlace.Both;
@@ -135,7 +135,9 @@ namespace Scratch_Utils
 			this.name = name;
 			for(int i = 0; i < vals.Length; i++)
 			{
-				TypeCheck.BaseCheck(vals[i], name);
+				object val = vals[i];
+				if(val is SpecVar) continue;
+				TypeCheck.BaseCheck(val, name, i);
 			}
 		}
 
@@ -147,21 +149,22 @@ namespace Scratch_Utils
 		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
 		private readonly static Random rd = new Random();
 
-		internal string MakeInput(string name, object val, bool isString = false)
+		internal string MakeInput(string name, object val, string valName, AcceptedTypes notAcceptedTypes = AcceptedTypes.String, bool isString = false)
 		{
-			//needs TypeCheck !!!
 			BuiltInVars(ref val);
+
 			string def = isString ? $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\"" : "4,\"0\"";
 			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
 			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
-			else if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
-			else return $"\"{name}\":[1,[{(isString ? "10" : "4")},\"{val}\"]]";
+
+			TypeCheck.Check(this.name, valName, val, notAcceptedTypes);
+			 if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
+			return $"\"{name}\":[1,[{(isString ? "10" : "4")},\"{val}\"]]";
 		}
 
 		internal static string MakeField(string name, string data, bool needQuote = true)
 		{
-			if(needQuote) return $"\"{name}\":[\"{data}\",null]";
-			else return $"\"{name}\":[{data},null]";
+			return needQuote ? $"\"{name}\":[\"{data}\",null]" : $"\"{name}\":[{data},null]";
 		}
 
 		internal static string MakeEffectField(string data)
@@ -182,11 +185,16 @@ namespace Scratch_Utils
 			return dir[enumType.GetEnumName(value)];
 		}
 
+		internal static SpecVar GetVar<T>(Dictionary<string, SpecVar> dir, object value)
+		{
+			return dir[typeof(T).GetEnumName(value)];
+		}
+
 		internal static void BuiltInVars(ref object val)
 		{
-			if(val is Movement.Vars vM) val = GetVar(Movement.specVars, typeof(Movement.Vars), vM);
-			else if(val is Looks.Vars vL) val = GetVar(Looks.specVars, typeof(Looks.Vars), vL);
-			else if(val is Sounds.Vars vS) val = GetVar(Sounds.specVars, typeof(Sounds.Vars), vS);
+			if(val is Movement.Vars vM) val = GetVar<Movement.Vars>(Movement.specVars, vM);
+			else if(val is Looks.Vars vL) val = GetVar<Looks.Vars>(Looks.specVars, vL);
+			else if(val is Sounds.Vars vS) val = GetVar<Sounds.Vars>(Sounds.specVars, vS);
 		}
 
 		public Block AddComment(Comment comment)
@@ -228,7 +236,7 @@ namespace Scratch_Utils
 		Number = 1,
 		String = 2,
 		Variable = 4,
-		List = 8,
+		ListElement = 8,
 		Enum = 16,
 		Sprite = 32,
 		MyBlockVar = 64,

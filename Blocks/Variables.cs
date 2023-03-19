@@ -7,7 +7,7 @@ namespace Scratch
 	{
 		private static string MakeVarField(Var v)
 		{
-			if(v is MyBlock.MyBlockVar) throw new ArgumentException($"Variable {v.Name} is not user made, so it cannot modify");
+			if(v is MyBlock.MyBlockVar) throw new ArgumentException($"Variable {v.Name} is not user made, so it cannot be modify");
 			return Block.MakeField("VARIABLE", $"\"{v.Name}\",\"{v.Id}\"", false);
 		}
 
@@ -15,9 +15,7 @@ namespace Scratch
 		{
 			public Change(Var variable, object by) : base("Change size", UsagePlace.Both, by)
 			{
-				if (TypeCheck.Check(by) == AcceptedTypes.String) throw new ArgumentException("by is string, which is not accepted");
-
-				args = new BlockArgs("data_changevariableby", MakeInput("VALUE", by), MakeVarField(variable));
+				args = new BlockArgs("data_changevariableby", MakeInput("VALUE", by, "by"), MakeVarField(variable));
 			}
 		}
 
@@ -25,9 +23,7 @@ namespace Scratch
 		{
 			public Set(Var variable, object to) : base("Set size", UsagePlace.Both, to)
 			{
-				if (TypeCheck.Check(to) == AcceptedTypes.String) throw new ArgumentException("to is string, which is not accepted");
-
-				args = new BlockArgs("data_setvariableto", MakeInput("VALUE", to), MakeVarField(variable));
+				args = new BlockArgs("data_setvariableto", MakeInput("VALUE", to, "to"), MakeVarField(variable));
 			}
 		}
 
