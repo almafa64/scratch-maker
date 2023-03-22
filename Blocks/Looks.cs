@@ -1,7 +1,6 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
-using static Scratch.Looks.Switch.Backdrop;
 
 namespace Scratch
 {

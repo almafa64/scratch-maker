@@ -120,6 +120,48 @@ namespace Scratch_Utils
 		}
 	}
 
+	public class SpecVar : Block
+	{
+		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, usagePlace, vals)
+		{
+			args = new BlockArgs(opcode, input, field);
+			this.usagePlace = usagePlace;
+		}
+	}
+
+	public class SpecBlock : SpecVar
+	{
+		internal bool isBool = false;
+		internal SpecBlock(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals) : base(usagePlace, name, null, null, null, vals)
+		{
+			
+		}
+	}
+
+	[Flags]
+	internal enum AcceptedTypes
+	{
+		None = 0,
+		Number = 1,
+		String = 2,
+		Variable = 4,
+		ListElement = 8,
+		Enum = 16,
+		Sprite = 32,
+		MyBlockVar = 64,
+		PositiveNumber = 128,
+	}
+
+	internal enum UsagePlace
+	{
+		Sprite,
+		Background,
+		Both
+	}
+}
+
+namespace Scratch
+{
 	public class Block
 	{
 		internal bool needsNext = true;
@@ -141,9 +183,9 @@ namespace Scratch_Utils
 			}
 		}
 
-		public Block PlaceIn(Column col)
+		public Block PlaceIn(Column column)
 		{
-			return col.Add(this);
+			return column.Add(this);
 		}
 
 		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
@@ -158,7 +200,7 @@ namespace Scratch_Utils
 			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
 
 			TypeCheck.Check(this.name, valName, val, notAcceptedTypes);
-			 if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
+			if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
 			return $"\"{name}\":[1,[{(isString ? "10" : "4")},\"{val}\"]]";
 		}
 
@@ -194,7 +236,8 @@ namespace Scratch_Utils
 		{
 			if(val is Movement.Vars vM) val = GetVar<Movement.Vars>(Movement.specVars, vM);
 			else if(val is Looks.Vars vL) val = GetVar<Looks.Vars>(Looks.specVars, vL);
-			else if(val is Sounds.Vars vS) val = GetVar<Sounds.Vars>(Sounds.specVars, vS);
+			else if(val is Sounds.Vars vSo) val = GetVar<Sounds.Vars>(Sounds.specVars, vSo);
+			else if(val is Sensing.Vars vSe) val = GetVar<Sensing.Vars>(Sensing.specVars, vSe);
 		}
 
 		public Block AddComment(Comment comment)
@@ -210,43 +253,5 @@ namespace Scratch_Utils
 			if(this.comment != null) throw new ArgumentException($"Comment already assigned to this Block with text \"{this.comment.text}\"");
 			return AddComment(new Comment(text, 0, 0, minimized, height, width));
 		}
-	}
-
-	public class SpecVar : Block
-	{
-		internal SpecVar(UsagePlace usagePlace, string opcode, string name = null, string field = null, string input = null, params object[] vals) : base(name, usagePlace, vals)
-		{
-			args = new BlockArgs(opcode, input, field);
-			this.usagePlace = usagePlace;
-		}
-	}
-
-	public class SpecBlock : SpecVar
-	{
-		internal SpecBlock(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals) : base(usagePlace, name, null, null, null, vals)
-		{
-			
-		}
-	}
-
-	[Flags]
-	internal enum AcceptedTypes
-	{
-		None = 0,
-		Number = 1,
-		String = 2,
-		Variable = 4,
-		ListElement = 8,
-		Enum = 16,
-		Sprite = 32,
-		MyBlockVar = 64,
-		PositiveNumber = 128,
-	}
-
-	internal enum UsagePlace
-	{
-		Sprite,
-		Background,
-		Both
 	}
 }

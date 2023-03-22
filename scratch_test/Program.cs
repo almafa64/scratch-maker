@@ -1,6 +1,4 @@
 ﻿using Scratch;
-using System;
-using System.ComponentModel;
 
 namespace scratch_test
 {
@@ -162,24 +160,33 @@ namespace scratch_test
 						column.Add(new Control.Clone.Delete());
 					}
 
-					using(Column column = new Column(sprite, 1500, 0)) //Operators
+					using(Column column = new Column(sprite, 1500, 0)) //Sensing
+					{
+						column.Add(new Sensing.Ask("test?"));
+						column.Add(new Sensing.Ask(Sensing.Vars.Answer));
+						column.Add(new Sensing.DragMode(Sensing.DragMode.Mode.Draggable));
+						column.Add(new Sensing.DragMode(Sensing.DragMode.Mode.NotDraggable));
+						column.Add(new Sensing.ResetTimer());
+					}
+
+					using(Column column = new Column(sprite, 1800, 0)) //Operators
 					{
 						column.Add(new Operators.Round(new Operators.Add(new Operators.Subtract(42, new Operators.Divide(sprite.Vars["te"], 4)), new Operators.Multiply(sprite.Vars["te"], 69))));
 					}
-					using(Column column = new Column(sprite, 1500, 100)) //Operators2
+					using(Column column = new Column(sprite, 1800, 100)) //Operators2
 					{
 						column.Add(new Operators.Not(new Operators.And(new Operators.Or(new Operators.Greater(53, sprite.Vars["te"]), new Operators.Lesser(new Operators.Greater(25, sprite.Vars["te"]), sprite.Vars["te"])), new Operators.Not(new Operators.Equal(53, sprite.Vars["te"])))));
 					}
-					using(Column column = new Column(sprite, 1500, 200)) //Operators3
+					using(Column column = new Column(sprite, 1800, 200)) //Operators3
 					{
 						column.Add(new Operators.Contains(sprite.Vars["text"], new Operators.Letter(new Operators.Random(sprite.Vars["te"], new Operators.Length(new Operators.Join(sprite.Vars["text"], " 535"))), "test")));
 					}
-					using(Column column = new Column(sprite, 1500, 300)) //Operators4
+					using(Column column = new Column(sprite, 1800, 300)) //Operators4
 					{
 						column.Add(new Operators.Abs(new Operators.Floor(new Operators.Ceil(new Operators.Sqrt(new Operators.Sin(new Operators.Cos(new Operators.Tan(new Operators.Asin(new Operators.Acos(new Operators.Tan(new Operators.Ln(new Operators.Log(new Operators.EPow(new Operators.TenPow(2)))))))))))))));
 					}
 
-					using (Column column = new Column(sprite, 1800, 0)) //Variables
+					using (Column column = new Column(sprite, 2100, 0)) //Variables
 					{
 
 						column.Add(new Variables.Change(sprite.Vars["te"], 64)).AddComment("trying to test");

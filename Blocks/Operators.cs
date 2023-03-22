@@ -1,8 +1,4 @@
 ﻿using Scratch_Utils;
-using System;
-using System.Collections.Generic;
-using static Scratch.Looks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Scratch
 {
@@ -68,6 +64,7 @@ namespace Scratch
 			public Greater(object a, object b) : base("If a greater than b", UsagePlace.Both, a, b)
 			{
 				args = new BlockArgs("operator_gt", MakeOperandInput(this, a, b));
+				isBool = true;
 			}
 		}
 
@@ -76,6 +73,7 @@ namespace Scratch
 			public Lesser(object a, object b) : base("If a lesser than b", UsagePlace.Both, a, b)
 			{
 				args = new BlockArgs("operator_lt", MakeOperandInput(this, a, b));
+				isBool = true;
 			}
 		}
 
@@ -84,6 +82,7 @@ namespace Scratch
 			public Equal(object a, object b) : base("a equal b", UsagePlace.Both, a, b)
 			{
 				args = new BlockArgs("operator_equals", MakeOperandInput(this, a, b));
+				isBool = true;
 			}
 		}
 
@@ -92,6 +91,7 @@ namespace Scratch
 			public Not(object a) : base("Not a", UsagePlace.Both, a)
 			{
 				args = new BlockArgs("operator_not", MakeInput("OPERAND", a, "a"));
+				isBool = true;
 			}
 		}
 
@@ -100,6 +100,7 @@ namespace Scratch
 			public Or(object a, object b) : base("a or b", UsagePlace.Both, a, b)
 			{
 				args = new BlockArgs("operator_or", MakeOperandInput(this, a, b));
+				isBool = true;
 			}
 		}
 
@@ -108,6 +109,7 @@ namespace Scratch
 			public And(object a, object b) : base("a and b", UsagePlace.Both, a, b)
 			{
 				args = new BlockArgs("operator_and", MakeOperandInput(this, a, b));
+				isBool = true;
 			}
 		}
 
@@ -132,6 +134,7 @@ namespace Scratch
 			public Contains(object text, object check) : base("If text contains check", UsagePlace.Both, text, check)
 			{
 				args = new BlockArgs("operator_contains", $"{MakeInput("STRING1", text, "text", AcceptedTypes.None, true)},{MakeInput("STRING2", check, "check", AcceptedTypes.None, true)}");
+				isBool = true;
 			}
 		}
 
@@ -158,116 +161,82 @@ namespace Scratch
 			}
 		}
 
-		public class Abs : SpecBlock
+		public class OperatorBlock : SpecBlock
 		{
-			public Abs(object a) : base("ABS a", UsagePlace.Both, a)
+			internal OperatorBlock(string name, object a, string data) : base(name, UsagePlace.Both, a) 
 			{
-				MakeOpBlock(this, a, "abs");
+				MakeOpBlock(this, a, data);
 			}
 		}
 
-		public class Floor : SpecBlock
+		public class Abs : OperatorBlock
 		{
-			public Floor(object a) : base("Floor a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "floor");
-			}
+			public Abs(object a) : base("ABS a", a, "abs"){}
 		}
 
-		public class Ceil : SpecBlock
+		public class Floor : OperatorBlock
 		{
-			public Ceil(object a) : base("Ceil a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "ceil");
-			}
+			public Floor(object a) : base("Floor a", a, "floor"){}
 		}
 
-		public class Sqrt : SpecBlock
+		public class Ceil : OperatorBlock
 		{
-			public Sqrt(object a) : base("SquareRoot a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "sqrt");
-			}
+			public Ceil(object a) : base("Ceil a", a, "ceil"){}
 		}
 
-		public class Sin : SpecBlock
+		public class Sqrt : OperatorBlock
 		{
-			public Sin(object a) : base("Sin a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "sin");
-			}
+			public Sqrt(object a) : base("SquareRoot a", a, "sqrt"){}
 		}
 
-		public class Cos : SpecBlock
+		public class Sin : OperatorBlock
 		{
-			public Cos(object a) : base("Cos a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "cos");
-			}
+			public Sin(object a) : base("Sin a", a, "sin"){}
 		}
 
-		public class Tan : SpecBlock
+		public class Cos : OperatorBlock
 		{
-			public Tan(object a) : base("Tan a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "tan");
-			}
+			public Cos(object a) : base("Cos a", a, "cos"){}
 		}
 
-		public class Asin : SpecBlock
+		public class Tan : OperatorBlock
 		{
-			public Asin(object a) : base("Asin a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "asin");
-			}
+			public Tan(object a) : base("Tan a", a, "tan"){}
 		}
 
-		public class Acos : SpecBlock
+		public class Asin : OperatorBlock
 		{
-			public Acos(object a) : base("Acos a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "acos");
-			}
+			public Asin(object a) : base("Asin a", a, "asin"){}
 		}
 
-		public class Atan : SpecBlock
+		public class Acos : OperatorBlock
 		{
-			public Atan(object a) : base("Atan a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "atan");
-			}
+			public Acos(object a) : base("Acos a", a, "acos"){}
 		}
 
-		public class Ln : SpecBlock
+		public class Atan : OperatorBlock
 		{
-			public Ln(object a) : base("Ln a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "ln");
-			}
+			public Atan(object a) : base("Atan a", a, "atan"){}
 		}
 
-		public class Log : SpecBlock
+		public class Ln : OperatorBlock
 		{
-			public Log(object a) : base("Log a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "log");
-			}
+			public Ln(object a) : base("Ln a", a, "ln"){}
 		}
 
-		public class EPow : SpecBlock
+		public class Log : OperatorBlock
 		{
-			public EPow(object a) : base("E a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "e ^");
-			}
+			public Log(object a) : base("Log a", a, "log"){}
 		}
 
-		public class TenPow : SpecBlock
+		public class EPow : OperatorBlock
 		{
-			public TenPow(object a) : base("Ten a", UsagePlace.Both, a)
-			{
-				MakeOpBlock(this, a, "10 ^");
-			}
+			public EPow(object a) : base("E a", a, "e ^"){}
+		}
+
+		public class TenPow : OperatorBlock
+		{
+			public TenPow(object a) : base("Ten a", a, "10 ^") {}
 		}
 	}
 }

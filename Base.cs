@@ -4,6 +4,7 @@ using Scratch_Utils.Dics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 
 namespace Scratch_Utils.Dics
@@ -391,31 +392,34 @@ namespace Scratch
 			this.isSpriteCol = sObject is Sprite;
 		}
 
-		public Block Add(Block block)
+		public Block Add(params Block[] inBlocks)
 		{
-			if(block.needsNext)
+			foreach(Block block in inBlocks)
 			{
-				if(blocks.Count - 1 >= 0)
+				if(block.needsNext)
 				{
-					Block prev;
-					for(int i = 0; ; i++)
+					if(blocks.Count - 1 >= 0)
 					{
-						prev = blocks[blocks.Count - (i + 1)];
-						if(prev.needsNext) break;
-					}
+						Block prev;
+						for(int i = 0; ; i++)
+						{
+							prev = blocks[blocks.Count - (i + 1)];
+							if(prev.needsNext) break;
+						}
 
-					block.args.ParentId = prev.args.Id;
-					prev.args.NextId = block.args.Id;
-					block.args.TopLevel = false;
+						block.args.ParentId = prev.args.Id;
+						prev.args.NextId = block.args.Id;
+						block.args.TopLevel = false;
+					}
+					else block.args.TopLevel = true;
 				}
-				else block.args.TopLevel = true;
+				foreach(Block b in block.kids)
+				{
+					Add(b);
+				}
+				CheckBlockUsage(block);
 			}
-			foreach(Block b in block.kids)
-			{
-				Add(b);
-			}
-			CheckBlockUsage(block);
-			return block;
+			return inBlocks.Last();
 		}
 
 		internal void CheckBlockUsage(Block b)
