@@ -1,6 +1,8 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using static Scratch.Looks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Scratch
 {
@@ -14,6 +16,11 @@ namespace Scratch
 		private static string MakeOperandInput(Block bl, object a, object b)
 		{
 			return $"{bl.MakeInput("OPERAND1", a, "a", AcceptedTypes.None, true)},{bl.MakeInput("OPERAND2", b, "b", AcceptedTypes.None, true)}";
+		}
+
+		private static void MakeOpBlock(Block bl, object val, string data)
+		{
+			bl.args = new BlockArgs("operator_mathop", bl.MakeInput("NUM", val, "val"), Block.MakeField("OPERATOR", data));
 		}
 
 		public class Add : SpecBlock
@@ -108,7 +115,7 @@ namespace Scratch
 		{
 			public Random(object a, object b) : base("Pick random from a to b", UsagePlace.Both, a, b)
 			{
-
+				args = new BlockArgs("operator_random", $"{MakeInput("FROM", a, "a")},{MakeInput("TO", b, "b")}");
 			}
 		}
 
@@ -116,15 +123,15 @@ namespace Scratch
 		{
 			public Length(object text) : base("Length of text", UsagePlace.Both, text)
 			{
-
+				args = new BlockArgs("operator_length", MakeInput("STRING", text, "text", AcceptedTypes.None, true));
 			}
 		}
 
 		public class Contains : SpecBlock
 		{
-			public Contains(object text1, object text2) : base("If text1 contains text2", UsagePlace.Both, text1, text2)
+			public Contains(object text, object check) : base("If text contains check", UsagePlace.Both, text, check)
 			{
-
+				args = new BlockArgs("operator_contains", $"{MakeInput("STRING1", text, "text", AcceptedTypes.None, true)},{MakeInput("STRING2", check, "check", AcceptedTypes.None, true)}");
 			}
 		}
 
@@ -132,7 +139,7 @@ namespace Scratch
 		{
 			public Join(object text1, object text2) : base("join text1 and text2", UsagePlace.Both, text1, text2)
 			{
-
+				args = new BlockArgs("operator_join", $"{MakeInput("STRING1", text1, "text1", AcceptedTypes.None, true)},{MakeInput("STRING2", text2, "text2", AcceptedTypes.None, true)}");
 			}
 		}
 
@@ -140,15 +147,14 @@ namespace Scratch
 		{
 			public Letter(object character, object text) : base("If letter character of text", UsagePlace.Both, character, text)
 			{
-
+				args = new BlockArgs("operator_letter_of", $"{MakeInput("LETTER", character, "character", AcceptedTypes.Number | AcceptedTypes.String, true)},{MakeInput("STRING", text, "text", AcceptedTypes.None, true)}");
 			}
 		}
-
 		public class Round : SpecBlock
 		{
 			public Round(object a) : base("Round a", UsagePlace.Both, a)
 			{
-
+				args = new BlockArgs("operator_round", MakeInput("NUM", a, "a"));
 			}
 		}
 
@@ -156,7 +162,7 @@ namespace Scratch
 		{
 			public Abs(object a) : base("ABS a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "abs");
 			}
 		}
 
@@ -164,7 +170,7 @@ namespace Scratch
 		{
 			public Floor(object a) : base("Floor a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "floor");
 			}
 		}
 
@@ -172,15 +178,15 @@ namespace Scratch
 		{
 			public Ceil(object a) : base("Ceil a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "ceil");
 			}
 		}
 
-		public class SquareRoot : SpecBlock
+		public class Sqrt : SpecBlock
 		{
-			public SquareRoot(object a) : base("SquareRoot a", UsagePlace.Both, a)
+			public Sqrt(object a) : base("SquareRoot a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "sqrt");
 			}
 		}
 
@@ -188,7 +194,7 @@ namespace Scratch
 		{
 			public Sin(object a) : base("Sin a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "sin");
 			}
 		}
 
@@ -196,7 +202,7 @@ namespace Scratch
 		{
 			public Cos(object a) : base("Cos a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "cos");
 			}
 		}
 
@@ -204,7 +210,7 @@ namespace Scratch
 		{
 			public Tan(object a) : base("Tan a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "tan");
 			}
 		}
 
@@ -212,7 +218,7 @@ namespace Scratch
 		{
 			public Asin(object a) : base("Asin a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "asin");
 			}
 		}
 
@@ -220,7 +226,7 @@ namespace Scratch
 		{
 			public Acos(object a) : base("Acos a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "acos");
 			}
 		}
 
@@ -228,7 +234,7 @@ namespace Scratch
 		{
 			public Atan(object a) : base("Atan a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "atan");
 			}
 		}
 
@@ -236,7 +242,7 @@ namespace Scratch
 		{
 			public Ln(object a) : base("Ln a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "ln");
 			}
 		}
 
@@ -244,23 +250,23 @@ namespace Scratch
 		{
 			public Log(object a) : base("Log a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "log");
 			}
 		}
 
-		public class E : SpecBlock
+		public class PowE : SpecBlock
 		{
-			public E(object a) : base("E a", UsagePlace.Both, a)
+			public PowE(object a) : base("E a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "e ^");
 			}
 		}
 
-		public class Ten : SpecBlock
+		public class Pow10 : SpecBlock
 		{
-			public Ten(object a) : base("Ten a", UsagePlace.Both, a)
+			public Pow10(object a) : base("Ten a", UsagePlace.Both, a)
 			{
-
+				MakeOpBlock(this, a, "10 ^");
 			}
 		}
 	}

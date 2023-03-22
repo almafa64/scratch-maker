@@ -137,8 +137,10 @@ namespace Scratch_Utils
 		{
 			if (o == null) return AcceptedTypes.None;
 			Type t = o.GetType();
-			if(t == typeof(int) || t == typeof(float) || t == typeof(double) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) || t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong))
-				return AcceptedTypes.Number;
+			if(t == typeof(int) || t == typeof(float) || t == typeof(double) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) || t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong) || t == typeof(decimal))
+			{
+				return (Convert.ToDouble(o) >= 0) ? AcceptedTypes.PositiveNumber : AcceptedTypes.Number;
+			}
 			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
 			else if(t == typeof(Var)) return AcceptedTypes.Variable;
 			//else if(t == typeof(ListElement)) return AcceptedTypes.ListElement;

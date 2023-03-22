@@ -240,6 +240,7 @@ namespace Scratch_Utils
 		Enum = 16,
 		Sprite = 32,
 		MyBlockVar = 64,
+		PositiveNumber = 128,
 	}
 
 	internal enum UsagePlace
