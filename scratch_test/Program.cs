@@ -176,7 +176,7 @@ namespace scratch_test
 					}
 					using(Column column = new Column(sprite, 1500, 300)) //Operators4
 					{
-						column.Add(new Operators.Abs(new Operators.Floor(new Operators.Ceil(new Operators.Sqrt(new Operators.Sin(new Operators.Cos(new Operators.Tan(new Operators.Asin(new Operators.Acos(new Operators.Tan(new Operators.Ln(new Operators.Log(new Operators.PowE(new Operators.Pow10(2)))))))))))))));
+						column.Add(new Operators.Abs(new Operators.Floor(new Operators.Ceil(new Operators.Sqrt(new Operators.Sin(new Operators.Cos(new Operators.Tan(new Operators.Asin(new Operators.Acos(new Operators.Tan(new Operators.Ln(new Operators.Log(new Operators.EPow(new Operators.TenPow(2)))))))))))))));
 					}
 
 					using (Column column = new Column(sprite, 1800, 0)) //Variables

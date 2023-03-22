@@ -254,17 +254,17 @@ namespace Scratch
 			}
 		}
 
-		public class PowE : SpecBlock
+		public class EPow : SpecBlock
 		{
-			public PowE(object a) : base("E a", UsagePlace.Both, a)
+			public EPow(object a) : base("E a", UsagePlace.Both, a)
 			{
 				MakeOpBlock(this, a, "e ^");
 			}
 		}
 
-		public class Pow10 : SpecBlock
+		public class TenPow : SpecBlock
 		{
-			public Pow10(object a) : base("Ten a", UsagePlace.Both, a)
+			public TenPow(object a) : base("Ten a", UsagePlace.Both, a)
 			{
 				MakeOpBlock(this, a, "10 ^");
 			}
