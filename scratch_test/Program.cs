@@ -168,6 +168,14 @@ namespace scratch_test
 						column.Add(new Sensing.DragMode(Sensing.DragMode.Mode.NotDraggable));
 						column.Add(new Sensing.ResetTimer());
 					}
+					using(Column column = new Column(sprite, 1500, 500)) //Sensing2
+					{
+						column.Add(new Operators.And(new Operators.Or(new Operators.And(new Operators.Or(new Sensing.Touching(Sensing.Touching.What.Mouse), new Operators.And(new Sensing.Mouse.Down(), new Sensing.KeyPress(Sensing.KeyPress.Key.Any))), new Sensing.Touching(Sensing.Touching.What.Edge)), new Sensing.Touching(project.Sprites["test2"])), new Operators.Or(new Sensing.TouchingColor(Color.Red), new Sensing.ColorTouchingColor(new Color("abcdef"), new Color("#abcdef")))));
+					}
+					using(Column column = new Column(sprite, 1500, 600)) //Sensing3
+					{
+						column.Add(new Operators.Subtract(new Operators.Multiply(new Operators.Divide(new Sensing.Mouse.X(), new Sensing.DaysSince()), new Sensing.Mouse.Y()), new Operators.Add(new Sensing.Distance(Sensing.Distance.What.Mouse), new Sensing.Distance(project.Sprites["test2"]))));
+					}
 
 					using(Column column = new Column(sprite, 1800, 0)) //Operators
 					{

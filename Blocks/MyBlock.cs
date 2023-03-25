@@ -155,7 +155,7 @@ namespace Scratch
 			prototype.args.Mutatator = m;
 		}
 
-		public new Block Add(Block block)
+		public new Block Add(params Block[] block)
 		{
 			if(!made) throw new Exception($"Block \"{mainBlock.name}\" is not builded!");
 			return base.Add(block);

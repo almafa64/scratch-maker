@@ -38,6 +38,7 @@ namespace Scratch
 				RightArrow,
 				UpArrow,
 				DownArrow,
+				Space,
 				a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 			}
 
@@ -51,6 +52,7 @@ namespace Scratch
 					case Keys.RightArrow: keyString = "right arrow"; break;
 					case Keys.UpArrow: keyString = "up arrow"; break;
 					case Keys.DownArrow: keyString = "down arrow"; break;
+					case Keys.Space: keyString = "space"; break;
 					default: keyString = typeof(Keys).GetEnumName(key); break;
 				}
 				mainBlock.args.Fields = Block.MakeField("KEY_OPTION", keyString);

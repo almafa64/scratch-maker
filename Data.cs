@@ -288,3 +288,41 @@ namespace Scratch
 		}
 	}
 }
+
+namespace Scratch
+{
+	public struct Color
+	{
+		internal string hex;
+		public Color(int r, int g, int b)
+		{
+			if(r < 0 || r > 255) throw new ArgumentException("r value of Color object cannot be less than 0 and more than 255");
+			if(g < 0 || g > 255) throw new ArgumentException("g value of Color object cannot be less than 0 and more than 255");
+			if(b < 0 || b > 255) throw new ArgumentException("b value of Color object cannot be less than 0 and more than 255");
+			hex = $"#{BitConverter.ToString(new byte[] { (byte)r, (byte)g, (byte)b }).Replace("-", "")}";
+		}
+		public Color(string hex)
+		{
+			bool hastag = hex[0] == '#';
+			if(hex.Length - (hastag ? 1 : 0) != 6) throw new ArgumentException("hex length was not 6 (without the # character)");
+			hex = hex.ToLower();
+			string good = "0123456789abcdef";
+			for(int i = hastag?1:0; i < hex.Length; i++)
+			{
+				if(good.IndexOf(hex[i]) == -1) throw new ArgumentException($"hex has no hex character \"{hex[i]}\"");
+			}
+			this.hex = hastag ? hex : $"#{hex}";
+		}
+		internal Color(string hex, int _) => this.hex = hex;
+		public static Color Red		= new Color("#ff0000", 0);
+		public static Color Green	= new Color("#00ff00", 0);
+		public static Color Blue	= new Color("#0000ff", 0);
+		public static Color Black	= new Color("#000000", 0);
+		public static Color Gray	= new Color("#808080", 0);
+		public static Color White	= new Color("#ffffff", 0);
+		public static Color Purple	= new Color("#800080", 0);
+		public static Color Yellow	= new Color("#ffff00", 0);
+		public static Color Aqua	= new Color("#00ffff", 0);
+		public static Color Pink	= new Color("#ff00ff", 0);
+	}
+}

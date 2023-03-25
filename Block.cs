@@ -150,6 +150,8 @@ namespace Scratch_Utils
 		Sprite = 32,
 		MyBlockVar = 64,
 		PositiveNumber = 128,
+
+		All = Number | String | Variable | ListElement | Enum | Sprite | MyBlockVar | PositiveNumber, 
 	}
 
 	internal enum UsagePlace
@@ -191,17 +193,28 @@ namespace Scratch
 		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
 		private readonly static Random rd = new Random();
 
-		internal string MakeInput(string name, object val, string valName, AcceptedTypes notAcceptedTypes = AcceptedTypes.String, bool isString = false)
+		internal string MakeInput(string name, object val, string valName, AcceptedTypes notAcceptedTypes = AcceptedTypes.String, InputType inputType = InputType.Number)
 		{
 			BuiltInVars(ref val);
 
-			string def = isString ? $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\"" : "4,\"0\"";
+			string def;
+			switch(inputType)
+			{
+				case InputType.Integer:
+				case InputType.PositiveInteger:
+				case InputType.PositiveNumber:
+				case InputType.Number: def = $"{(int)inputType},\"0\""; break;
+				case InputType.String: def = $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\""; break;
+				case InputType.Color: def = "9,#ffffff"; break;
+				default: def = $"{(int)inputType},\"\""; break;
+			}
+
 			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
 			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
 
 			TypeCheck.Check(this.name, valName, val, notAcceptedTypes);
 			if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
-			return $"\"{name}\":[1,[{(isString ? "10" : "4")},\"{val}\"]]";
+			return $"\"{name}\":[1,[{(int)inputType},\"{val}\"]]";
 		}
 
 		internal static string MakeField(string name, string data, bool needQuote = true)

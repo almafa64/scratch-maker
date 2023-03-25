@@ -30,12 +30,12 @@ namespace Scratch
 			{
 				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException("sec is string, which is not accepted");
 
-				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true)},{MakeInput("SECS", sec, "sec")}");
+				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Say(object text) : base("Say text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true));
+				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String));
 			}
 		}
 
@@ -43,12 +43,12 @@ namespace Scratch
 		{
 			public Think(object text, object sec) : base("Think text for seconds", UsagePlace.Sprite, text, sec)
 			{
-				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true)},{MakeInput("SECS", sec, "sec")}");
+				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Think(object text) : base("Think text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, true));
+				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String));
 			}
 		}
 
