@@ -12,8 +12,6 @@ namespace scratch_test
 				{
 					bg.Costumes["testBackdrop"] = new Costume("blackness.png");
 
-					using(Events.ClickStage c = new Events.ClickStage(bg, 400)) { }
-
 					using(Sprite s = new Sprite("test2", project))
 					{
 						s.Vars["te"] = new Var(96);
@@ -28,6 +26,7 @@ namespace scratch_test
 						using(Events.Broadcasts.Recive c = new Events.Broadcasts.Recive(s.Broadcasts["test"], s, 0, 500)) { }
 					}
 
+					using(Events.ClickStage c = new Events.ClickStage(bg, 400)) { }
 					using(Column column = new Column(bg, 0, 0))
 					{
 						column.Add(new Looks.Effect.Set(Looks.Effect.Effects.Ghost, bg.Vars["fwafwa"]));
@@ -175,6 +174,10 @@ namespace scratch_test
 					using(Column column = new Column(sprite, 1500, 600)) //Sensing3
 					{
 						column.Add(new Operators.Subtract(new Operators.Multiply(new Operators.Divide(new Sensing.Mouse.X(), new Sensing.DaysSince()), new Sensing.Mouse.Y()), new Operators.Add(new Sensing.Distance(Sensing.Distance.What.Mouse), new Sensing.Distance(project.Sprites["test2"]))));
+					}
+					using(Column column = new Column(sprite, 1500, 700)) //Sensing4
+					{
+						column.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Operators.Add(new Sensing.Of(Sensing.Of.Data.Volume, project.Sprites["test2"]), new Sensing.Of(Sensing.Of.Data.BackdropName, project.background)), new Sensing.Of(Sensing.Of.Data.BackdropNum, project.background)), new Sensing.Of(Sensing.Of.Data.Size, project.Sprites["test2"])), new Sensing.Of(Sensing.Of.Data.CostumeName, project.Sprites["test2"])), new Sensing.Of(Sensing.Of.Data.CostumeNum, project.Sprites["test2"])), new Sensing.Of(Sensing.Of.Data.Direction, project.Sprites["test2"])), new Sensing.Of(Sensing.Of.Data.PositionY, project.Sprites["test2"])), new Operators.Add(new Sensing.Of(Sensing.Of.Data.PositionX, project.Sprites["test2"]), new Operators.Add(new Sensing.Of(project.Sprites["test2"].Vars["te"]), new Sensing.Of(sprite.Vars["fwafwa"])))));
 					}
 
 					using(Column column = new Column(sprite, 1800, 0)) //Operators

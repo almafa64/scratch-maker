@@ -1,8 +1,10 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using static Scratch.Events.KeyPress;
 using static Scratch.Sensing.KeyPress;
+using static Scratch.Sounds;
 
 namespace Scratch
 {
@@ -93,10 +95,10 @@ namespace Scratch
 				args = new BlockArgs("sensing_touchingobject");
 				Block tmp = new Block(null)
 				{
-					args = new BlockArgs("sensing_touchingobjectmenu", null, $"\"TOUCHINGOBJECTMENU\":[\"{wS}\",null]", null, args.Id, true)
+					args = new BlockArgs("sensing_touchingobjectmenu", null, $"\"TOUCHINGOBJECTMENU\":[\"{wS}\",null]", null, args.Id, true),
+					needsNext = false
 				};
 				kids.Add(tmp);
-				tmp.needsNext = false;
 				args.Inputs = $"\"TOUCHINGOBJECTMENU\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
@@ -136,10 +138,10 @@ namespace Scratch
 				args = new BlockArgs("sensing_distanceto");
 				Block tmp = new Block(null)
 				{
-					args = new BlockArgs("sensing_distancetomenu", null, $"\"DISTANCETOMENU\":[\"{wS}\",null]", null, args.Id, true)
+					args = new BlockArgs("sensing_distancetomenu", null, $"\"DISTANCETOMENU\":[\"{wS}\",null]", null, args.Id, true),
+					needsNext = false
 				};
 				kids.Add(tmp);
-				tmp.needsNext = false;
 				args.Inputs = $"\"DISTANCETOMENU\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
@@ -212,11 +214,90 @@ namespace Scratch
 				args = new BlockArgs("sensing_keypressed");
 				Block tmp = new Block(null)
 				{
-					args = new BlockArgs("sensing_keyoptions", null, $"\"KEY_OPTION\":[\"{wS}\",null]", null, args.Id, true)
+					args = new BlockArgs("sensing_keyoptions", null, $"\"KEY_OPTION\":[\"{wS}\",null]", null, args.Id, true),
+					needsNext = false
 				};
 				kids.Add(tmp);
-				tmp.needsNext = false;
 				args.Inputs = $"\"KEY_OPTION\":[1,\"{tmp.args.Id}\"]";
+			}
+		}
+
+		public class Of : SpecBlock
+		{
+			public enum Data
+			{
+				//Sprite
+				PositionX,
+				PositionY,
+				Direction,
+				CostumeNum,
+				CostumeName,
+				Size,
+				//Back
+				BackdropNum,
+				BackdropName,
+				//Both
+				Volume,
+			}
+
+			public Of(object data, SObject sObject = null) : base("data of sObject")
+			{
+				string prop, obj;
+
+				if(data is Var v)
+				{
+					prop = v.Name;
+					obj = (v.sObject is Sprite s) ? s.name : "_stage_";
+				}
+				else
+				{
+					bool isSprite = false;
+					if(sObject is Sprite s)
+					{
+						isSprite = true;
+						obj = s.name;
+					}
+					else if(sObject is Project.Background) obj = "_stage_";
+					else throw new ArgumentException("sObject is not Sprite or Background");
+
+					if(data is Data d)
+					{
+						if(d == Data.Volume) prop = "volume";
+						else if(isSprite)
+						{
+							switch(d)
+							{
+								case Data.PositionX: prop = "x position"; break;
+								case Data.PositionY: prop = "y position"; break;
+								case Data.Direction: prop = "direction"; break;
+								case Data.CostumeNum: prop = "costume #"; break;
+								case Data.CostumeName: prop = "costume name"; break;
+								case Data.Size: prop = "size"; break;
+								case Data.Volume: prop = "volume"; break;
+								default: throw new ArgumentException($"cannot use \"{typeof(Data).GetEnumName(d)}\" elelemnt on Sprite");
+							}
+						}
+						else
+						{
+							switch(d)
+							{
+								case Data.BackdropName: prop = "backdrop name"; break;
+								case Data.BackdropNum: prop = "backdrop #"; break;
+								default: throw new ArgumentException($"cannot use \"{typeof(Data).GetEnumName(d)}\" elelemnt on the Background");
+							}
+						}
+					}
+					else throw new ArgumentException("data is not Data elelemnt or Var");
+				}
+
+				args = new BlockArgs("sensing_of", null, $"\"PROPERTY\":[\"{prop}\",null]");
+				Block tmp = new Block(null)
+				{
+					args = new BlockArgs("sensing_of_object_menu", null, $"\"OBJECT\":[\"{obj}\",null]", null, args.Id, true),
+					needsNext = false
+				};
+				kids.Add(tmp);
+				args.Inputs = $"\"OBJECT\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
 	}

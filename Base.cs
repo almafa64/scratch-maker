@@ -39,9 +39,16 @@ namespace Scratch_Utils.Dics
 				if(Var.Has(sObject, name) || Var.BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
 
 				value.Name = name;
-				value.sObject = sObject;
-				if(!global || sObject is Project.Background) dic[name] = value;
-				else sObject.Project.background._Vars[name] = value;
+				if(!global || sObject is Project.Background)
+				{
+					dic[name] = value;
+					value.sObject = sObject;
+				}
+				else 
+				{
+					sObject.Project.background._Vars[name] = value;
+					value.sObject = sObject.Project.background;
+				}
 			}
 		}
 	}
@@ -65,8 +72,16 @@ namespace Scratch_Utils.Dics
 
 				value.Name = name;
 				value.sObject = sObject;
-				if(!global || sObject is Project.Background) dic[name] = value;
-				else sObject.Project.background._Lists[name] = value;
+				if(!global || sObject is Project.Background)
+				{
+					dic[name] = value;
+					value.sObject = sObject;
+				}
+				else
+				{
+					sObject.Project.background._Lists[name] = value;
+					value.sObject = sObject.Project.background;
+				}
 			}
 		}
 	}
@@ -172,7 +187,7 @@ namespace Scratch_Utils.Dics
 			get
 			{
 				if(pr._sprites.ContainsKey(name)) return sprites[name];
-				else throw new ArgumentException($"No list was found with the name \"{name}\"");
+				else throw new ArgumentException($"No sprite was found with the name \"{name}\"");
 			}
 		}
 	}
