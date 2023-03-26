@@ -1,8 +1,4 @@
 ﻿using Scratch_Utils;
-using System;
-using static Scratch.Events;
-using static Scratch.Looks.Next;
-using static Scratch.Sounds;
 
 namespace Scratch
 {

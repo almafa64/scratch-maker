@@ -72,7 +72,7 @@ namespace Scratch
 			if(Has(sObject, name) || BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
 			
 			if(value == null) value = 0;
-			else if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.ListElement) throw new ArgumentException("Variable value cannot be another variable or list");
+			else if(TypeCheck.Check(value) == Types.Variable || TypeCheck.Check(value) == Types.List) throw new ArgumentException("Variable value cannot be another variable or list");
 			
 			this.value = value;
 			sObject._Vars[name] = this;
@@ -80,9 +80,9 @@ namespace Scratch
 
 		public Var(object value) : base(null, null)
 		{
-			AcceptedTypes tmp = TypeCheck.Check(value);
+			Types tmp = TypeCheck.Check(value);
 			if(value == null) value = 0;
-			else if(tmp == AcceptedTypes.Variable || tmp == AcceptedTypes.ListElement) throw new ArgumentException("Variable value cannot be another variable or list");
+			else if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("Variable value cannot be another variable or list");
 
 			this.value = value;
 		}
@@ -110,7 +110,8 @@ namespace Scratch
 			{
 				foreach(object value in vars)
 				{
-					if(TypeCheck.Check(value) == AcceptedTypes.Variable || TypeCheck.Check(value) == AcceptedTypes.ListElement) throw new ArgumentException("List value cannot be another variable or list");
+					Types tmp = TypeCheck.Check(value);
+					if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("List value cannot be another variable or list");
 				}
 				this.vars.AddRange(vars);
 			}
@@ -123,8 +124,8 @@ namespace Scratch
 			{
 				foreach(object value in vars)
 				{
-					AcceptedTypes tmp = TypeCheck.Check(value);
-					if(tmp == AcceptedTypes.Variable || tmp == AcceptedTypes.ListElement) throw new ArgumentException("List value cannot be another variable or list");
+					Types tmp = TypeCheck.Check(value);
+					if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("List value cannot be another variable or list");
 				}
 				this.vars.AddRange(vars);
 			}

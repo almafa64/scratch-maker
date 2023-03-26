@@ -1,10 +1,6 @@
 ﻿using Scratch_Utils;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using static Scratch.Events.KeyPress;
-using static Scratch.Sensing.KeyPress;
-using static Scratch.Sounds;
 
 namespace Scratch
 {
@@ -48,7 +44,7 @@ namespace Scratch
 		{
 			public Ask(object text) : base("Ask text and wait", UsagePlace.Both, text) 
 			{
-				args = new BlockArgs("sensing_askandwait", MakeInput("QUESTION", text, "text", AcceptedTypes.None, InputType.String));
+				args = new BlockArgs("sensing_askandwait", MakeInput("QUESTION", text, "text", Types.None, InputType.String));
 			}
 		}
 
@@ -100,6 +96,8 @@ namespace Scratch
 				};
 				kids.Add(tmp);
 				args.Inputs = $"\"TOUCHINGOBJECTMENU\":[1,\"{tmp.args.Id}\"]";
+
+				isBool = true;
 			}
 		}
 
@@ -107,7 +105,8 @@ namespace Scratch
 		{
 			public TouchingColor(Color color) : base("Touching color", UsagePlace.Sprite)
 			{
-				args = new BlockArgs("sensing_touchingcolor", MakeInput("COLOR", color.hex, "hex", AcceptedTypes.None, InputType.Color));
+				args = new BlockArgs("sensing_touchingcolor", MakeInput("COLOR", color.hex, "hex", Types.None, InputType.Color));
+				isBool = true;
 			}
 		}
 
@@ -115,7 +114,8 @@ namespace Scratch
 		{
 			public ColorTouchingColor(Color a, Color b) : base("a Color Touching b Color", UsagePlace.Sprite)
 			{
-				args = new BlockArgs("sensing_coloristouchingcolor", $"{MakeInput("COLOR", a.hex, "a", AcceptedTypes.None, InputType.Color)},{MakeInput("COLOR2", b.hex, "b", AcceptedTypes.None, InputType.Color)}");
+				args = new BlockArgs("sensing_coloristouchingcolor", $"{MakeInput("COLOR", a.hex, "a", Types.None, InputType.Color)},{MakeInput("COLOR2", b.hex, "b", Types.None, InputType.Color)}");
+				isBool = true;
 			}
 		}
 
@@ -169,6 +169,7 @@ namespace Scratch
 				public Down() : base("Mouse down")
 				{
 					args = new BlockArgs("sensing_mousedown");
+					isBool = true;
 				}
 			}
 		}
@@ -183,7 +184,7 @@ namespace Scratch
 
 		public class KeyPress : SpecBlock
 		{
-			public enum Key
+			public enum Keys
 			{
 				Any,
 				LeftArrow,
@@ -196,16 +197,16 @@ namespace Scratch
 			public KeyPress(object what) : base("Touching what", UsagePlace.Sprite, what)
 			{
 				string wS;
-				if(what is Key w)
+				if(what is Keys w)
 				{
 					switch(w)
 					{
-						case Key.Any: wS = "any"; break;
-						case Key.LeftArrow: wS = "left arrow"; break;
-						case Key.RightArrow: wS = "right arrow"; break;
-						case Key.UpArrow: wS = "up arrow"; break;
-						case Key.DownArrow: wS = "down arrow"; break;
-						case Key.Space: wS = "space"; break;
+						case Keys.Any: wS = "any"; break;
+						case Keys.LeftArrow: wS = "left arrow"; break;
+						case Keys.RightArrow: wS = "right arrow"; break;
+						case Keys.UpArrow: wS = "up arrow"; break;
+						case Keys.DownArrow: wS = "down arrow"; break;
+						case Keys.Space: wS = "space"; break;
 						default: wS = typeof(Keys).GetEnumName(w); break;
 					}
 				}
@@ -219,6 +220,8 @@ namespace Scratch
 				};
 				kids.Add(tmp);
 				args.Inputs = $"\"KEY_OPTION\":[1,\"{tmp.args.Id}\"]";
+
+				isBool = true;
 			}
 		}
 
@@ -240,7 +243,7 @@ namespace Scratch
 				Volume,
 			}
 
-			public Of(object data, SObject sObject = null) : base("data of sObject")
+			public Of(object data, SObject sObject = null) : base("data of sObject", UsagePlace.Both, data)
 			{
 				string prop, obj;
 

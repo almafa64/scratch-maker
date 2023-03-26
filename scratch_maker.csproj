@@ -60,6 +60,7 @@
     <Compile Include="Blocks\Extensions\EV3.cs" />
     <Compile Include="Blocks\Events.cs" />
     <Compile Include="Blocks\Extensions\ForceAndAcc.cs" />
+    <Compile Include="Blocks\Lists.cs" />
     <Compile Include="Blocks\Looks.cs" />
     <Compile Include="Blocks\Extensions\MakeyMakey.cs" />
     <Compile Include="Blocks\Extensions\Microbit.cs" />

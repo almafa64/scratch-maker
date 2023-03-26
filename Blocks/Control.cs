@@ -51,6 +51,14 @@ namespace Scratch
 			}
 		}
 
+		public class WaitUntil : Block
+		{
+			public WaitUntil(SpecBlock block) : base("Wait until block true", UsagePlace.Both)
+			{
+				args = new BlockArgs("control_wait_until", MakeInput("CONDITION", block, "block"));
+			}
+		}
+
 		public static class Clone
 		{
 			public class Delete : Block
@@ -104,6 +112,74 @@ namespace Scratch
 				{
 					mainBlock.usagePlace = UsagePlace.Sprite;
 				}
+			}
+		}
+
+		public static class Loop
+		{
+			public class Forever : Block
+			{
+				public Forever(params Block[] blocks) : base("Loop forever")
+				{
+					args = new BlockArgs("control_forever");
+					blocks[0].autoLevel = false;
+					args.Inputs = MakeInput("SUBSTACK", blocks[0], "blocks", Types.All, InputType.Number, "", false);
+
+					for(int i = 1; i < blocks.Length; i++) 
+					{
+						kids.Add(blocks[i]);
+					}
+				}
+			}
+
+			public class Repeat : Block
+			{
+				public Repeat(object num, params Block[] blocks) : base("Repeat for num", UsagePlace.Both, num)
+				{
+					args = new BlockArgs("control_repeat");
+					blocks[0].autoLevel = false;
+					args.Inputs = $"{MakeInput("TIMES", num, "num", Types.String, InputType.PositiveInteger)},{MakeInput("SUBSTACK", blocks[0], "blocks", Types.All, InputType.Number, "", false)}";
+
+					for(int i = 1; i < blocks.Length; i++)
+					{
+						kids.Add(blocks[i]);
+					}
+				}
+			}
+
+			public class RepeatUntil : Block
+			{
+				public RepeatUntil(Block block, params Block[] blocks) : base("Repeat until block false")
+				{
+					args = new BlockArgs("control_repeat_until");
+					blocks[0].autoLevel = false;
+					args.Inputs = $"{MakeInput("CONDITION", block, "num", Types.String, InputType.PositiveInteger)},{MakeInput("SUBSTACK", blocks[0], "blocks", Types.All, InputType.Number, "", false)}";
+
+					for(int i = 1; i < blocks.Length; i++)
+					{
+						kids.Add(blocks[i]);
+					}
+				}
+			}
+		}
+
+		public class If : Block
+		{
+			public If(Block block, params Block[] blocks) : base("If block true")
+			{
+				args = new BlockArgs("control_if");
+				blocks[0].autoLevel = false;
+				args.Inputs = $"{MakeInput("CONDITION", block, "num", Types.String, InputType.PositiveInteger)},{MakeInput("SUBSTACK", blocks[0], "blocks", Types.All, InputType.Number, "", false)}";
+			}
+		}
+
+		public class IfElse : Block
+		{
+			public IfElse(Block block, Block[] blocksTrue, Block[] blocksFalse) : base("If block true else")
+			{
+				args = new BlockArgs("control_if_else");
+				blocksTrue[0].autoLevel = blocksFalse[0].autoLevel = false;
+				args.Inputs = $"{MakeInput("CONDITION", block, "num", Types.String, InputType.PositiveInteger)},{MakeInput("SUBSTACK", blocksTrue[0], "blocksTrue", Types.All, InputType.Number, "", false)},{MakeInput("SUBSTACK2", blocksFalse[0], "blocksFalse", Types.All, InputType.Number, "", false)}";
 			}
 		}
 	}

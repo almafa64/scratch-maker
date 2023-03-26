@@ -8,11 +8,16 @@ namespace scratch_test
 		{
 			using(Project project = new Project("test", Extensions.Translate, false))
 			{
+				using(Sprite sprite = new Sprite("test3", project))
+				{
+					sprite.Delete();
+				}
+
 				using(Project.Background bg = project.background)
 				{
 					bg.Costumes["testBackdrop"] = new Costume("blackness.png");
 
-					using(Sprite s = new Sprite("test2", project))
+					using(Sprite s = new Sprite("test2", project, 43, 24, 180, 50))
 					{
 						s.Vars["te"] = new Var(96);
 						s.Vars["fwafwa", true] = new Var(69);
@@ -46,7 +51,7 @@ namespace scratch_test
 
 					sprite.Vars["te"] = new Var(43);
 					sprite.Vars["text"] = new Var("aebc");
-					sprite.Lists["rerererere", true] = new List(43, "adwa", true);
+					sprite.Lists["re", true] = new List(43, "adwa", true);
 
 					using(Column column = new Column(sprite)) //Movement
 					{
@@ -143,20 +148,27 @@ namespace scratch_test
 
 					using(Column column = new Column(sprite, 1200, 0)) //Control
 					{
-						column.Add(new Control.Wait(20));
-						column.Add(new Control.Wait(sprite.Vars["te"]));
-						column.Add(new Control.Stop(Control.Stop.What.All));
+						column.Add(new Control.Loop.Forever(new Control.Wait(20), new Control.Wait(sprite.Vars["te"]), new Control.WaitUntil(new Sensing.Mouse.Down()), new Control.Stop(Control.Stop.What.All)));
 					}
 					using(Column column = new Column(sprite, 1200, 300)) //Control2
 					{
-						column.Add(new Control.Stop(Control.Stop.What.This));
+						column.Add(new Control.Loop.Repeat(20, new Control.Wait(20), new Control.Wait(sprite.Vars["te"]), new Control.WaitUntil(new Sensing.Mouse.Down()), new Control.Stop(Control.Stop.What.This)));
+						column.Add(new Control.Loop.Repeat(sprite.Vars["te"], new Control.Wait(20), new Control.Wait(sprite.Vars["te"]), new Control.WaitUntil(new Sensing.Mouse.Down()), new Control.Stop(Control.Stop.What.This)));
+						column.Add(new Control.Loop.RepeatUntil(new Sensing.Mouse.Down(), new Control.Wait(20), new Control.Wait(sprite.Vars["te"]), new Control.WaitUntil(new Sensing.Mouse.Down()), new Control.Stop(Control.Stop.What.This)));
 					}
-					using(Control.Clone.StartAs column = new Control.Clone.StartAs(sprite, 1200, 400)) //Control3
+					using(Control.Clone.StartAs column = new Control.Clone.StartAs(sprite, 1200, 1200)) //Control3
 					{
 						column.Add(new Control.Clone.Create(Control.Clone.Create.What.Myself));
 						column.Add(new Control.Clone.Create(project.Sprites["test2"]));
 						column.Add(new Control.Stop(Control.Stop.What.OtherScripts));
 						column.Add(new Control.Clone.Delete());
+					}
+					using(Column column = new Column(sprite, 1200, 1500)) //Control4
+					{
+						column.Add(new Control.If(new Sensing.Mouse.Down(), new Control.Clone.Create(Control.Clone.Create.What.Myself), new Control.Clone.Create(project.Sprites["test2"]), new Control.Stop(Control.Stop.What.OtherScripts)));
+						Block[] blocksTrue = {new Control.Wait(sprite.Vars["te"]), new Control.Stop(Control.Stop.What.All)};
+						Block[] blocksFalse = {new Control.Wait(53), new Control.Stop(Control.Stop.What.This)};
+						column.Add(new Control.IfElse(new Sensing.Mouse.Down(), blocksTrue, blocksFalse));
 					}
 
 					using(Column column = new Column(sprite, 1500, 0)) //Sensing
@@ -169,7 +181,7 @@ namespace scratch_test
 					}
 					using(Column column = new Column(sprite, 1500, 500)) //Sensing2
 					{
-						column.Add(new Operators.And(new Operators.Or(new Operators.And(new Operators.Or(new Sensing.Touching(Sensing.Touching.What.Mouse), new Operators.And(new Sensing.Mouse.Down(), new Sensing.KeyPress(Sensing.KeyPress.Key.Any))), new Sensing.Touching(Sensing.Touching.What.Edge)), new Sensing.Touching(project.Sprites["test2"])), new Operators.Or(new Sensing.TouchingColor(Color.Red), new Sensing.ColorTouchingColor(new Color("abcdef"), new Color("#abcdef")))));
+						column.Add(new Operators.And(new Operators.Or(new Operators.And(new Operators.Or(new Sensing.Touching(Sensing.Touching.What.Mouse), new Operators.And(new Sensing.Mouse.Down(), new Sensing.KeyPress(Sensing.KeyPress.Keys.Any))), new Sensing.Touching(Sensing.Touching.What.Edge)), new Sensing.Touching(project.Sprites["test2"])), new Operators.Or(new Sensing.TouchingColor(Color.Red), new Sensing.ColorTouchingColor(new Color("abcdef"), new Color("#abcdef")))));
 					}
 					using(Column column = new Column(sprite, 1500, 600)) //Sensing3
 					{
@@ -206,6 +218,36 @@ namespace scratch_test
 						column.Add(new Variables.Set(sprite.Vars["fwafwa"], sprite.Vars["te"]));
 						column.Add(new Variables.Show(sprite.Vars["te"]));
 						column.Add(new Variables.Hide(sprite.Vars["fwafwa"]));
+					}
+
+					using(Column column = new Column(sprite, 2400, 0)) //Lists
+					{
+						column.Add(new Lists.Add(42, sprite.Lists["re"]));
+						column.Add(new Lists.Add(sprite.Lists["re"], sprite.Lists["re"]));
+						column.Add(new Lists.Add(sprite.Vars["te"], sprite.Lists["re"]));
+						column.Add(new Lists.Delete(42, sprite.Lists["re"]));
+						column.Add(new Lists.Delete(sprite.Vars["te"], sprite.Lists["re"]));
+						column.Add(new Lists.Delete.All(sprite.Lists["re"]));
+						column.Add(new Lists.Insert(42, sprite.Vars["te"], sprite.Lists["re"]));
+						column.Add(new Lists.Insert(sprite.Vars["te"], 42, sprite.Lists["re"]));
+						column.Add(new Lists.Replace(42, sprite.Vars["te"], sprite.Lists["re"]));
+						column.Add(new Lists.Replace(sprite.Vars["te"], 43, sprite.Lists["re"]));
+						column.Add(new Lists.Show(sprite.Lists["re"]));
+						column.Add(new Lists.Hide(sprite.Lists["re"]));
+					}
+					using(Column column = new Column(sprite, 2400, 600)) //Lists2
+					{
+						column.Add(new Operators.Add(new Operators.Add(new Lists.ItemIndex(24, sprite.Lists["re"]), new Lists.Item(sprite.Vars["te"], sprite.Lists["re"])), new Lists.Length(sprite.Lists["re"])));
+					}
+					using(Column column = new Column(sprite, 2400, 700)) //Lists3
+					{
+						column.Add(new Lists.Contains("a", sprite.Lists["re"]));
+					}
+
+					using(Column column = new Column(sprite))
+					{
+						column.Add(new Movement.Goto(24, 53));
+						column.Delete();
 					}
 
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())

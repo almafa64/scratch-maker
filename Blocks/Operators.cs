@@ -11,7 +11,7 @@ namespace Scratch
 
 		private static string MakeOperandInput(Block bl, object a, object b)
 		{
-			return $"{bl.MakeInput("OPERAND1", a, "a", AcceptedTypes.None, InputType.String)},{bl.MakeInput("OPERAND2", b, "b", AcceptedTypes.None, InputType.String)}";
+			return $"{bl.MakeInput("OPERAND1", a, "a", Types.None, InputType.String)},{bl.MakeInput("OPERAND2", b, "b", Types.None, InputType.String)}";
 		}
 
 		private static void MakeOpBlock(Block bl, object val, string data)
@@ -125,7 +125,7 @@ namespace Scratch
 		{
 			public Length(object text) : base("Length of text", UsagePlace.Both, text)
 			{
-				args = new BlockArgs("operator_length", MakeInput("STRING", text, "text", AcceptedTypes.None, InputType.String));
+				args = new BlockArgs("operator_length", MakeInput("STRING", text, "text", Types.None, InputType.String));
 			}
 		}
 
@@ -133,7 +133,7 @@ namespace Scratch
 		{
 			public Contains(object text, object check) : base("If text contains check", UsagePlace.Both, text, check)
 			{
-				args = new BlockArgs("operator_contains", $"{MakeInput("STRING1", text, "text", AcceptedTypes.None, InputType.String)},{MakeInput("STRING2", check, "check", AcceptedTypes.None, InputType.String)}");
+				args = new BlockArgs("operator_contains", $"{MakeInput("STRING1", text, "text", Types.None, InputType.String)},{MakeInput("STRING2", check, "check", Types.None, InputType.String)}");
 				isBool = true;
 			}
 		}
@@ -142,7 +142,7 @@ namespace Scratch
 		{
 			public Join(object text1, object text2) : base("join text1 and text2", UsagePlace.Both, text1, text2)
 			{
-				args = new BlockArgs("operator_join", $"{MakeInput("STRING1", text1, "text1", AcceptedTypes.None, InputType.String)},{MakeInput("STRING2", text2, "text2", AcceptedTypes.None, InputType.String)}");
+				args = new BlockArgs("operator_join", $"{MakeInput("STRING1", text1, "text1", Types.None, InputType.String)},{MakeInput("STRING2", text2, "text2", Types.None, InputType.String)}");
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace Scratch
 		{
 			public Letter(object character, object text) : base("If letter character of text", UsagePlace.Both, character, text)
 			{
-				args = new BlockArgs("operator_letter_of", $"{MakeInput("LETTER", character, "character", AcceptedTypes.Number | AcceptedTypes.String)},{MakeInput("STRING", text, "text", AcceptedTypes.None, InputType.String)}");
+				args = new BlockArgs("operator_letter_of", $"{MakeInput("LETTER", character, "character", Types.Number | Types.String)},{MakeInput("STRING", text, "text", Types.None, InputType.String)}");
 			}
 		}
 		public class Round : SpecBlock

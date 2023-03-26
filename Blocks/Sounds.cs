@@ -1,11 +1,15 @@
 ﻿using Scratch_Utils;
-using System;
 using System.Collections.Generic;
 
 namespace Scratch
 {
 	public static class Sounds
 	{
+		private static string MakeEffectField(string data)
+		{
+			return Block.MakeField("EFFECT", data);
+		}
+
 		public enum Vars
 		{
 			Volume
@@ -88,7 +92,7 @@ namespace Scratch
 
 			private static string EffField(Effects eff)
 			{
-				return (eff == Effects.Pitch) ? Block.MakeEffectField("PITCH") : Block.MakeEffectField("PAN");
+				return (eff == Effects.Pitch) ? MakeEffectField("PITCH") : MakeEffectField("PAN");
 			}
 
 			public class Change : Block

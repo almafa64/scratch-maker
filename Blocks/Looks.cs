@@ -15,6 +15,11 @@ namespace Scratch
 			BackdropNumber
 		}
 
+		private static string MakeEffectField(string data)
+		{
+			return Block.MakeField("EFFECT", data);
+		}
+
 		internal static Dictionary<string, SpecVar> specVars = new Dictionary<string, SpecVar>() 
 		{
 			["BackdropNumber"] = new SpecVar(UsagePlace.Both, "looks_backdropnumbername", "background number variable", "\"NUMBER_NAME\":[\"number\",null]"),
@@ -28,14 +33,14 @@ namespace Scratch
 		{
 			public Say(object text, object sec) : base("Say text for seconds", UsagePlace.Sprite, text, sec)
 			{
-				if(TypeCheck.Check(sec) == AcceptedTypes.String) throw new ArgumentException("sec is string, which is not accepted");
+				if(TypeCheck.Check(sec) == Types.String) throw new ArgumentException("sec is string, which is not accepted");
 
-				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
+				args = new BlockArgs("looks_sayforsecs", $"{MakeInput("MESSAGE", text, "text", Types.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Say(object text) : base("Say text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String));
+				args = new BlockArgs("looks_say", MakeInput("MESSAGE", text, "text", Types.None, InputType.String));
 			}
 		}
 
@@ -43,12 +48,12 @@ namespace Scratch
 		{
 			public Think(object text, object sec) : base("Think text for seconds", UsagePlace.Sprite, text, sec)
 			{
-				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
+				args = new BlockArgs("looks_thinkforsecs", $"{MakeInput("MESSAGE", text, "text", Types.None, InputType.String)},{MakeInput("SECS", sec, "sec")}");
 			}
 
 			public Think(object text) : base("Think text", UsagePlace.Sprite, text)
 			{
-				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, "text", AcceptedTypes.None, InputType.String));
+				args = new BlockArgs("looks_think", MakeInput("MESSAGE", text, "text", Types.None, InputType.String));
 			}
 		}
 
@@ -189,13 +194,13 @@ namespace Scratch
 			{
 				switch (eff)
 				{
-					case Effects.Color: return Block.MakeEffectField("COLOR");
-					case Effects.Fisheye: return Block.MakeEffectField("FISHEYE");
-					case Effects.Whirl: return Block.MakeEffectField("WHIRL");
-					case Effects.Pixelate: return Block.MakeEffectField("PIXELATE");
-					case Effects.Mosaic: return Block.MakeEffectField("MOSAIC");
-					case Effects.Brightness: return Block.MakeEffectField("BRIGHTNESS");
-					case Effects.Ghost: return Block.MakeEffectField("GHOST");
+					case Effects.Color:		 return MakeEffectField("COLOR");
+					case Effects.Fisheye:	 return MakeEffectField("FISHEYE");
+					case Effects.Whirl:		 return MakeEffectField("WHIRL");
+					case Effects.Pixelate:	 return MakeEffectField("PIXELATE");
+					case Effects.Mosaic:	 return MakeEffectField("MOSAIC");
+					case Effects.Brightness: return MakeEffectField("BRIGHTNESS");
+					case Effects.Ghost:		 return MakeEffectField("GHOST");
 					default: return null;
 				}
 			}

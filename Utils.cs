@@ -121,43 +121,43 @@ namespace Scratch_Utils
 
 	internal static class TypeCheck
 	{
-		internal static void Check(string blockName, string nameOfVar, object val, AcceptedTypes notAcceptedTypes)
+		internal static void Check(string blockName, string nameOfVar, object val, Types notAcceptedTypes)
 		{
-			AcceptedTypes tmp = Check(val);
+			Types tmp = Check(val);
 
-			if(tmp == AcceptedTypes.None) throw new ArgumentException($"{nameOfVar} is null or other object on block \"{blockName}\", which it cannot be");
+			if(tmp == Types.None) throw new ArgumentException($"{nameOfVar} is null or other object on block \"{blockName}\", which it cannot be");
 
 			if(notAcceptedTypes.HasFlag(tmp))
 			{
-				throw new ArgumentException($"{nameOfVar} is {typeof(AcceptedTypes).GetEnumName(tmp)} on block \"{blockName}\", which it cannot be");
+				throw new ArgumentException($"{nameOfVar} is {typeof(Types).GetEnumName(tmp)} on block \"{blockName}\", which it cannot be");
 			}
 		}
 
-		internal static AcceptedTypes Check(object o)
+		internal static Types Check(object o)
 		{
-			if (o == null) return AcceptedTypes.None;
+			if (o == null) return Types.None;
 			Type t = o.GetType();
 			if(t == typeof(int) || t == typeof(float) || t == typeof(double) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) || t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong) || t == typeof(decimal))
 			{
-				return (Convert.ToDouble(o) >= 0) ? AcceptedTypes.PositiveNumber : AcceptedTypes.Number;
+				return (Convert.ToDouble(o) >= 0) ? Types.PositiveNumber : Types.Number;
 			}
-			else if(t == typeof(string) || t == typeof(bool)) return AcceptedTypes.String;
-			else if(t == typeof(Var)) return AcceptedTypes.Variable;
-			//else if(t == typeof(ListElement)) return AcceptedTypes.ListElement;
-			else if(t.IsEnum) return AcceptedTypes.Enum;
-			else if(t == typeof(Sprite)) return AcceptedTypes.Sprite;
-			else if(t == typeof(MyBlock.MyBlockVar)) return AcceptedTypes.MyBlockVar;
+			else if(t == typeof(string) || t == typeof(bool)) return Types.String;
+			else if(t == typeof(Var)) return Types.Variable;
+			else if(t == typeof(List)) return Types.List;
+			else if(t.IsEnum) return Types.Enum;
+			else if(t == typeof(Sprite)) return Types.Sprite;
+			else if(t == typeof(MyBlock.MyBlockVar)) return Types.MyBlockVar;
 
-			return AcceptedTypes.None;
+			return Types.None;
 		}
 
 		internal static void BaseCheck(object o, string blockName, int index)
 		{
 			switch(Check(o))
 			{
-				case AcceptedTypes.None:
+				case Types.None:
 					throw new ArgumentException($"Argument is null at place {index} on block {blockName}");
-				case AcceptedTypes.Variable:
+				case Types.Variable:
 					if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {index} on block \"{blockName}\"");
 					break;
 				/*case AcceptedTypes.List:

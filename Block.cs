@@ -8,16 +8,16 @@ namespace Scratch_Utils
 {
 	internal enum InputType // from https://en.scratch-wiki.info/wiki/Scratch_File_Format#Blocks
 	{
-		Number = 4,				//value
-		PositiveNumber = 5,		//null
-		PositiveInteger = 6,	//null
-		Integer = 7,			//null
-		Angle = 8,				//null
-		Color = 9,				//hex color (#abcdef)
-		String = 10,			//value
-		Broadcast = 11,			//name, ID
-		Var = 12,				//null, null, x, y
-		List = 13				//null
+		Number = 4,             //value
+		PositiveNumber = 5,     //null
+		PositiveInteger = 6,    //null
+		Integer = 7,            //null
+		Angle = 8,              //null
+		Color = 9,              //hex color (#abcdef)
+		String = 10,            //value
+		Broadcast = 11,         //name, ID
+		Var = 12,               //null, null, x, y
+		List = 13               //null
 	}
 
 	internal enum ShadowType
@@ -134,24 +134,24 @@ namespace Scratch_Utils
 		internal bool isBool = false;
 		internal SpecBlock(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals) : base(usagePlace, name, null, null, null, vals)
 		{
-			
+
 		}
 	}
 
 	[Flags]
-	internal enum AcceptedTypes
+	internal enum Types
 	{
 		None = 0,
 		Number = 1,
 		String = 2,
 		Variable = 4,
-		ListElement = 8,
+		List = 8,
 		Enum = 16,
 		Sprite = 32,
 		MyBlockVar = 64,
 		PositiveNumber = 128,
 
-		All = Number | String | Variable | ListElement | Enum | Sprite | MyBlockVar | PositiveNumber, 
+		All = Number | String | Variable | List | Enum | Sprite | MyBlockVar | PositiveNumber,
 	}
 
 	internal enum UsagePlace
@@ -167,6 +167,7 @@ namespace Scratch
 	public class Block
 	{
 		internal bool needsNext = true;
+		internal bool autoLevel = true;
 		internal string name;
 		internal Comment comment;
 		internal BlockArgs args;
@@ -193,27 +194,34 @@ namespace Scratch
 		private readonly static string[] randomTexts = { "apple", "orange", "hello", "texting", "lol", "XD", "cat", "banana", "scratch>js", "VALVe" };
 		private readonly static Random rd = new Random();
 
-		internal string MakeInput(string name, object val, string valName, AcceptedTypes notAcceptedTypes = AcceptedTypes.String, InputType inputType = InputType.Number)
+		internal string MakeInput(string name, object val, string valName, Types notAcceptedTypes = Types.String, InputType inputType = InputType.Number, string defVal = null, bool autoNext = true)
 		{
 			BuiltInVars(ref val);
 
 			string def;
-			switch(inputType)
+			if(defVal == null)
 			{
-				case InputType.Integer:
-				case InputType.PositiveInteger:
-				case InputType.PositiveNumber:
-				case InputType.Number: def = $"{(int)inputType},\"0\""; break;
-				case InputType.String: def = $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\""; break;
-				case InputType.Color: def = "9,#ffffff"; break;
-				default: def = $"{(int)inputType},\"\""; break;
+				switch(inputType)
+				{
+					case InputType.Integer:
+					case InputType.PositiveInteger:
+					case InputType.PositiveNumber:
+					case InputType.Number: def = $"{(int)inputType},\"0\""; break;
+					case InputType.String: def = $"10,\"{randomTexts[rd.Next(randomTexts.Length)]}\""; break;
+					case InputType.Color: def = "9,\"#ffffff\""; break;
+					default: def = $"{(int)inputType},\"\""; break;
+				}
 			}
+			else def = null;
 
-			if(val is SpecVar sv) return VarBlockId(name, this, sv, def);
-			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, def);
+			if(val is SpecVar sv) return VarBlockId(name, this, sv, (val is SpecBlock s && !s.isBool) ? 3 : 2, def, autoNext);
+			else if(val is MyBlock.MyBlockVar bv) return VarBlockId(name, this, bv.block, 3, def, autoNext);
+			else if(val is Block b) return VarBlockId(name, this, b, 2, def, autoNext);
 
 			TypeCheck.Check(this.name, valName, val, notAcceptedTypes);
 			if(val is Var v) return $"\"{name}\":[3,[12,\"{v.Name}\",\"{v.Id}\"],[{def}]]";
+			else if(val is List l) return $"\"{name}\":[3,[13,\"{l.Name}\",\"{l.Id}\"],[{def}]]";
+			
 			return $"\"{name}\":[1,[{(int)inputType},\"{val}\"]]";
 		}
 
@@ -222,17 +230,13 @@ namespace Scratch
 			return needQuote ? $"\"{name}\":[\"{data}\",null]" : $"\"{name}\":[{data},null]";
 		}
 
-		internal static string MakeEffectField(string data)
-		{
-			return MakeField("EFFECT", data);
-		}
-
-		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, string def = "4,\"0\"")
+		internal static string VarBlockId(string type, Block mainBlock, Block varBlock, int shadowType, string def = null, bool autoNext = true)
 		{
 			varBlock.args.ParentId = mainBlock.args.Id;
-			varBlock.needsNext = false;
+			if(autoNext) varBlock.needsNext = false;
 			mainBlock.kids.Add(varBlock);
-			return $"\"{type}\":[3,\"{varBlock.args.Id}\",[{def}]]";
+
+			return $"\"{type}\":[{shadowType},\"{varBlock.args.Id}\"{((def != null) ? $",[{def}]" : "")}]";
 		}
 
 		internal static SpecVar GetVar(Dictionary<string, SpecVar> dir, Type enumType, object value)
@@ -251,6 +255,11 @@ namespace Scratch
 			else if(val is Looks.Vars vL) val = GetVar<Looks.Vars>(Looks.specVars, vL);
 			else if(val is Sounds.Vars vSo) val = GetVar<Sounds.Vars>(Sounds.specVars, vSo);
 			else if(val is Sensing.Vars vSe) val = GetVar<Sensing.Vars>(Sensing.specVars, vSe);
+		}
+
+		internal static Types Invert(Types types)
+		{
+			return Types.All ^ types;
 		}
 
 		public Block AddComment(Comment comment)

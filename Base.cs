@@ -386,6 +386,17 @@ namespace Scratch
 			this.draggable = draggable;
 		}
 
+		public static void Delete(Sprite sprite, Project project)
+		{
+			project._sprites.Remove(sprite.name);
+			sprite.Project = null;
+		}
+
+		public void Delete()
+		{
+			Delete(this, Project);
+		}
+
 		public void Dispose() { }
 	}
 
@@ -411,9 +422,9 @@ namespace Scratch
 		{
 			foreach(Block block in inBlocks)
 			{
-				if(block.needsNext)
+				if(block.needsNext && block.autoLevel)
 				{
-					if(blocks.Count - 1 >= 0)
+					if(blocks.Count > 0)
 					{
 						Block prev;
 						for(int i = 0; ; i++)
@@ -432,6 +443,7 @@ namespace Scratch
 				{
 					Add(b);
 				}
+
 				CheckBlockUsage(block);
 			}
 			return inBlocks.Last();
@@ -442,6 +454,17 @@ namespace Scratch
 			if(isSpriteCol) { if(b.usagePlace == UsagePlace.Background) throw new Exception($"Block \"{b.name}\" can only be used in the backdrop but it was used in sprite"); }
 			else if(b.usagePlace == UsagePlace.Sprite) throw new Exception($"Block \"{b.name}\" can only be used in sprites but it was used in the backdrop");
 			blocks.Add(b);
+		}
+
+		public static void Delete(Column column, SObject sObject)
+		{
+			column.sObject = null;
+			sObject.columns.Remove(column);
+		}
+
+		public void Delete()
+		{
+			Delete(this, sObject);
 		}
 
 		public void Dispose() { }
