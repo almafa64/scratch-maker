@@ -49,9 +49,10 @@ namespace scratch_test
 
 					sprite.AddComments(new Comment("testing", 200, 200, true));
 
-					sprite.Vars["te", false] = new Var(43);
-					sprite.Vars["text"] = new Var("aebc");
+					sprite.Vars["te", false, true, 53, 155, 55] = new Var(43);
+					sprite.Vars["text", true] = new Var("aebc");
 					sprite.Lists["re", true] = new List(43, "adwa", true);
+					sprite.Lists["re2", true, true] = new List(43, "adwa", true);
 
 					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").AddBool("y").AddDesc("lol", "lol"))
 					{

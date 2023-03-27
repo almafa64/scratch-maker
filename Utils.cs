@@ -6,6 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Threading;
+using static Scratch.Operators;
 using static Scratch.Project;
 
 namespace Scratch_Utils
@@ -18,8 +19,8 @@ namespace Scratch_Utils
 		private static string[] AssetIds = new string[chuckSize];
 		private static int newIdIndex = 0;
 		private static int newAssetIdIndex = 0;
-		private static readonly Random rd = new Random();
-		private static readonly Random asserRd = new Random();
+		private static readonly System.Random rd = new System.Random();
+		private static readonly System.Random asserRd = new System.Random();
 		private const string ascii = "!#%()*+,-./:;=?@[]^_`{|}~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		private const string assetAscii = "0123456789ABCDEFabcdef";
 
@@ -135,7 +136,7 @@ namespace Scratch_Utils
 
 		internal static Types Check(object o)
 		{
-			if (o == null) return Types.None;
+			if(o == null) return Types.None;
 			Type t = o.GetType();
 			if(t == typeof(int) || t == typeof(float) || t == typeof(double) || t == typeof(uint) || t == typeof(short) || t == typeof(ushort) || t == typeof(byte) || t == typeof(sbyte) || t == typeof(long) || t == typeof(ulong) || t == typeof(decimal))
 			{
@@ -160,9 +161,9 @@ namespace Scratch_Utils
 				case Types.Variable:
 					if((o as Var).value == null) throw new ArgumentException($"Not initalized variable at place {index} on block \"{blockName}\"");
 					break;
-				/*case AcceptedTypes.List:
-					if((o as List).vars == null) throw new ArgumentException($"Not initalized list at place {i} on block \"{blockName}\"");
-					break;*/
+					/*case AcceptedTypes.List:
+						if((o as List).vars == null) throw new ArgumentException($"Not initalized list at place {i} on block \"{blockName}\"");
+						break;*/
 			}
 		}
 	}
@@ -173,19 +174,19 @@ namespace Scratch_Utils
 		{
 			string newPath = Path.GetFullPath(pr.name);
 
-			if (!Directory.Exists(newPath)) Directory.CreateDirectory(newPath);
+			if(!Directory.Exists(newPath)) Directory.CreateDirectory(newPath);
 			else Directory.Delete(newPath, true);
 
 			Directory.CreateDirectory($"{newPath}\\build");
 
 			StringBuilder fileText = new StringBuilder(2000).Append("{\"extensions\":[");
-			if (pr.extensions != Extensions.None)
+			if(pr.extensions != Extensions.None)
 			{
 				int tmp = (int)pr.extensions;
 				int flagMask = 1 << 10;
-				while (flagMask > 0)
+				while(flagMask > 0)
 				{
-					switch (tmp & flagMask)
+					switch(tmp & flagMask)
 					{
 						case (int)Extensions.TextToSpeech:
 							fileText.Append("\"text2speech\",");
@@ -226,18 +227,21 @@ namespace Scratch_Utils
 				Utils.RemoveLast(fileText);
 			}
 
-
 			fileText.Append("],\"meta\":{\"semver\":\"3.0.0\",\"vm\":\"1.4.6\",\"agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36\"},\"monitors\":[");
 
 			Dictionary<string, Sprite>.ValueCollection sprites = pr._sprites.Values;
 
-			DoMonitorStuff(pr.background._Vars);
-			DoMonitorStuff(pr.background._Lists);
+			bool didMonitor = false;
+			StringBuilder monitorText = new StringBuilder();
+			DoMonitorStuff(monitorText, null, pr.background._Vars.Values, pr.background._Lists.Values);
 			foreach(Sprite sprite in sprites)
 			{
-				DoMonitorStuff(sprite._Vars);
-				DoMonitorStuff(sprite._Lists);
+				bool a = DoMonitorStuff(monitorText, sprite.name, sprite._Vars.Values, sprite._Lists.Values);
+				if(a) didMonitor = true;
 			}
+			if(didMonitor) Utils.RemoveLast(monitorText);
+
+			fileText.Append(monitorText);
 
 			fileText.Append("],\"targets\":[");
 			DoSpriteStuff(fileText, false, pr.background);
@@ -257,9 +261,128 @@ namespace Scratch_Utils
 			if(pr.openFolder) Process.Start("explorer.exe", $"{newPath}");
 		}
 
-		private static void DoMonitorStuff<T>(Dictionary<string, T> cont)
+		private static bool DoMonitorStuff(StringBuilder sb, string nameOfSprite, Dictionary<string, Var>.ValueCollection vars, Dictionary<string, List>.ValueCollection lists)
 		{
+			void Base(Container c, Var.DisplayMode mode, string opcode, string spriteName)
+			{
+				Var v = null;
+				List l = null;
+				bool isVar;
+				if(c is Var var)
+				{
+					v = var;
+					isVar = true;
+				}
+				else
+				{
+					isVar = false;
+					l = c as List;
+				}
 
+				sb.Append("{\"x\":");
+				sb.Append(c.x);
+
+				sb.Append(",\"y\":");
+				sb.Append(c.y);
+
+				sb.Append(",\"width\":");
+				sb.Append(c.width);
+
+				sb.Append(",\"height\":");
+				if(isVar)
+				{
+					sb.Append(0);
+
+					sb.Append(",\"sliderMax\":");
+					sb.Append(v.max);
+
+					sb.Append(",\"sliderMin\":");
+					sb.Append(v.min);
+				}
+				else sb.Append(l.height);
+
+				sb.Append(",\"visible\":");
+				sb.Append(Utils.Small(c.show));
+
+				string paramMode;
+
+				sb.Append(",\"value\":");
+				if(isVar)
+				{
+					Types types = TypeCheck.Check(v.value);
+					sb.Append((types == Types.Number || types == Types.PositiveNumber) ? v.value : $"\"{v.value}\"");
+
+					sb.Append(",\"isDiscrete\":");
+					sb.Append(Utils.Small((Math.Floor(v.min) - Math.Ceiling(v.min)) + (Math.Floor(v.max) - Math.Ceiling(v.max)) == 0));
+
+					sb.Append(",\"mode\":\"");
+					string s;
+					switch(v.mode)
+					{
+						case Var.DisplayMode.Normal: s = "default"; break;
+						case Var.DisplayMode.Large: s = "large"; break;
+						case Var.DisplayMode.Slider: s = "slider"; break;
+						default: throw new ArgumentException("Are you joking with me?");
+					}
+					sb.Append(s);
+					
+					sb.Append("\",\"opcode\":\"data_variable\"");
+
+					paramMode = "VARIABLE";
+				}
+				else
+				{
+					sb.Append('[');
+					if(l.vars.Count != 0) {
+						StringBuilder sbL = new StringBuilder();
+						foreach(object o in l.vars)
+						{
+							sbL.Append('"');
+							sbL.Append(o.ToString());
+							sbL.Append("\",");
+						}
+						Utils.RemoveLast(sbL);
+					}
+					sb.Append(']');
+
+					sb.Append(",\"mode\":\"");
+					sb.Append("list");
+					
+					sb.Append("\",\"opcode\":\"data_listcontents\"");
+
+					paramMode = "LIST";
+				}
+
+				sb.Append(",\"spriteName\":\"");
+				sb.Append(nameOfSprite ?? "null");
+
+				sb.Append("\",\"id\":\"");
+				sb.Append(c.Id);
+
+				sb.Append("\",\"params\":{\"");
+				sb.Append(paramMode);
+				sb.Append("\":\"");
+				sb.Append(c.Name);
+
+				sb.Append("\"}},");
+			}
+
+			/*if(vars.Count != 0)
+			{*/
+				foreach(Var v in vars)
+				{
+					Base(v, v.mode, "data_variable", (v.sObject is Sprite s) ? s.name : null);
+				}
+			/*}
+			if(lists.Count != 0)
+			{*/
+				foreach(List l in lists)
+				{
+					Base(l, Var.DisplayMode.Normal, "data_listcontents", (l.sObject is Sprite s) ? s.name : null);
+				}
+			//}
+
+			return lists.Count + vars.Count != 0;
 		}
 
 		private static void DoSpriteStuff(StringBuilder fileText, bool isSprite, SObject sObject)
@@ -309,13 +432,13 @@ namespace Scratch_Utils
 
 								if(hasId)
 								{
-									fileText.Append($"{(hasDef?"\",":"")}\"argumentids\":\"");
+									fileText.Append($"{(hasDef ? "\"," : "")}\"argumentids\":\"");
 									fileText.Append(m.argumentIds);
 								}
 
 								if(m.argumentNames != null)
 								{
-									fileText.Append($"{((hasDef||hasId)?"\",":"")}\"argumentnames\":\"");
+									fileText.Append($"{((hasDef || hasId) ? "\"," : "")}\"argumentnames\":\"");
 									fileText.Append(m.argumentNames);
 								}
 
@@ -566,7 +689,7 @@ namespace Scratch_Utils
 			fileText.Append(",\"layerOrder\":");
 			fileText.Append(sObject.LayerOrder);
 
-			if (isSprite)
+			if(isSprite)
 			{
 				Sprite tmpSprite = sObject as Sprite;
 
@@ -580,7 +703,7 @@ namespace Scratch_Utils
 				fileText.Append(Utils.Small(tmpSprite.draggable));
 
 				fileText.Append(",\"rotationStyle\":\"");
-				switch (tmpSprite.rotationStyle)
+				switch(tmpSprite.rotationStyle)
 				{
 					case RotationStyle.AllAround:
 						fileText.Append("all around");
@@ -612,10 +735,10 @@ namespace Scratch_Utils
 				fileText.Append(",\"isStage\":true,\"name\":\"Stage\",\"tempo\":");
 				fileText.Append(tmpBg.tempo);
 
-				if (tmpBg.textToSpeechLanguage != TextToSpeechLanguages.None)
+				if(tmpBg.textToSpeechLanguage != TextToSpeechLanguages.None)
 				{
 					fileText.Append(",\"textToSpeechLanguage\":\"");
-					switch (tmpBg.textToSpeechLanguage)
+					switch(tmpBg.textToSpeechLanguage)
 					{
 						case TextToSpeechLanguages.English:
 							fileText.Append("en");

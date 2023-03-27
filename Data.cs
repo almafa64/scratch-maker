@@ -30,6 +30,8 @@ namespace Scratch_Utils
 	{
 		internal SObject sObject;
 		internal bool show = false;
+		internal int x, y, width = 0;
+
 		public Container(SObject sObject, string name) : base(name)
 		{
 			this.sObject = sObject;
@@ -66,24 +68,38 @@ namespace Scratch
 {
 	public class Var : Container
 	{
+		public enum DisplayMode
+		{
+			Normal,
+			Large,
+			Slider
+		}
+
 		internal object value;
+		internal double min, max;
+		internal DisplayMode mode;
 
 		internal Var(SObject sObject, string name, object value) : base(sObject, name)
 		{
 			if(Has(sObject, name) || BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
-			
-			if(value == null) value = 0;
-			else if(TypeCheck.Check(value) == Types.Variable || TypeCheck.Check(value) == Types.List) throw new ArgumentException("Variable value cannot be another variable or list");
-			
+
+			if(value is bool b) value = Utils.Small(b);
+			else if(value is Var v) value = v.value;
+			else if(value is List l) value = string.Join(" ", l.vars);
+
 			this.value = value;
 			sObject._Vars[name] = this;
 		}
 
-		public Var(object value) : base(null, null)
+		public Var(object value, DisplayMode mode = DisplayMode.Normal, int x = 0, int y = 0, double min = 0, double max = 100) : base(null, null)
 		{
-			Types tmp = TypeCheck.Check(value);
-			if(value == null) value = 0;
-			else if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("Variable value cannot be another variable or list");
+			if(value is bool b) value = Utils.Small(b);
+			else if(value is Var v) value = v.value;
+			else if(value is List l) value = string.Join(" ", l.vars);
+
+			this.min = min;
+			this.max = max;
+			this.mode = mode;
 
 			this.value = value;
 		}
@@ -102,6 +118,7 @@ namespace Scratch
 	public class List : Container
 	{
 		internal List<object> vars = new List<object>();
+		internal int height = 0;
 
 		internal List(SObject sObject, string name, params object[] vars) : base(sObject, name)
 		{
@@ -109,10 +126,13 @@ namespace Scratch
 
 			if(vars != null)
 			{
-				foreach(object value in vars)
+				for(int i = 0; i < vars.Length; i++)
 				{
-					Types tmp = TypeCheck.Check(value);
-					if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("List value cannot be another variable or list");
+					object value = vars[i];
+
+					if(value is bool b) vars[i] = Utils.Small(b);
+					else if(value is Var v) vars[i] = v.value;
+					else if(value is List l) vars[i] = string.Join(" ", l.vars);
 				}
 				this.vars.AddRange(vars);
 			}
@@ -123,10 +143,13 @@ namespace Scratch
 		{
 			if(vars != null)
 			{
-				foreach(object value in vars)
+				for(int i = 0; i < vars.Length; i++)
 				{
-					Types tmp = TypeCheck.Check(value);
-					if(tmp == Types.Variable || tmp == Types.List) throw new ArgumentException("List value cannot be another variable or list");
+					object value = vars[i];
+
+					if(value is bool b) vars[i] = Utils.Small(b);
+					else if(value is Var v) vars[i] = v.value;
+					else if(value is List l) vars[i] = string.Join(" ", l.vars);
 				}
 				this.vars.AddRange(vars);
 			}
