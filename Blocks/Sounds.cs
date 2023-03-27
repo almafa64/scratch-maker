@@ -29,7 +29,7 @@ namespace Scratch
 			};
 		}
 
-		public class Play : Block
+		public sealed class Play : Block
 		{
 			public Play(Sound sound) : base("Play sound")
 			{
@@ -42,7 +42,7 @@ namespace Scratch
 			}
 		}
 
-		public class PlayAndWait : Block
+		public sealed class PlayAndWait : Block
 		{
 			public PlayAndWait(Sound sound) : base("Play sound until done")
 			{
@@ -55,7 +55,7 @@ namespace Scratch
 			}
 		}
 
-		public class Stop : Block
+		public sealed class Stop : Block
 		{
 			public Stop() : base("Stop sounds")
 			{
@@ -65,7 +65,7 @@ namespace Scratch
 
 		public static class Volume
 		{
-			public class Change : Block
+			public sealed class Change : Block
 			{
 				public Change(object by) : base("Change volume by", UsagePlace.Both, by)
 				{
@@ -73,7 +73,7 @@ namespace Scratch
 				}
 			}
 
-			public class Set : Block
+			public sealed class Set : Block
 			{
 				public Set(object to) : base("Set volume to", UsagePlace.Both, to)
 				{
@@ -95,7 +95,7 @@ namespace Scratch
 				return (eff == Effects.Pitch) ? MakeEffectField("PITCH") : MakeEffectField("PAN");
 			}
 
-			public class Change : Block
+			public sealed class Change : Block
 			{
 				public Change(Effects effect, object by) : base("Change effect by", UsagePlace.Both, by)
 				{
@@ -103,7 +103,7 @@ namespace Scratch
 				}
 			}
 
-			public class Set : Block
+			public sealed class Set : Block
 			{
 				public Set(Effects effect, object to) : base("Set effect to", UsagePlace.Both, to)
 				{
@@ -111,7 +111,7 @@ namespace Scratch
 				}
 			}
 
-			public class Clear : Block
+			public sealed class Clear : Block
 			{
 				public Clear() : base("Clear effects")
 				{

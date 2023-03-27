@@ -26,7 +26,7 @@ namespace Scratch
 			["Y"] = new SpecVar(UsagePlace.Sprite, "motion_yposition", "y variable")
 		};
 
-		public class Goto : Block
+		public sealed class Goto : Block
 		{
 			public Goto(object x, object y) : base("Goto X Y", UsagePlace.Sprite, x, y)
 			{
@@ -43,17 +43,16 @@ namespace Scratch
 				args = new BlockArgs("motion_goto");
 
 				Block tmp = new Block(null) {
-					args = new BlockArgs("motion_goto_menu", null, arg, null, null, true),
+					args = new BlockArgs("motion_goto_menu", null, arg, null, args.Id, true),
 					needsNext = false
 				};
-				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
 				args.Inputs = $"\"TO\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
 
-		public class Glide : Block
+		public sealed class Glide : Block
 		{
 			public Glide(object sec, object x, object y) : base("Goto X Y", UsagePlace.Sprite, sec, x, y)
 			{
@@ -71,17 +70,16 @@ namespace Scratch
 
 				Block tmp = new Block(null)
 				{
-					args = new BlockArgs("motion_glideto_menu", null, arg, null, null, true),
+					args = new BlockArgs("motion_glideto_menu", null, arg, null, args.Id, true),
 					needsNext = false
 				};
-				tmp.args.ParentId = args.Id;
 				kids.Add(tmp);
 
 				args.Inputs = $"{MakeInput("SECS", sec, "sec")},\"TO\":[1,\"{tmp.args.Id}\"]";
 			}
 		}
 
-		public class Move : Block
+		public sealed class Move : Block
 		{
 			public Move(object steps) : base("Move steps", UsagePlace.Sprite, steps)
 			{
@@ -91,7 +89,7 @@ namespace Scratch
 
 		public static class Change
 		{
-			public class X : Block
+			public sealed class X : Block
 			{
 				public X(object by) : base("Change X by", UsagePlace.Sprite, by)
 				{
@@ -99,7 +97,7 @@ namespace Scratch
 				}
 			}
 
-			public class Y : Block
+			public sealed class Y : Block
 			{
 				public Y(object by) : base("Change Y by", UsagePlace.Sprite, by)
 				{
@@ -110,7 +108,7 @@ namespace Scratch
 
 		public static class Set
 		{
-			public class X : Block
+			public sealed class X : Block
 			{
 				public X(object value) : base("Change X by", UsagePlace.Sprite, value)
 				{
@@ -118,7 +116,7 @@ namespace Scratch
 				}
 			}
 
-			public class Y : Block
+			public sealed class Y : Block
 			{
 				public Y(object value) : base("Change Y value", UsagePlace.Sprite, value)
 				{
@@ -129,7 +127,7 @@ namespace Scratch
 
 		public static class Turn
 		{
-			public class Left : Block
+			public sealed class Left : Block
 			{
 				public Left(object degrees) : base("Change X by", UsagePlace.Sprite, degrees)
 				{
@@ -137,7 +135,7 @@ namespace Scratch
 				}
 			}
 
-			public class Right : Block
+			public sealed class Right : Block
 			{
 				public Right(object degrees) : base("Change Y by", UsagePlace.Sprite, degrees)
 				{
@@ -146,41 +144,35 @@ namespace Scratch
 			}
 		}
 
-		public class Point : Block
+		public sealed class Point : Block
 		{
 			public Point(object to) : base("Point to/in direction", UsagePlace.Sprite, to)
 			{
-				if (to is Sprite || to is To)
+				Sprite s = to as Sprite;
+				To? t = to as To?;
+
+				if (s != null || t.HasValue)
 				{
 					string arg;
-					if (to is Sprite s) arg = $"\"TOWARDS\":[\"{s.name}\",null]";
-					else if (to is To t)
-					{
-						if (t == To.Random) throw new ArgumentException("to cannot be random in this block");
-						arg = "\"TOWARDS\":[\"_mouse_\",null]";
-					}
-					else throw new ArgumentException("to is not a sprite or To element");
+					if(s != null) arg = $"\"TOWARDS\":[\"{s.name}\",null]";
+					else if(t == To.Mouse) arg = "\"TOWARDS\":[\"_mouse_\",null]";
+					else throw new ArgumentException("to cannot be To.Random");
 
 					args = new BlockArgs("motion_pointtowards");
 
 					Block tmp = new Block(null)
 					{
-						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, null, true),
+						args = new BlockArgs("motion_pointtowards_menu", null, arg, null, args.Id, true),
 						needsNext = false 
 					};
-					tmp.args.ParentId = args.Id;
 					kids.Add(tmp);
-
 					args.Inputs = $"\"TOWARDS\":[1,\"{tmp.args.Id}\"]";
 				}
-				else
-				{
-					args = new BlockArgs("motion_pointindirection", MakeInput("DIRECTION", to, "to"));
-				}
+				else args = new BlockArgs("motion_pointindirection", MakeInput("DIRECTION", to, "to"));
 			}
 		}
 
-		public class OnEdgeBounce : Block
+		public sealed class OnEdgeBounce : Block
 		{
 			public OnEdgeBounce() : base("On edge bounce", UsagePlace.Sprite)
 			{
@@ -188,7 +180,7 @@ namespace Scratch
 			}
 		}
 
-		public class RotationStyle : Block
+		public sealed class RotationStyle : Block
 		{
 			public enum RotStyle
 			{

@@ -3,14 +3,43 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Scratch
 {
-	public class MyBlock : TopBlock
+	public sealed class MyBlock : TopBlock
 	{
+		public sealed class Call : Block
+		{
+			public Call(MyBlock myBlock, params object[] parameters) : base("Call myBlock")
+			{
+				if(parameters.Length != myBlock.paramBlocks.Count) throw new ArgumentException($"parameters length ({parameters.Length}) does not match with myBlock parameters length ({myBlock.paramBlocks.Count})");
+
+				Mutator mMy = myBlock.prototype.args.Mutatator.Value;
+
+				Mutator m = new Mutator
+				{
+					argumentIds = mMy.argumentIds,
+					proCode = mMy.proCode,
+					warp = mMy.warp,
+				};
+				StringBuilder sb = new StringBuilder();
+
+				string[] arr = myBlock.prototype.args.Inputs.Split('"');
+				for(int i = 1, j = 0; i < arr.Length; i+=4, j++)
+				{
+					sb.Append(MakeInput(arr[i], parameters[j], $"parameter at index {j}") + ",");
+				}
+
+				Utils.RemoveLast(sb);
+
+				args = new BlockArgs("procedures_call", sb.ToString(), null, null, null, false, false, m);
+			}
+		}
+
 		internal Dictionary<string, MyBlockVar> parameters;
 		internal Block prototype;
-		internal List<Block> paramBlocks;
+		internal List<Block> paramBlocks = new List<Block>();
 
 		internal bool made = false;
 
@@ -18,7 +47,6 @@ namespace Scratch
 		{
 			sObject._MyBlocks[name] = this;
 
-			paramBlocks = new List<Block>();
 			parameters = new Dictionary<string, MyBlockVar>
 			{
 				[name] = new MyBlockVar(name, null)
@@ -26,32 +54,29 @@ namespace Scratch
 
 			prototype = new Block(null)
 			{
-				args = new BlockArgs("procedures_prototype", null, null, null, mainBlock.args.Id, true, false, new Mutator())
+				args = new BlockArgs("procedures_prototype", null, null, null, mainBlock.args.Id, true, false, new Mutator()),
+				needsNext = false
 			};
 
 			mainBlock.args.Inputs = $"\"custom_block\":[1,\"{prototype.args.Id}\"]";
 
 			blocks.Add(prototype);
+			blocks.Add(mainBlock);
 
 			Update();
-		}
-
-		public MyBlock Build()
-		{
-			made = true;
-			blocks.Add(mainBlock);
-			return this;
 		}
 
 		public MyBlock AddDesc(string name, string text)
 		{
-			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
-			parameters[name] = new MyBlockVar(text, null);
+			MyBlockVar tmp = new MyBlockVar(text, null);
+			tmp.block.needsNext = false;
+			parameters[name] = tmp;
+
 			Update();
 			return this;
 		}
 
-		internal void ArgBlocker(string name, string opcode)
+		private void ArgBlocker(string name, string opcode)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append("\"VALUE\":[\"");
@@ -61,32 +86,35 @@ namespace Scratch
 
 			Block argBlock = new Block(null)
 			{
-				args = new BlockArgs(opcode, null, field, null, prototype.args.Id, true)
+				args = new BlockArgs(opcode, null, field, null, prototype.args.Id, true),
+				needsNext = false,
 			};
 
 			blocks.Add(argBlock);
 			paramBlocks.Add(argBlock);
+
+			Update();
 		}
 
 		public MyBlock AddBool(string name)
 		{
-			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
-			parameters[name] = new MyBlockVar("%b", "argument_reporter_boolean", name);
+			MyBlockVar tmp = new MyBlockVar("%b", "argument_reporter_boolean", name);
+			tmp.block.needsNext = false;
+			parameters[name] = tmp;
 
 			ArgBlocker(name, "argument_reporter_boolean");
 
-			Update();
 			return this;
 		}
 
 		public MyBlock AddValue(string name)
 		{
-			if(made) throw new Exception($"Block \"{mainBlock.name}\" is builded, so no more variable can be added!");
-			parameters[name] = new MyBlockVar("%s", "argument_reporter_string_number", name);
+			MyBlockVar tmp = new MyBlockVar("%s", "argument_reporter_string_number", name);
+			tmp.block.needsNext = false;
+			parameters[name] = tmp;
 
 			ArgBlocker(name, "argument_reporter_string_number");
 
-			Update();
 			return this;
 		}
 
@@ -153,12 +181,6 @@ namespace Scratch
 
 			prototype.args.Inputs = sb5.ToString();
 			prototype.args.Mutatator = m;
-		}
-
-		public new Block Add(params Block[] block)
-		{
-			if(!made) throw new Exception($"Block \"{mainBlock.name}\" is not builded!");
-			return base.Add(block);
 		}
 
 		public class MyBlockVar : Var

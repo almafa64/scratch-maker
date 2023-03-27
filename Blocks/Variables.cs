@@ -11,7 +11,7 @@ namespace Scratch
 			return Block.MakeField("VARIABLE", $"\"{v.Name}\",\"{v.Id}\"", false);
 		}
 
-		public class Change : Block
+		public sealed class Change : Block
 		{
 			public Change(Var variable, object by) : base("Change size", UsagePlace.Both, by)
 			{
@@ -19,7 +19,7 @@ namespace Scratch
 			}
 		}
 
-		public class Set : Block
+		public sealed class Set : Block
 		{
 			public Set(Var variable, object to) : base("Set size", UsagePlace.Both, to)
 			{
@@ -27,7 +27,7 @@ namespace Scratch
 			}
 		}
 
-		public class Show : Block
+		public sealed class Show : Block
 		{
 			public Show(Var variable) : base("Show variable")
 			{
@@ -35,7 +35,7 @@ namespace Scratch
 			}
 		}
 
-		public class Hide : Block
+		public sealed class Hide : Block
 		{
 			public Hide(Var variable) : base("Hide variable")
 			{

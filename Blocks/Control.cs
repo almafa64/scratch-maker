@@ -5,7 +5,7 @@ namespace Scratch
 {
 	public static class Control
 	{
-		public class Stop : Block
+		public sealed class Stop : Block
 		{
 			private static string MakeStopField(string what)
 			{
@@ -43,7 +43,7 @@ namespace Scratch
 			}
 		}
 
-		public class Wait : Block
+		public sealed class Wait : Block
 		{
 			public Wait(object secs) : base("Wait secs", UsagePlace.Both, secs)
 			{
@@ -51,7 +51,7 @@ namespace Scratch
 			}
 		}
 
-		public class WaitUntil : Block
+		public sealed class WaitUntil : Block
 		{
 			public WaitUntil(SpecBlock block) : base("Wait until block true", UsagePlace.Both)
 			{
@@ -61,7 +61,7 @@ namespace Scratch
 
 		public static class Clone
 		{
-			public class Delete : Block
+			public sealed class Delete : Block
 			{
 				public Delete() : base("Delete this sprite", UsagePlace.Sprite) 
 				{
@@ -69,7 +69,7 @@ namespace Scratch
 				}
 			}
 
-			public class Create : Block
+			public sealed class Create : Block
 			{
 				public enum What
 				{
@@ -106,7 +106,7 @@ namespace Scratch
 				}
 			}
 
-			public class StartAs : TopBlock
+			public sealed class StartAs : TopBlock
 			{
 				public StartAs(SObject sprite, int x = 200, int y = 200) : base("control_start_as_clone", "When start as clone", sprite, x, y) 
 				{
@@ -117,7 +117,7 @@ namespace Scratch
 
 		public static class Loop
 		{
-			public class Forever : Block
+			public sealed class Forever : Block
 			{
 				public Forever(params Block[] blocks) : base("Loop forever")
 				{
@@ -132,7 +132,7 @@ namespace Scratch
 				}
 			}
 
-			public class Repeat : Block
+			public sealed class Repeat : Block
 			{
 				public Repeat(object num, params Block[] blocks) : base("Repeat for num", UsagePlace.Both, num)
 				{
@@ -147,7 +147,7 @@ namespace Scratch
 				}
 			}
 
-			public class RepeatUntil : Block
+			public sealed class RepeatUntil : Block
 			{
 				public RepeatUntil(Block block, params Block[] blocks) : base("Repeat until block false")
 				{
@@ -163,7 +163,7 @@ namespace Scratch
 			}
 		}
 
-		public class If : Block
+		public sealed class If : Block
 		{
 			public If(Block block, params Block[] blocks) : base("If block true")
 			{
@@ -173,7 +173,7 @@ namespace Scratch
 			}
 		}
 
-		public class IfElse : Block
+		public sealed class IfElse : Block
 		{
 			public IfElse(Block block, Block[] blocksTrue, Block[] blocksFalse) : base("If block true else")
 			{

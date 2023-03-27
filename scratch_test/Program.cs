@@ -49,9 +49,47 @@ namespace scratch_test
 
 					sprite.AddComments(new Comment("testing", 200, 200, true));
 
-					sprite.Vars["te"] = new Var(43);
+					sprite.Vars["te", false] = new Var(43);
 					sprite.Vars["text"] = new Var("aebc");
 					sprite.Lists["re", true] = new List(43, "adwa", true);
+
+					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").AddBool("y").AddDesc("lol", "lol"))
+					{
+						b.Add(new Movement.Goto(4242, b["x"]));
+						b.Add(new Movement.Glide(b["x"], b["x"], b["x"]));
+						b.Add(new Movement.Move(b["x"]));
+						b.Add(new Movement.Change.X(b["x"]));
+						b.Add(new Movement.Change.Y(b["x"]));
+						b.Add(new Movement.Set.X(b["x"]));
+						b.Add(new Movement.Set.Y(b["x"]));
+						b.Add(new Movement.Turn.Left(b["x"]));
+						b.Add(new Movement.Turn.Right(b["x"]));
+						b.Add(new Movement.Point(b["x"]));
+
+						b.Add(new Looks.Say(b["x"], b["x"]));
+						b.Add(new Looks.Think(b["x"], b["x"]));
+						b.Add(new Looks.Size.Change(b["x"]));
+						b.Add(new Looks.Size.Set(b["x"]));
+						b.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Forward, b["x"]));
+						b.Add(new Looks.Effect.Set(Looks.Effect.Effects.Color, b["x"]));
+						b.Add(new Looks.Effect.Change(Looks.Effect.Effects.Whirl, b["x"]));
+
+						b.Add(new Sounds.Volume.Set(b["x"]));
+						b.Add(new Sounds.Volume.Change(b["x"]));
+						b.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, b["x"]));
+						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
+
+						b.Add(new Control.Wait(b["x"]));
+
+						b.Add(new Movement.Goto(b["x"], new Operators.And(new Sensing.Mouse.Down(), b["y"])));
+
+						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
+					}
+					using(Column column = new Column(sprite, -300, -200)) //MyBlock call
+					{
+						column.Add(new MyBlock.Call(sprite.MyBlocks["test"], 43, new Operators.Contains("apple", "a")));
+						column.Add(new MyBlock.Call(sprite.MyBlocks["test"], sprite.Vars["te"], new Operators.Contains("banana", "b")));
+					}
 
 					using(Column column = new Column(sprite)) //Movement
 					{
@@ -248,37 +286,6 @@ namespace scratch_test
 					{
 						column.Add(new Movement.Goto(24, 53));
 						column.Delete();
-					}
-
-					using(MyBlock b = new MyBlock(sprite, "test", -300, 0).AddValue("x").Build())
-					{
-						b.Add(new Movement.Goto(4242, b["x"]));
-						b.Add(new Movement.Glide(b["x"], b["x"], b["x"]));
-						b.Add(new Movement.Move(b["x"]));
-						b.Add(new Movement.Change.X(b["x"]));
-						b.Add(new Movement.Change.Y(b["x"]));
-						b.Add(new Movement.Set.X(b["x"]));
-						b.Add(new Movement.Set.Y(b["x"]));
-						b.Add(new Movement.Turn.Left(b["x"]));
-						b.Add(new Movement.Turn.Right(b["x"]));
-						b.Add(new Movement.Point(b["x"]));
-
-						b.Add(new Looks.Say(b["x"], b["x"]));
-						b.Add(new Looks.Think(b["x"], b["x"]));
-						b.Add(new Looks.Size.Change(b["x"]));
-						b.Add(new Looks.Size.Set(b["x"]));
-						b.Add(new Looks.Layer.Go(Looks.Layer.Go.WhereTo.Forward, b["x"]));
-						b.Add(new Looks.Effect.Set(Looks.Effect.Effects.Color, b["x"]));
-						b.Add(new Looks.Effect.Change(Looks.Effect.Effects.Whirl, b["x"]));
-
-						b.Add(new Sounds.Volume.Set(b["x"]));
-						b.Add(new Sounds.Volume.Change(b["x"]));
-						b.Add(new Sounds.Effect.Change(Sounds.Effect.Effects.Pan, b["x"]));
-						b.Add(new Sounds.Effect.Set(Sounds.Effect.Effects.Pitch, b["x"]));
-
-						b.Add(new Control.Wait(b["x"]));
-
-						b.Add(new Variables.Change(sprite.Vars["te"], b["x"]));
 					}
 				}
 			}

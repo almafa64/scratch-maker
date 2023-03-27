@@ -25,7 +25,7 @@ namespace Scratch_Utils.Dics
 	{
 		internal VarDic(SObject sObject, Dictionary<string, Var> vars) : base(sObject, vars) { }
 
-		public Var this[string name, bool global = false]
+		public Var this[string name, bool global = false, bool showInGame = false]
 		{
 			get
 			{
@@ -39,6 +39,7 @@ namespace Scratch_Utils.Dics
 				if(Var.Has(sObject, name) || Var.BgHas(sObject, name)) throw new ArgumentException($"Variable with the name \"{name}\" already exists");
 
 				value.Name = name;
+				value.show = showInGame;
 				if(!global || sObject is Project.Background)
 				{
 					dic[name] = value;
@@ -57,7 +58,7 @@ namespace Scratch_Utils.Dics
 	{
 		internal ListDic(SObject sObject, Dictionary<string, List> lists) : base(sObject, lists) { }
 
-		public List this[string name, bool global = false]
+		public List this[string name, bool global = false, bool showInGame = false]
 		{
 			get
 			{
@@ -72,6 +73,7 @@ namespace Scratch_Utils.Dics
 
 				value.Name = name;
 				value.sObject = sObject;
+				value.show = showInGame;
 				if(!global || sObject is Project.Background)
 				{
 					dic[name] = value;
@@ -422,6 +424,8 @@ namespace Scratch
 		{
 			foreach(Block block in inBlocks)
 			{
+				//if(block is SpecBlock s) throw new ArgumentException(s.args.OpCode + " <--"); //removed until reference next/parent
+
 				if(block.needsNext && block.autoLevel)
 				{
 					if(blocks.Count > 0)

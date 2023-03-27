@@ -29,7 +29,7 @@ namespace Scratch
 			["Size"] = new SpecVar(UsagePlace.Sprite, "looks_size", "size variable")
 		};
 
-		public class Say : Block
+		public sealed class Say : Block
 		{
 			public Say(object text, object sec) : base("Say text for seconds", UsagePlace.Sprite, text, sec)
 			{
@@ -44,7 +44,7 @@ namespace Scratch
 			}
 		}
 
-		public class Think : Block
+		public sealed class Think : Block
 		{
 			public Think(object text, object sec) : base("Think text for seconds", UsagePlace.Sprite, text, sec)
 			{
@@ -59,7 +59,7 @@ namespace Scratch
 
 		public static class Switch
 		{
-			public class Costumes : Block
+			public sealed class Costumes : Block
 			{
 				public Costumes(Costume costume) : base("Switch costume", UsagePlace.Sprite)
 				{
@@ -111,7 +111,7 @@ namespace Scratch
 				};
 			}
 
-			public class Backdrop : Block
+			public sealed class Backdrop : Block
 			{
 				public Backdrop(object costume) : base($"Switch backdrop", UsagePlace.Both)
 				{
@@ -124,7 +124,7 @@ namespace Scratch
 				}
 			}
 
-			public class BackdropWait : Block
+			public sealed class BackdropWait : Block
 			{
 				public BackdropWait(object costume) : base($"Switch backdrop and wait", UsagePlace.Background)
 				{
@@ -140,7 +140,7 @@ namespace Scratch
 
 		public static class Next
 		{
-			public class Costume : Block
+			public sealed class Costume : Block
 			{
 				public Costume() : base("next Costume", UsagePlace.Sprite)
 				{
@@ -149,7 +149,7 @@ namespace Scratch
 				}
 			}
 
-			public class Backdrop : Block
+			public sealed class Backdrop : Block
 			{
 				public Backdrop() : base("next Backdrop")
 				{
@@ -160,7 +160,7 @@ namespace Scratch
 
 		public static class Size
 		{
-			public class Set : Block
+			public sealed class Set : Block
 			{
 				public Set(object to) : base("Set size", UsagePlace.Sprite, to)
 				{
@@ -168,7 +168,7 @@ namespace Scratch
 				}
 			}
 
-			public class Change : Block
+			public sealed class Change : Block
 			{
 				public Change(object by) : base("Change size", UsagePlace.Sprite, by)
 				{
@@ -205,7 +205,7 @@ namespace Scratch
 				}
 			}
 
-			public class Change : Block
+			public sealed class Change : Block
 			{
 				public Change(Effects effect, object by) : base("Change effect", UsagePlace.Both, by)
 				{
@@ -213,7 +213,7 @@ namespace Scratch
 				}
 			}
 
-			public class Set : Block
+			public sealed class Set : Block
 			{
 				public Set(Effects effect, object to) : base("Set effect", UsagePlace.Both, to)
 				{
@@ -221,7 +221,7 @@ namespace Scratch
 				}
 			}
 
-			public class Clear : Block
+			public sealed class Clear : Block
 			{
 				public Clear() : base("Clear effects", UsagePlace.Both)
 				{
@@ -230,7 +230,7 @@ namespace Scratch
 			}
 		}
 
-		public class Show : Block
+		public sealed class Show : Block
 		{
 			public Show() : base("Show", UsagePlace.Sprite)
 			{
@@ -238,7 +238,7 @@ namespace Scratch
 			}
 		}
 
-		public class Hide : Block
+		public sealed class Hide : Block
 		{
 			public Hide() : base("Hide", UsagePlace.Sprite)
 			{
@@ -248,7 +248,7 @@ namespace Scratch
 
 		public static class Layer
 		{
-			public class GoTo : Block
+			public sealed class GoTo : Block
 			{
 				public enum To
 				{
@@ -261,7 +261,7 @@ namespace Scratch
 				}
 			}
 
-			public class Go : Block
+			public sealed class Go : Block
 			{
 				public enum WhereTo
 				{

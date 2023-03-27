@@ -44,7 +44,7 @@ namespace Scratch
 {
 	public static class Lists
 	{
-		public class Add : ListBlock
+		public sealed class Add : ListBlock
 		{
 			public Add(object data, List list) : base(list, "Add data", UsagePlace.Both, data)
 			{
@@ -52,9 +52,9 @@ namespace Scratch
 			}
 		}
 
-		public class Delete : ListBlock
+		public sealed class Delete : ListBlock
 		{
-			public class All : ListBlock
+			public sealed class All : ListBlock
 			{
 				public All(List list) : base(list, "Delete all")
 				{
@@ -68,7 +68,7 @@ namespace Scratch
 			}
 		}
 
-		public class Insert : ListBlock
+		public sealed class Insert : ListBlock
 		{
 			public Insert(object data, object at, List list) : base(list, "Insert data at", UsagePlace.Both, data, at)
 			{
@@ -76,7 +76,7 @@ namespace Scratch
 			}
 		}
 
-		public class Replace : ListBlock
+		public sealed class Replace : ListBlock
 		{
 			public Replace(object data, object at, List list) : base(list, "Replace at with data", UsagePlace.Both, data, at)
 			{
@@ -84,7 +84,7 @@ namespace Scratch
 			}
 		}
 
-		public class Show : ListBlock
+		public sealed class Show : ListBlock
 		{
 			public Show(List list) : base(list, "")
 			{
@@ -92,7 +92,7 @@ namespace Scratch
 			}
 		}
 
-		public class Hide : ListBlock
+		public sealed class Hide : ListBlock
 		{
 			public Hide(List list) : base(list, "")
 			{
@@ -100,7 +100,7 @@ namespace Scratch
 			}
 		}
 
-		public class Item : SpecList
+		public sealed class Item : SpecList
 		{
 			public Item(object at, List list) : base(list, "", UsagePlace.Both, at)
 			{
@@ -108,7 +108,7 @@ namespace Scratch
 			}
 		}
 
-		public class ItemIndex : SpecList
+		public sealed class ItemIndex : SpecList
 		{
 			public ItemIndex(object data, List list) : base(list, "")
 			{
@@ -116,7 +116,7 @@ namespace Scratch
 			}
 		}
 
-		public class Length : SpecList
+		public sealed class Length : SpecList
 		{
 			public Length(List list) : base(list, "")
 			{
@@ -124,7 +124,7 @@ namespace Scratch
 			}
 		}
 
-		public class Contains : SpecList
+		public sealed class Contains : SpecList
 		{
 			public Contains(object data, List list) : base(list, "", UsagePlace.Both, data)
 			{

@@ -227,25 +227,23 @@ namespace Scratch_Utils
 			}
 
 
-			fileText.Append("],\"meta\":{\"semver\":\"3.0.0\",\"vm\":\"1.3.18\",\"agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36\"},\"monitors\":[");
-			/*if(pr.containers.Count != 0)
-			{
-				foreach(Container cr in pr.containers)
-				{
-					fileText.Append("{\"id\":\"");
-					fileText.Append(cr.Id);
+			fileText.Append("],\"meta\":{\"semver\":\"3.0.0\",\"vm\":\"1.4.6\",\"agent\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36\"},\"monitors\":[");
 
-					fileText.Append("\",\"mode\":");
-					fileText.Append();
-				}
-				RemoveLast(fileText);
-			}*/
+			Dictionary<string, Sprite>.ValueCollection sprites = pr._sprites.Values;
+
+			DoMonitorStuff(pr.background._Vars);
+			DoMonitorStuff(pr.background._Lists);
+			foreach(Sprite sprite in sprites)
+			{
+				DoMonitorStuff(sprite._Vars);
+				DoMonitorStuff(sprite._Lists);
+			}
 
 			fileText.Append("],\"targets\":[");
 			DoSpriteStuff(fileText, false, pr.background);
-			foreach(KeyValuePair<string, Sprite> sprite in pr._sprites)
+			foreach(Sprite sprite in sprites)
 			{
-				DoSpriteStuff(fileText, true, sprite.Value);
+				DoSpriteStuff(fileText, true, sprite);
 			}
 
 			Utils.RemoveLast(fileText);
@@ -257,6 +255,11 @@ namespace Scratch_Utils
 			ZipFile.CreateFromDirectory($"{newPath}\\build", $"{newPath}\\{pr.name}.sb3");
 
 			if(pr.openFolder) Process.Start("explorer.exe", $"{newPath}");
+		}
+
+		private static void DoMonitorStuff<T>(Dictionary<string, T> cont)
+		{
+
 		}
 
 		private static void DoSpriteStuff(StringBuilder fileText, bool isSprite, SObject sObject)
@@ -295,14 +298,26 @@ namespace Scratch_Utils
 							}
 							else
 							{
-								fileText.Append("\"argumentdefaults\":\"");
-								fileText.Append(m.argumentDefaults);
+								bool hasDef = m.argumentDefaults != null;
+								bool hasId = m.argumentIds != null;
 
-								fileText.Append("\",\"argumentids\":\"");
-								fileText.Append(m.argumentIds);
+								if(hasDef)
+								{
+									fileText.Append("\"argumentdefaults\":\"");
+									fileText.Append(m.argumentDefaults);
+								}
 
-								fileText.Append("\",\"argumentnames\":\"");
-								fileText.Append(m.argumentNames);
+								if(hasId)
+								{
+									fileText.Append($"{(hasDef?"\",":"")}\"argumentids\":\"");
+									fileText.Append(m.argumentIds);
+								}
+
+								if(m.argumentNames != null)
+								{
+									fileText.Append($"{((hasDef||hasId)?"\",":"")}\"argumentnames\":\"");
+									fileText.Append(m.argumentNames);
+								}
 
 								fileText.Append("\",\"proccode\":\"");
 								fileText.Append(m.proCode);

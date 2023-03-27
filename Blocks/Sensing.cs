@@ -40,7 +40,7 @@ namespace Scratch
 			["Username"] = new SpecVar(UsagePlace.Both, "sensing_username", "username variable"),
 		};
 
-		public class Ask : Block
+		public sealed class Ask : Block
 		{
 			public Ask(object text) : base("Ask text and wait", UsagePlace.Both, text) 
 			{
@@ -48,7 +48,7 @@ namespace Scratch
 			}
 		}
 
-		public class DragMode : Block
+		public sealed class DragMode : Block
 		{
 			public enum Mode
 			{
@@ -62,7 +62,7 @@ namespace Scratch
 			}
 		}
 
-		public class ResetTimer : Block
+		public sealed class ResetTimer : Block
 		{
 			public ResetTimer() : base("Reset timer")
 			{
@@ -70,7 +70,7 @@ namespace Scratch
 			}
 		}
 
-		public class Touching : SpecBlock
+		public sealed class Touching : SpecBlock
 		{
 			public enum What
 			{
@@ -80,11 +80,7 @@ namespace Scratch
 			public Touching(object what) : base("Touching what", UsagePlace.Sprite, what)
 			{
 				string wS;
-				if(what is What w)
-				{
-					if(w == What.Edge) wS = "_edge_";
-					else wS = "_mouse_";
-				}
+				if(what is What w) wS = (w == What.Edge) ? "_edge_" : "_mouse_";
 				else if(what is Sprite s) wS = s.name;
 				else throw new ArgumentException("what was not a Sprite or What element");
 
@@ -101,7 +97,7 @@ namespace Scratch
 			}
 		}
 
-		public class TouchingColor : SpecBlock
+		public sealed class TouchingColor : SpecBlock
 		{
 			public TouchingColor(Color color) : base("Touching color", UsagePlace.Sprite)
 			{
@@ -110,7 +106,7 @@ namespace Scratch
 			}
 		}
 
-		public class ColorTouchingColor : SpecBlock
+		public sealed class ColorTouchingColor : SpecBlock
 		{
 			public ColorTouchingColor(Color a, Color b) : base("a Color Touching b Color", UsagePlace.Sprite)
 			{
@@ -119,7 +115,7 @@ namespace Scratch
 			}
 		}
 
-		public class Distance : SpecBlock
+		public sealed class Distance : SpecBlock
 		{
 			public enum What
 			{
@@ -128,10 +124,7 @@ namespace Scratch
 			public Distance(object what) : base("Touching what", UsagePlace.Sprite, what)
 			{
 				string wS;
-				if(what is What)
-				{
-					wS = "_mouse_";
-				}
+				if(what is What) wS = "_mouse_";
 				else if(what is Sprite s) wS = s.name;
 				else throw new ArgumentException("what was not a Sprite or What element");
 
@@ -148,15 +141,15 @@ namespace Scratch
 
 		public static class Mouse
 		{
-			public class X : SpecBlock
+			public sealed class X : SpecBlock
 			{
 				public X() : base("Mouse x position") 
 				{
 					args = new BlockArgs("sensing_mousex");
 				}
 			}
-			
-			public class Y : SpecBlock
+
+			public sealed class Y : SpecBlock
 			{
 				public Y() : base("Mouse y position")
 				{
@@ -164,7 +157,7 @@ namespace Scratch
 				}
 			}
 
-			public class Down : SpecBlock
+			public sealed class Down : SpecBlock
 			{
 				public Down() : base("Mouse down")
 				{
@@ -174,7 +167,7 @@ namespace Scratch
 			}
 		}
 
-		public class DaysSince : SpecBlock
+		public sealed class DaysSince : SpecBlock
 		{
 			public DaysSince() : base("Days since 2000")
 			{
@@ -182,7 +175,7 @@ namespace Scratch
 			}
 		}
 
-		public class KeyPress : SpecBlock
+		public sealed class KeyPress : SpecBlock
 		{
 			public enum Keys
 			{
@@ -194,23 +187,19 @@ namespace Scratch
 				Space,
 				a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
 			}
-			public KeyPress(object what) : base("Touching what", UsagePlace.Sprite, what)
+			public KeyPress(Keys key) : base("Pressing key", UsagePlace.Sprite, key)
 			{
 				string wS;
-				if(what is Keys w)
+				switch(key)
 				{
-					switch(w)
-					{
-						case Keys.Any: wS = "any"; break;
-						case Keys.LeftArrow: wS = "left arrow"; break;
-						case Keys.RightArrow: wS = "right arrow"; break;
-						case Keys.UpArrow: wS = "up arrow"; break;
-						case Keys.DownArrow: wS = "down arrow"; break;
-						case Keys.Space: wS = "space"; break;
-						default: wS = typeof(Keys).GetEnumName(w); break;
-					}
+					case Keys.Any: wS = "any"; break;
+					case Keys.LeftArrow: wS = "left arrow"; break;
+					case Keys.RightArrow: wS = "right arrow"; break;
+					case Keys.UpArrow: wS = "up arrow"; break;
+					case Keys.DownArrow: wS = "down arrow"; break;
+					case Keys.Space: wS = "space"; break;
+					default: wS = typeof(Keys).GetEnumName(key); break;
 				}
-				else throw new ArgumentException("what was not a Sprite or What element");
 
 				args = new BlockArgs("sensing_keypressed");
 				Block tmp = new Block(null)
@@ -225,7 +214,7 @@ namespace Scratch
 			}
 		}
 
-		public class Of : SpecBlock
+		public sealed class Of : SpecBlock
 		{
 			public enum Data
 			{

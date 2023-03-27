@@ -4,7 +4,7 @@ namespace Scratch
 {
 	public static class Events
 	{
-		public class ClickSprite : TopBlock
+		public sealed class ClickSprite : TopBlock
 		{
 			public ClickSprite(SObject sObject, int x = 0, int y = 0) : base("event_whenthisspriteclicked", "When sprite clicked", sObject, x, y)
 			{
@@ -12,7 +12,7 @@ namespace Scratch
 			}
 		}
 
-		public class ClickStage : TopBlock
+		public sealed class ClickStage : TopBlock
 		{
 			public ClickStage(SObject sObject, int x = 0, int y = 0) : base("event_whenstageclicked", "When stage clicked", sObject, x, y) 
 			{
@@ -20,12 +20,12 @@ namespace Scratch
 			}
 		}
 
-		public class ClickFlag : TopBlock
+		public sealed class ClickFlag : TopBlock
 		{
 			public ClickFlag(SObject sObject, int x = 0, int y = 0) : base("event_whenflagclicked", "When green flag clicked", sObject, x, y) { }
 		}
 
-		public class KeyPress : TopBlock
+		public sealed class KeyPress : TopBlock
 		{
 			public enum Keys
 			{
@@ -55,7 +55,7 @@ namespace Scratch
 			}
 		}
 
-		public class BackdropSwitch : TopBlock
+		public sealed class BackdropSwitch : TopBlock
 		{
 			public BackdropSwitch(Costume costume, SObject sprite, int x = 0, int y = 0) : base("event_whenbackdropswitchesto", "When backdrop switches to", sprite, x, y)
 			{
@@ -63,7 +63,7 @@ namespace Scratch
 			}
 		}
 
-		public class Greater : TopBlock
+		public sealed class Greater : TopBlock
 		{
 			public enum What
 			{
@@ -85,7 +85,7 @@ namespace Scratch
 
 		public static class Broadcasts
 		{
-			public class Recive : TopBlock
+			public sealed class Recive : TopBlock
 			{
 				public Recive(Broadcast broadcast, SObject sprite, int x = 0, int y = 0) : base("event_whenbroadcastreceived", "When broadcast recived", sprite, x, y)
 				{
@@ -98,7 +98,7 @@ namespace Scratch
 				return $"\"BROADCAST_INPUT\":[1,[11,\"{br.Name}\",\"{br.Id}\"]]";
 			}
 
-			public class Send : Block
+			public sealed class Send : Block
 			{
 				public Send(Broadcast broadcast) : base("Broadcast broadcast")
 				{
@@ -106,7 +106,7 @@ namespace Scratch
 				}
 			}
 
-			public class SendAndWait : Block
+			public sealed class SendAndWait : Block
 			{
 				public SendAndWait(Broadcast broadcast) : base("Broadcast broadcast and wait")
 				{

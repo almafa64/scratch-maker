@@ -29,6 +29,7 @@ namespace Scratch_Utils
 	public class Container : Ided
 	{
 		internal SObject sObject;
+		internal bool show = false;
 		public Container(SObject sObject, string name) : base(name)
 		{
 			this.sObject = sObject;

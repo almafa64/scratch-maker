@@ -58,9 +58,9 @@ namespace Scratch_Utils
 			if(procode.Length > 0) Utils.RemoveLast(procode);
 			if(ids.Length > 0) Utils.RemoveLast(ids);
 
-			argumentDefaults += $"{defaults}]";
-			argumentIds += $"{ids}]";
-			argumentNames += $"{names}]";
+			argumentDefaults += defaults + "]";
+			argumentIds += ids + "]";
+			argumentNames += names + "]";
 			proCode = procode.ToString();
 
 			hasNext = null;
