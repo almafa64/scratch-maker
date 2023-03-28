@@ -220,7 +220,7 @@ namespace scratch_test
 					}
 					using(Column column = new Column(sprite, 1500, 500)) //Sensing2
 					{
-						column.Add(new Operators.And(new Operators.Or(new Operators.And(new Operators.Or(new Sensing.Touching(Sensing.Touching.What.Mouse), new Operators.And(new Sensing.Mouse.Down(), new Sensing.KeyPress(Sensing.KeyPress.Keys.Any))), new Sensing.Touching(Sensing.Touching.What.Edge)), new Sensing.Touching(project.Sprites["test2"])), new Operators.Or(new Sensing.TouchingColor(Color.Red), new Sensing.ColorTouchingColor(new Color("abcdef"), new Color("#abcdef")))));
+						column.Add(new Operators.And(new Operators.Or(new Operators.And(new Operators.Or(new Sensing.Touching(Sensing.Touching.What.Mouse), new Operators.And(new Sensing.Mouse.Down(), new Sensing.KeyPress(Sensing.KeyPress.Keys.Any))), new Sensing.Touching(Sensing.Touching.What.Edge)), new Sensing.Touching(project.Sprites["test2"])), new Operators.Or(new Sensing.TouchingColor(new Color(255,0,0)), new Sensing.ColorTouchingColor(new Color("abcdef"), new Color("#abcdef")))));
 					}
 					using(Column column = new Column(sprite, 1500, 600)) //Sensing3
 					{

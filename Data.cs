@@ -2,7 +2,9 @@
 using Scratch_Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Scratch_Utils
@@ -59,7 +61,7 @@ namespace Scratch_Utils
 		{
 			this.assetId = ID.AssetMake();
 			this.dataFormat = "svg";
-			this.md5ext = assetId + '.' + dataFormat;
+			this.md5ext = assetId + ".svg";
 		}
 	}
 }
@@ -296,10 +298,29 @@ namespace Scratch
 		internal int rate;
 		internal int sampleCount;
 
+		[DllImport("winmm.dll", EntryPoint = "mciSendStringA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		private static extern int mciSendString(string lpstrCommand, string lpstrReturnString, int uReturnLength, int hwndCallback);
+
 		public Sound(string path, int rate = 48000, int sampleCount = 1123) : base(path, null)
 		{
 			this.rate = rate;
 			this.sampleCount = sampleCount;
+		}
+
+		public static string Record(string nameOfNewFile)
+		{
+			int iOfDot = nameOfNewFile.IndexOf('.');
+			if(iOfDot != -1) nameOfNewFile = nameOfNewFile.Substring(0, iOfDot);
+			string path = $"{AppDomain.CurrentDomain.BaseDirectory}{nameOfNewFile}.wav";
+			mciSendString("open new Type waveaudio Alias recsound", "", 0, 0);
+			mciSendString("record recsound", "", 0, 0);
+			Console.WriteLine($"recording \"{nameOfNewFile}\", press Enter to stop and save ...");
+			Console.ReadLine();
+
+			mciSendString($"save recsound " + path, "", 0, 0);
+			mciSendString("close recsound ", "", 0, 0);
+
+			return path;
 		}
 
 		internal static bool Has(SObject sObject, string name)
@@ -319,24 +340,23 @@ namespace Scratch
 	public struct Color
 	{
 		internal string hex;
-		public Color(int r, int g, int b)
+		public Color(byte r, byte g, byte b)
 		{
-			if(r < 0 || r > 255) throw new ArgumentException("r value of Color object cannot be less than 0 and more than 255");
-			if(g < 0 || g > 255) throw new ArgumentException("g value of Color object cannot be less than 0 and more than 255");
-			if(b < 0 || b > 255) throw new ArgumentException("b value of Color object cannot be less than 0 and more than 255");
-			hex = $"#{BitConverter.ToString(new byte[] { (byte)r, (byte)g, (byte)b }).Replace("-", "")}";
+			hex = '#' + BitConverter.ToString(new byte[] { r, g, b }).Replace("-", "");
 		}
 		public Color(string hex)
 		{
 			bool hastag = hex[0] == '#';
+
 			if(hex.Length - (hastag ? 1 : 0) != 6) throw new ArgumentException("hex length was not 6 (without the # character)");
+			
 			hex = hex.ToLower();
 			string good = "0123456789abcdef";
-			for(int i = hastag?1:0; i < hex.Length; i++)
+			for(int i = hastag ? 1 : 0; i < hex.Length; i++)
 			{
 				if(good.IndexOf(hex[i]) == -1) throw new ArgumentException($"hex has no hex character \"{hex[i]}\"");
 			}
-			this.hex = hastag ? hex : $"#{hex}";
+			this.hex = hastag ? hex : ('#'+hex);
 		}
 		internal Color(string hex, int _) => this.hex = hex;
 		public static Color Red		= new Color("#ff0000", 0);

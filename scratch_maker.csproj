@@ -101,7 +101,9 @@
     <Reference Include="System" />
     <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="backdrop1.svg" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

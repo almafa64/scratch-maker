@@ -231,12 +231,11 @@ namespace Scratch_Utils
 
 			Dictionary<string, Sprite>.ValueCollection sprites = pr._sprites.Values;
 
-			bool didMonitor = false;
 			StringBuilder monitorText = new StringBuilder();
-			DoMonitorStuff(monitorText, null, pr.background._Vars.Values, pr.background._Lists.Values);
+			bool didMonitor = DoMonitorStuff(monitorText, pr.background._Vars.Values, pr.background._Lists.Values);
 			foreach(Sprite sprite in sprites)
 			{
-				bool a = DoMonitorStuff(monitorText, sprite.name, sprite._Vars.Values, sprite._Lists.Values);
+				bool a = DoMonitorStuff(monitorText, sprite._Vars.Values, sprite._Lists.Values);
 				if(a) didMonitor = true;
 			}
 			if(didMonitor) Utils.RemoveLast(monitorText);
@@ -261,9 +260,9 @@ namespace Scratch_Utils
 			if(pr.openFolder) Process.Start("explorer.exe", $"{newPath}");
 		}
 
-		private static bool DoMonitorStuff(StringBuilder sb, string nameOfSprite, Dictionary<string, Var>.ValueCollection vars, Dictionary<string, List>.ValueCollection lists)
+		private static bool DoMonitorStuff(StringBuilder sb, Dictionary<string, Var>.ValueCollection vars, Dictionary<string, List>.ValueCollection lists)
 		{
-			void Base(Container c, Var.DisplayMode mode, string opcode, string spriteName)
+			void Base(Container c, Var.DisplayMode mode, string opcode)
 			{
 				Var v = null;
 				List l = null;
@@ -316,16 +315,16 @@ namespace Scratch_Utils
 					sb.Append(Utils.Small((Math.Floor(v.min) - Math.Ceiling(v.min)) + (Math.Floor(v.max) - Math.Ceiling(v.max)) == 0));
 
 					sb.Append(",\"mode\":\"");
-					string s;
+					string sW;
 					switch(v.mode)
 					{
-						case Var.DisplayMode.Normal: s = "default"; break;
-						case Var.DisplayMode.Large: s = "large"; break;
-						case Var.DisplayMode.Slider: s = "slider"; break;
+						case Var.DisplayMode.Normal:	sW = "default"; break;
+						case Var.DisplayMode.Large:		sW = "large"; break;
+						case Var.DisplayMode.Slider:	sW = "slider"; break;
 						default: throw new ArgumentException("Are you joking with me?");
 					}
-					sb.Append(s);
-					
+					sb.Append(sW);
+
 					sb.Append("\",\"opcode\":\"data_variable\"");
 
 					paramMode = "VARIABLE";
@@ -333,7 +332,8 @@ namespace Scratch_Utils
 				else
 				{
 					sb.Append('[');
-					if(l.vars.Count != 0) {
+					if(l.vars.Count != 0)
+					{
 						StringBuilder sbL = new StringBuilder();
 						foreach(object o in l.vars)
 						{
@@ -347,16 +347,16 @@ namespace Scratch_Utils
 
 					sb.Append(",\"mode\":\"");
 					sb.Append("list");
-					
+
 					sb.Append("\",\"opcode\":\"data_listcontents\"");
 
 					paramMode = "LIST";
 				}
 
-				sb.Append(",\"spriteName\":\"");
-				sb.Append(nameOfSprite ?? "null");
+				sb.Append(",\"spriteName\":");
+				sb.Append((c.sObject is Sprite s && s.name != null) ? $"\"{s.name}\"" : "null");
 
-				sb.Append("\",\"id\":\"");
+				sb.Append(",\"id\":\"");
 				sb.Append(c.Id);
 
 				sb.Append("\",\"params\":{\"");
@@ -367,20 +367,15 @@ namespace Scratch_Utils
 				sb.Append("\"}},");
 			}
 
-			/*if(vars.Count != 0)
-			{*/
-				foreach(Var v in vars)
-				{
-					Base(v, v.mode, "data_variable", (v.sObject is Sprite s) ? s.name : null);
-				}
-			/*}
-			if(lists.Count != 0)
-			{*/
-				foreach(List l in lists)
-				{
-					Base(l, Var.DisplayMode.Normal, "data_listcontents", (l.sObject is Sprite s) ? s.name : null);
-				}
-			//}
+			foreach(Var v in vars)
+			{
+				Base(v, v.mode, "data_variable");
+			}
+
+			foreach(List l in lists)
+			{
+				Base(l, Var.DisplayMode.Normal, "data_listcontents");
+			}
 
 			return lists.Count + vars.Count != 0;
 		}
