@@ -1,4 +1,5 @@
 ﻿using Scratch;
+using System;
 
 namespace scratch_test
 {
@@ -6,18 +7,6 @@ namespace scratch_test
 	{
 		static void Main(string[] args)
 		{
-			using(Project pr = new Project("test_blocks", Extensions.None, false))
-			{
-				using(Sprite s = new Sprite("test", pr))
-				{
-					using(Column c = new Column(s))
-					{
-
-					}
-				}
-			}
-
-			return;
 			using(Project project = new Project("test", Extensions.Translate, false))
 			{
 				using(Sprite sprite = new Sprite("test3", project))

@@ -306,7 +306,8 @@ namespace Scratch
 		EV3 = 128,
 		BOOST = 256,
 		WeDo2 = 512,
-		ForceAndAceleration = 1024
+		ForceAndAceleration = 1024,
+		All = ForceAndAceleration | WeDo2 | BOOST | EV3 | Microbit | MakeyMakey | Translate | TextToSpeech | VideoSensing | Pen | Music
 	}
 
 	public enum TextToSpeechLanguages

@@ -361,10 +361,10 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Mine
-/scratch_test/bin/Release/netcoreapp3.1/*
-!/scratch_test/bin/Release/netcoreapp3.1/6a952345f4af816734ce38eb69bfea8a.png
-!/scratch_test/bin/Release/netcoreapp3.1/83c36d806dc92327b9e7049a565c6bff.wav
-!/scratch_test/bin/Release/netcoreapp3.1/blackness.png
+/scratch_test/bin/Release/net6.0/*
+!/scratch_test/bin/Release/net6.0/6a952345f4af816734ce38eb69bfea8a.png
+!/scratch_test/bin/Release/net6.0/83c36d806dc92327b9e7049a565c6bff.wav
+!/scratch_test/bin/Release/net6.0/blackness.png
 /scratch_test/obj/
 /bin/Release/*.config
 /scratch

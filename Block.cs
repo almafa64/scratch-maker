@@ -69,7 +69,10 @@ namespace Scratch_Utils
 
 	public struct BlockArgs
 	{
-		internal Block Id;
+		//internal Block Id;
+		/*internal Block NextId;
+		internal Block ParentId;*/
+		internal string Id;
 		internal string NextId;
 		internal string ParentId;
 		internal string OpCode;
@@ -79,9 +82,11 @@ namespace Scratch_Utils
 		internal bool Shadow;
 		internal bool TopLevel;
 
+		//internal BlockArgs(string opCode, string inputs = null, string fields = null, Block nextId = null, Block parentId = null, bool shadow = false, bool topLevel = false, Mutator? mutatator = null)
 		internal BlockArgs(string opCode, string inputs = null, string fields = null, string nextId = null, string parentId = null, bool shadow = false, bool topLevel = false, Mutator? mutatator = null)
 		{
-			Id = null; //ID.Make();
+			//Id = null; //ID.Make();
+			Id = ID.Make();
 			NextId = nextId;
 			ParentId = parentId;
 			OpCode = opCode;
@@ -172,7 +177,7 @@ namespace Scratch
 		internal Comment comment;
 		internal BlockArgs args;
 		internal List<Block> kids = new List<Block>();
-		internal UsagePlace usagePlace = UsagePlace.Both;
+		internal UsagePlace usagePlace;
 
 		internal Block(string name, UsagePlace usagePlace = UsagePlace.Both, params object[] vals)
 		{

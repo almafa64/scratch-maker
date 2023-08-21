@@ -183,46 +183,46 @@ namespace Scratch_Utils
 			if(pr.extensions != Extensions.None)
 			{
 				int tmp = (int)pr.extensions;
-				int flagMask = 1 << 10;
-				while(flagMask > 0)
+				int flagMask = 1;
+				while(flagMask < (int)Extensions.All)
 				{
-					switch(tmp & flagMask)
+					switch((Extensions)(tmp & flagMask))
 					{
-						case (int)Extensions.TextToSpeech:
+						case Extensions.TextToSpeech:
 							fileText.Append("\"text2speech\",");
 							break;
-						case (int)Extensions.Pen:
+						case Extensions.Pen:
 							fileText.Append("\"pen\",");
 							break;
-						case (int)Extensions.ForceAndAceleration:
+						case Extensions.ForceAndAceleration:
 							fileText.Append("\"gdxfor\",");
 							break;
-						case (int)Extensions.WeDo2:
+						case Extensions.WeDo2:
 							fileText.Append("\"wedo2\",");
 							break;
-						case (int)Extensions.BOOST:
+						case Extensions.BOOST:
 							fileText.Append("\"boost\",");
 							break;
-						case (int)Extensions.EV3:
+						case Extensions.EV3:
 							fileText.Append("\"ev3\",");
 							break;
-						case (int)Extensions.Microbit:
+						case Extensions.Microbit:
 							fileText.Append("\"microbit\",");
 							break;
-						case (int)Extensions.MakeyMakey:
+						case Extensions.MakeyMakey:
 							fileText.Append("\"makeymakey\",");
 							break;
-						case (int)Extensions.Translate:
+						case Extensions.Translate:
 							fileText.Append("\"translate\",");
 							break;
-						case (int)Extensions.VideoSensing:
+						case Extensions.VideoSensing:
 							fileText.Append("\"videoSensing\",");
 							break;
-						case (int)Extensions.Music:
+						case Extensions.Music:
 							fileText.Append("\"music\",");
 							break;
 					}
-					flagMask >>= 1;
+					flagMask <<= 1;
 				}
 				Utils.RemoveLast(fileText);
 			}
