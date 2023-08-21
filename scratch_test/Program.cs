@@ -6,6 +6,18 @@ namespace scratch_test
 	{
 		static void Main(string[] args)
 		{
+			using(Project pr = new Project("test_blocks", Extensions.None, false))
+			{
+				using(Sprite s = new Sprite("test", pr))
+				{
+					using(Column c = new Column(s))
+					{
+
+					}
+				}
+			}
+
+			return;
 			using(Project project = new Project("test", Extensions.Translate, false))
 			{
 				using(Sprite sprite = new Sprite("test3", project))
@@ -276,7 +288,7 @@ namespace scratch_test
 					}
 					using(Column column = new Column(sprite, 2400, 600)) //Lists2
 					{
-						column.Add(new Operators.Add(new Operators.Add(new Lists.ItemIndex(24, sprite.Lists["re"]), new Lists.Item(sprite.Vars["te"], sprite.Lists["re"])), new Lists.Length(sprite.Lists["re"])));
+						column.Add(new Operators.Add(new Operators.Add(new Lists.ItemCount(24, sprite.Lists["re"]), new Lists.Item(sprite.Vars["te"], sprite.Lists["re"])), new Lists.Length(sprite.Lists["re"])));
 					}
 					using(Column column = new Column(sprite, 2400, 700)) //Lists3
 					{

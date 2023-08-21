@@ -86,7 +86,7 @@ namespace Scratch
 
 		public sealed class Show : ListBlock
 		{
-			public Show(List list) : base(list, "")
+			public Show(List list) : base(list, "Show list")
 			{
 				args = new BlockArgs("data_showlist", null, MakeListField());
 			}
@@ -94,7 +94,7 @@ namespace Scratch
 
 		public sealed class Hide : ListBlock
 		{
-			public Hide(List list) : base(list, "")
+			public Hide(List list) : base(list, "Hide list")
 			{
 				args = new BlockArgs("data_hidelist", null, MakeListField());
 			}
@@ -108,11 +108,11 @@ namespace Scratch
 			}
 		}
 
-		public sealed class ItemIndex : SpecList
+		public sealed class ItemCount : SpecList
 		{
-			public ItemIndex(object data, List list) : base(list, "")
+			public ItemCount(object item, List list) : base(list, "")
 			{
-				args = new BlockArgs("data_itemnumoflist", MakeInput("ITEM", data, "data", Types.None, InputType.String), MakeListField());
+				args = new BlockArgs("data_itemnumoflist", MakeInput("ITEM", item, "data", Types.None, InputType.String), MakeListField());
 			}
 		}
 
